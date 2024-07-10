@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BaliProject version="3.2" title="sx3_live_aud_vid_explorer_fpga_des" device="LIF-MD6000-6KMG80I" default_implementation="impl1">
+    <Options/>
+    <Implementation title="impl1" dir="impl1" description="impl1" synthesis="lse" default_strategy="Strategy1">
+        <Options def_top="PDM_iddr" top="topmod"/>
+        <Source name="source/rtl/bit_synchronizer.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="source/rtl/bus_synchronizer.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="source/rtl/gpif_interface_mod.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="source/rtl/gpif_interface_top.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="source/rtl/i2c_slave.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="source/rtl/mipidphy2cmos.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="source/rtl/reset_bridge.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="source/rtl/topmod.v" type="Verilog" type_short="Verilog">
+            <Options top_module="topmod"/>
+        </Source>
+        <Source name="source/rtl/vid_buf_mod.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="source/ip/byte_pixel/byte_pixel.sbx" type="sbx" type_short="SBX">
+            <Options/>
+        </Source>
+        <Source name="source/ip/rx_dphy_ip/rx_dphy_ip.sbx" type="sbx" type_short="SBX">
+            <Options/>
+        </Source>
+        <Source name="source/ip/vid_buf_fifo/vid_buf_fifo.sbx" type="sbx" type_short="SBX">
+            <Options/>
+        </Source>
+        <Source name="source/ip/pll/pll.sbx" type="sbx" type_short="SBX">
+            <Options/>
+        </Source>
+        <Source name="source/rtl/aud_buffer_manager.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="source/rtl/mic_clk_generator.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="source/rtl/pdm_pcm_core.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="source/rtl/PDM_iddr.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="source/ip/intermediate_dc_fifo/intermediate_dc_fifo.sbx" type="sbx" type_short="SBX">
+            <Options/>
+        </Source>
+        <Source name="source/ip/ping_pong_buffer/ping_pong_buffer.sbx" type="sbx" type_short="SBX">
+            <Options/>
+        </Source>
+        <Source name="source/rtl/mipi_ip_reset_manager.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="impl1/impl1.xcf" type="Programming Project File" type_short="Programming">
+            <Options/>
+        </Source>
+        <Source name="sx3_live_aud_vid_explorer_fpga_des.lpf" type="Logic Preference" type_short="LPF">
+            <Options/>
+        </Source>
+    </Implementation>
+    <Strategy name="Strategy1" file="sx3_live_aud_vid_explorer_fpga_des1.sty"/>
+</BaliProject>

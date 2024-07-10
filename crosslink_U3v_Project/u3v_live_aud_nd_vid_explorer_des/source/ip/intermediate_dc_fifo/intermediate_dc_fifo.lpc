@@ -1,0 +1,53 @@
+[Device]
+Family=lifmd
+PartType=LIF-MD6000
+PartName=LIF-MD6000-6KMG80I
+SpeedGrade=6
+Package=CKFBGA80
+OperatingCondition=IND
+Status=S
+
+[IP]
+VendorName=Lattice Semiconductor Corporation
+CoreType=LPM
+CoreStatus=Demo
+CoreName=FIFO_DC
+CoreRevision=5.8
+ModuleName=intermediate_dc_fifo
+SourceFormat=verilog
+ParameterFileVersion=1.0
+Date=07/13/2021
+Time=10:52:50
+
+[Parameters]
+Verilog=1
+VHDL=0
+EDIF=1
+Destination=Synplicity
+Expression=BusA(0 to 7)
+Order=Big Endian [MSB:LSB]
+IO=0
+FIFOImp=EBR Based
+Depth=128
+Width=16
+RDepth=128
+RWidth=16
+regout=1
+ClockEn=0
+CtrlByRdEn=0
+EmpFlg=0
+PeMode=Static - Dual Threshold
+PeAssert=10
+PeDeassert=12
+FullFlg=0
+PfMode=Static - Dual Threshold
+PfAssert=508
+PfDeassert=506
+Reset=Sync
+Reset1=Sync
+RDataCount=1
+WDataCount=1
+EnECC=0
+
+[Command]
+cmd_line= -w -n intermediate_dc_fifo -lang verilog -synth lse -bus_exp 7 -bb -arch sn5w00 -type ebfifo -depth 128 -width 16 -rwidth 16 -regout -no_enable -sync_reset -pe -1 -pf -1 -rfill -fill
