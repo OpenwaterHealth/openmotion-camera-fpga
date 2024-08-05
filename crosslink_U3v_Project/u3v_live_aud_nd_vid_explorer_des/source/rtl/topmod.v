@@ -73,8 +73,10 @@ module topmod
 	//output cam_app_en,
 	
 //	output pktend_g_o,
-	output buf_done_o
+	output buf_done_o,
 	//output GPIO_4
+	output cam_clk
+
 
 );
 wire pktend_g_o;
@@ -585,5 +587,10 @@ sync_line_blanking
   .data_src_i	(line_blanking_osc),	// Input signal
   .data_sync_o	(line_blanking)	// Synchronized data out
 );
+
+reg cam_clk = 1'b0;
+always @(posedge clk_osc) begin
+	cam_clk <= ~cam_clk;
+end
 
 endmodule

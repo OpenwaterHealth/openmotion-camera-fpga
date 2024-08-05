@@ -220,6 +220,6 @@ BLOCK PATH FROM CELL "sync_cam_en/data_src_r*" TO CELL "sync_cam_en/data_m1_r_8"
 BLOCK PATH FROM CELL "sync_vidrst/data_src_r_7" TO CELL "sync_vidrst/data_m1_r_8" ;
 BLOCK PATH FROM CELL "sync_img_size/data_src_r*" TO CELL "sync_img_size/data_m1_r*" ;
 
-//LOCATE COMP "GPIO_4" SITE "J2" ;
-//IOBUF PORT "GPIO_4" IO_TYPE=LVCMOS33 PULLMODE=NONE ;
+LOCATE COMP "cam_clk" SITE "J9" ;
+IOBUF PORT "cam_clk" IO_TYPE=LVCMOS33 PULLMODE=NONE ;
 
