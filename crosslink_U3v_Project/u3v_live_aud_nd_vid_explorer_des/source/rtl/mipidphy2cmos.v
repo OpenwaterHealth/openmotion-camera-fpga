@@ -42,7 +42,8 @@ module mipidphy2cmos
 	input 			pll_lock_i,
 	
 	output rx_payload_en,
-	output [15:0] tp_data
+	output [15:0] tp_data,
+	output test_out
 );
 assign tp_data = 32'h00800080;
 //-----------------------------------------------------------------------------
@@ -171,7 +172,7 @@ rx_dphy_ip rx_dphy
 	.csi_dphy_rx_clk_byte_o			(rx_clk_byte),
 	.csi_dphy_rx_clk_byte_hs_o		(rx_clk_byte_hs),
 	.csi_dphy_rx_cd_d0_o			(),
-	.csi_dphy_rx_lp_d0_rx_p_o		(),
+	.csi_dphy_rx_lp_d0_rx_p_o		(test_out),
 	.csi_dphy_rx_lp_d0_rx_n_o		(),
 	.csi_dphy_rx_lp_d1_rx_p_o		(),
 	.csi_dphy_rx_lp_d1_rx_n_o		(),

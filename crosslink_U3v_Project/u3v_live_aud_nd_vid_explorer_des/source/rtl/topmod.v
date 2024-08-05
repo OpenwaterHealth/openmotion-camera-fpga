@@ -74,6 +74,7 @@ module topmod
 	
 //	output pktend_g_o,
 	output buf_done_o
+	//output GPIO_4
 
 );
 wire pktend_g_o;
@@ -202,7 +203,7 @@ wire [ 7:0] vid_fps_osc;
 wire [ 7:0] vid_fps;
 wire [15:0] line_blanking_osc;
 wire [15:0] line_blanking;
-
+//wire mic_clk_o;
 // Internal Oscillator
 // 1 -> 48MHz, 2 -> 24MHz, 4 -> 12MHz, 8 -> 6MHz
 defparam int_osc.HFCLKDIV = INT_OSC_CLK_DIVIDER;
@@ -243,14 +244,14 @@ reset_bridge aud_mod_reset(
   .sync_resetn_out	(reset_n_aud_pixclk)// Synchronized reset signal
 );
 
-//	Reset Bridge for mic_clk_o
+/*//	Reset Bridge for mic_clk_o
 reset_bridge rst_brg_mic(
   .clk_i			(mic_clk_o),// Destination clock
   // .ext_resetn_i		(reset_n_i & pll_lock), // Asynchronous reset signal
   .ext_resetn_i		( reset_n_i &  aud_app_en_osc & pll_lock), // Asynchronous reset signal
   .sync_resetn_out	(sync_bclk_reset_n)// Synchronized reset signal
 );
-
+*/
 //	Reset Bridge for clk_osc
 reset_bridge rst_brg_osc(
   .clk_i			(clk_osc),// Destination clock
@@ -304,7 +305,7 @@ endgenerate
 localparam [31:0] MIC_CLK = 32'd3_000_000;
 
 // For 720p and 1080p resolutions.
-mic_clk_generator
+/*mic_clk_generator
    #
    (
     .INPUT_CLK_VALUE  ( INT_OSC_CLK_VALUE ),  // 48 MHz Internal Oscillator Clock
@@ -315,6 +316,7 @@ mic_clk_generator
       .reset_n        (reset_n_HFCLKOUT),
       .data_o         (mic_clk_o)
      );
+	 */
 
 
 // ODDR to drive GPIF Clock out
@@ -337,13 +339,18 @@ ODDRX1F SX3_CLOCK ( .D0(1'b1), .D1(1'b0), .SCLK(clk_pixel), .RST(1'b0), .Q(slclk
  	.lv_o				(  cmos_lv ),
  	.rx_clk_byte_fr_o	(rx_clk_byte_fr),
  	.clk_pixel_i		(clk_pixel1),
- 	.pll_lock_i			(pll_lock)
+ 	.pll_lock_i			(pll_lock),
+	.test_out      (mic_clk_o)
  );
  
 assign sldata_o= UVC_FL ?  cmos_data : sldata_r;
 assign slrd_o =  UVC_FL ?  cmos_lv : slrd_r;
 assign sloe_o =  UVC_FL ?  cmos_fv : sloe_r;
 
+reg test_reg = 1'b0;
+
+wire GPIO_4;
+assign GPIO_4 = rx_clk_byte_fr;
 //----------------------------------------
 //
 // PDM Mic Data Manager Module
