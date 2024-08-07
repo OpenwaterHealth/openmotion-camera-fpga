@@ -74,7 +74,6 @@ module topmod
 	
 //	output pktend_g_o,
 	output buf_done_o,
-	//output GPIO_4
 	output cam_clk
 
 
@@ -349,10 +348,6 @@ assign sldata_o= UVC_FL ?  cmos_data : sldata_r;
 assign slrd_o =  UVC_FL ?  cmos_lv : slrd_r;
 assign sloe_o =  UVC_FL ?  cmos_fv : sloe_r;
 
-reg test_reg = 1'b0;
-
-wire GPIO_4;
-assign GPIO_4 = rx_clk_byte_fr;
 //----------------------------------------
 //
 // PDM Mic Data Manager Module
