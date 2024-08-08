@@ -449,7 +449,7 @@
                     <spirit:wire>
                         <spirit:direction>out</spirit:direction>
                         <spirit:vector>
-                            <spirit:left>15</spirit:left>
+                            <spirit:left>31</spirit:left>
                             <spirit:right>0</spirit:right>
                         </spirit:vector>
                     </spirit:wire>
@@ -513,8 +513,8 @@
             <lattice:device>LIF-MD6000-6KMG80I</lattice:device>
             <lattice:synthesis>lse</lattice:synthesis>
             <lattice:date>2021-04-26.17:39:05</lattice:date>
-            <lattice:modified>2021-11-06.17:16:56</lattice:modified>
-            <lattice:diamond>3.12.0.240.2</lattice:diamond>
+            <lattice:modified>2024-08-08.11:10:40</lattice:modified>
+            <lattice:diamond>3.12.1.454</lattice:diamond>
             <lattice:language>Verilog</lattice:language>
             <lattice:attributes>
                 <lattice:attribute lattice:name="AddComponent">false</lattice:attribute>
@@ -1052,7 +1052,7 @@
                                 <spirit:wire>
                                     <spirit:direction>out</spirit:direction>
                                     <spirit:vector>
-                                        <spirit:left>15</spirit:left>
+                                        <spirit:left>31</spirit:left>
                                         <spirit:right>0</spirit:right>
                                     </spirit:vector>
                                 </spirit:wire>
@@ -1115,7 +1115,7 @@
                     <spirit:vendorExtensions>
                         <lattice:synthesis>lse</lattice:synthesis>
                         <lattice:date>22-04-16.00:00:00</lattice:date>
-                        <lattice:modified>2021-11-06.17:16:56</lattice:modified>
+                        <lattice:modified>2024-08-08.11:10:40</lattice:modified>
                         <lattice:attributes>
                             <lattice:attribute lattice:name="AddComponent">false</lattice:attribute>
                             <lattice:attribute lattice:name="Change4to5">false</lattice:attribute>
@@ -1182,7 +1182,7 @@
                             </lattice:lpcentry>
                             <lattice:lpcentry>
                                 <lattice:lpckey>Date</lattice:lpckey>
-                                <lattice:lpcvalue lattice:resolve="constant">07/23/2021</lattice:lpcvalue>
+                                <lattice:lpcvalue lattice:resolve="constant">08/08/2024</lattice:lpcvalue>
                             </lattice:lpcentry>
                             <lattice:lpcentry>
                                 <lattice:lpckey>ModuleName</lattice:lpckey>
@@ -1198,7 +1198,7 @@
                             </lattice:lpcentry>
                             <lattice:lpcentry>
                                 <lattice:lpckey>Time</lattice:lpckey>
-                                <lattice:lpcvalue lattice:resolve="constant">16:50:03</lattice:lpcvalue>
+                                <lattice:lpcvalue lattice:resolve="constant">11:09:40</lattice:lpcvalue>
                             </lattice:lpcentry>
                             <lattice:lpcentry>
                                 <lattice:lpckey>VendorName</lattice:lpckey>
@@ -1227,7 +1227,7 @@
                             </lattice:lpcentry>
                             <lattice:lpcentry>
                                 <lattice:lpckey>expsettleper</lattice:lpckey>
-                                <lattice:lpcvalue lattice:resolve="constant">10</lattice:lpcvalue>
+                                <lattice:lpcvalue lattice:resolve="constant">8</lattice:lpcvalue>
                             </lattice:lpcentry>
                             <lattice:lpcentry>
                                 <lattice:lpckey>fifotype</lattice:lpckey>
@@ -1239,11 +1239,11 @@
                             </lattice:lpcentry>
                             <lattice:lpcentry>
                                 <lattice:lpckey>maxrxrate</lattice:lpckey>
-                                <lattice:lpcvalue lattice:resolve="constant">1200</lattice:lpcvalue>
+                                <lattice:lpcvalue lattice:resolve="constant">1500</lattice:lpcvalue>
                             </lattice:lpcentry>
                             <lattice:lpcentry>
                                 <lattice:lpckey>minrxrate</lattice:lpckey>
-                                <lattice:lpcvalue lattice:resolve="constant">80</lattice:lpcvalue>
+                                <lattice:lpcvalue lattice:resolve="constant">160</lattice:lpcvalue>
                             </lattice:lpcentry>
                             <lattice:lpcentry>
                                 <lattice:lpckey>miscon</lattice:lpckey>
@@ -1327,7 +1327,7 @@
                             </lattice:lpcentry>
                             <lattice:lpcentry>
                                 <lattice:lpckey>rxgear</lattice:lpckey>
-                                <lattice:lpcvalue lattice:resolve="constant">8</lattice:lpcvalue>
+                                <lattice:lpcvalue lattice:resolve="constant">16</lattice:lpcvalue>
                             </lattice:lpcentry>
                             <lattice:lpcentry>
                                 <lattice:lpckey>rxtype</lattice:lpckey>
@@ -1339,35 +1339,35 @@
                             </lattice:lpcentry>
                             <lattice:lpcentry>
                                 <lattice:lpckey>tgtbyteclk</lattice:lpckey>
-                                <lattice:lpcvalue lattice:resolve="constant">83.7500</lattice:lpcvalue>
+                                <lattice:lpcvalue lattice:resolve="constant">83.0000</lattice:lpcvalue>
                             </lattice:lpcentry>
                             <lattice:lpcentry>
                                 <lattice:lpckey>tgtbyteclk_int</lattice:lpckey>
-                                <lattice:lpcvalue lattice:resolve="constant">84</lattice:lpcvalue>
+                                <lattice:lpcvalue lattice:resolve="constant">83</lattice:lpcvalue>
                             </lattice:lpcentry>
                             <lattice:lpcentry>
                                 <lattice:lpckey>tgtdphyclk</lattice:lpckey>
-                                <lattice:lpcvalue lattice:resolve="constant">335.0000</lattice:lpcvalue>
+                                <lattice:lpcvalue lattice:resolve="constant">664.0000</lattice:lpcvalue>
                             </lattice:lpcentry>
                             <lattice:lpcentry>
                                 <lattice:lpckey>tgtpixclk</lattice:lpckey>
-                                <lattice:lpcvalue lattice:resolve="constant">55.8333</lattice:lpcvalue>
+                                <lattice:lpcvalue lattice:resolve="constant">110.6667</lattice:lpcvalue>
                             </lattice:lpcentry>
                             <lattice:lpcentry>
                                 <lattice:lpckey>tgtpixclkint</lattice:lpckey>
-                                <lattice:lpcvalue lattice:resolve="constant">55.8333</lattice:lpcvalue>
+                                <lattice:lpcvalue lattice:resolve="constant">110.6667</lattice:lpcvalue>
                             </lattice:lpcentry>
                             <lattice:lpcentry>
                                 <lattice:lpckey>tgtrefclk</lattice:lpckey>
-                                <lattice:lpcvalue lattice:resolve="constant">27.9167</lattice:lpcvalue>
+                                <lattice:lpcvalue lattice:resolve="constant">27.6667</lattice:lpcvalue>
                             </lattice:lpcentry>
                             <lattice:lpcentry>
                                 <lattice:lpckey>tgtrxrate</lattice:lpckey>
-                                <lattice:lpcvalue lattice:resolve="constant">670</lattice:lpcvalue>
+                                <lattice:lpcvalue lattice:resolve="constant">1328</lattice:lpcvalue>
                             </lattice:lpcentry>
                             <lattice:lpcentry>
                                 <lattice:lpckey>tgttxrate</lattice:lpckey>
-                                <lattice:lpcvalue lattice:resolve="constant">55.8333</lattice:lpcvalue>
+                                <lattice:lpcvalue lattice:resolve="constant">110.6667</lattice:lpcvalue>
                             </lattice:lpcentry>
                             <lattice:lpcentry>
                                 <lattice:lpckey>txgear</lattice:lpckey>
@@ -2107,8 +2107,8 @@
                         <lattice:attribute lattice:name="export">sys_yes</lattice:attribute>
                     </lattice:attributes>
                 </spirit:vendorExtensions>
-                <spirit:internalPortReference spirit:right="0" spirit:portRef="payload_o" spirit:componentRef="csi_dphy_rx" spirit:left="15"/>
-                <spirit:externalPortReference spirit:right="0" spirit:portRef="csi_dphy_rx_payload_o" spirit:left="15"/>
+                <spirit:externalPortReference spirit:right="0" spirit:portRef="csi_dphy_rx_payload_o" spirit:left="31"/>
+                <spirit:internalPortReference spirit:right="0" spirit:portRef="payload_o" spirit:componentRef="csi_dphy_rx" spirit:left="31"/>
             </spirit:adHocConnection>
             <spirit:adHocConnection>
                 <spirit:name>csi_dphy_rx_payload_o[0]</spirit:name>
@@ -2188,6 +2188,50 @@
                 <spirit:externalPortReference spirit:portRef="csi_dphy_rx_payload_o[15]"/>
             </spirit:adHocConnection>
             <spirit:adHocConnection>
+                <spirit:name>csi_dphy_rx_payload_o[16]</spirit:name>
+                <spirit:displayName>csi_dphy_rx_payload_o[16]</spirit:displayName>
+                <spirit:vendorExtensions>
+                    <lattice:attributes>
+                        <lattice:attribute lattice:name="export">sys_yes</lattice:attribute>
+                    </lattice:attributes>
+                </spirit:vendorExtensions>
+                <spirit:internalPortReference spirit:portRef="payload_o[16]" spirit:componentRef="csi_dphy_rx"/>
+                <spirit:externalPortReference spirit:portRef="csi_dphy_rx_payload_o[16]"/>
+            </spirit:adHocConnection>
+            <spirit:adHocConnection>
+                <spirit:name>csi_dphy_rx_payload_o[17]</spirit:name>
+                <spirit:displayName>csi_dphy_rx_payload_o[17]</spirit:displayName>
+                <spirit:vendorExtensions>
+                    <lattice:attributes>
+                        <lattice:attribute lattice:name="export">sys_yes</lattice:attribute>
+                    </lattice:attributes>
+                </spirit:vendorExtensions>
+                <spirit:internalPortReference spirit:portRef="payload_o[17]" spirit:componentRef="csi_dphy_rx"/>
+                <spirit:externalPortReference spirit:portRef="csi_dphy_rx_payload_o[17]"/>
+            </spirit:adHocConnection>
+            <spirit:adHocConnection>
+                <spirit:name>csi_dphy_rx_payload_o[18]</spirit:name>
+                <spirit:displayName>csi_dphy_rx_payload_o[18]</spirit:displayName>
+                <spirit:vendorExtensions>
+                    <lattice:attributes>
+                        <lattice:attribute lattice:name="export">sys_yes</lattice:attribute>
+                    </lattice:attributes>
+                </spirit:vendorExtensions>
+                <spirit:internalPortReference spirit:portRef="payload_o[18]" spirit:componentRef="csi_dphy_rx"/>
+                <spirit:externalPortReference spirit:portRef="csi_dphy_rx_payload_o[18]"/>
+            </spirit:adHocConnection>
+            <spirit:adHocConnection>
+                <spirit:name>csi_dphy_rx_payload_o[19]</spirit:name>
+                <spirit:displayName>csi_dphy_rx_payload_o[19]</spirit:displayName>
+                <spirit:vendorExtensions>
+                    <lattice:attributes>
+                        <lattice:attribute lattice:name="export">sys_yes</lattice:attribute>
+                    </lattice:attributes>
+                </spirit:vendorExtensions>
+                <spirit:internalPortReference spirit:portRef="payload_o[19]" spirit:componentRef="csi_dphy_rx"/>
+                <spirit:externalPortReference spirit:portRef="csi_dphy_rx_payload_o[19]"/>
+            </spirit:adHocConnection>
+            <spirit:adHocConnection>
                 <spirit:name>csi_dphy_rx_payload_o[1]</spirit:name>
                 <spirit:displayName>csi_dphy_rx_payload_o[1]</spirit:displayName>
                 <spirit:vendorExtensions>
@@ -2199,6 +2243,116 @@
                 <spirit:externalPortReference spirit:portRef="csi_dphy_rx_payload_o[1]"/>
             </spirit:adHocConnection>
             <spirit:adHocConnection>
+                <spirit:name>csi_dphy_rx_payload_o[20]</spirit:name>
+                <spirit:displayName>csi_dphy_rx_payload_o[20]</spirit:displayName>
+                <spirit:vendorExtensions>
+                    <lattice:attributes>
+                        <lattice:attribute lattice:name="export">sys_yes</lattice:attribute>
+                    </lattice:attributes>
+                </spirit:vendorExtensions>
+                <spirit:internalPortReference spirit:portRef="payload_o[20]" spirit:componentRef="csi_dphy_rx"/>
+                <spirit:externalPortReference spirit:portRef="csi_dphy_rx_payload_o[20]"/>
+            </spirit:adHocConnection>
+            <spirit:adHocConnection>
+                <spirit:name>csi_dphy_rx_payload_o[21]</spirit:name>
+                <spirit:displayName>csi_dphy_rx_payload_o[21]</spirit:displayName>
+                <spirit:vendorExtensions>
+                    <lattice:attributes>
+                        <lattice:attribute lattice:name="export">sys_yes</lattice:attribute>
+                    </lattice:attributes>
+                </spirit:vendorExtensions>
+                <spirit:internalPortReference spirit:portRef="payload_o[21]" spirit:componentRef="csi_dphy_rx"/>
+                <spirit:externalPortReference spirit:portRef="csi_dphy_rx_payload_o[21]"/>
+            </spirit:adHocConnection>
+            <spirit:adHocConnection>
+                <spirit:name>csi_dphy_rx_payload_o[22]</spirit:name>
+                <spirit:displayName>csi_dphy_rx_payload_o[22]</spirit:displayName>
+                <spirit:vendorExtensions>
+                    <lattice:attributes>
+                        <lattice:attribute lattice:name="export">sys_yes</lattice:attribute>
+                    </lattice:attributes>
+                </spirit:vendorExtensions>
+                <spirit:internalPortReference spirit:portRef="payload_o[22]" spirit:componentRef="csi_dphy_rx"/>
+                <spirit:externalPortReference spirit:portRef="csi_dphy_rx_payload_o[22]"/>
+            </spirit:adHocConnection>
+            <spirit:adHocConnection>
+                <spirit:name>csi_dphy_rx_payload_o[23]</spirit:name>
+                <spirit:displayName>csi_dphy_rx_payload_o[23]</spirit:displayName>
+                <spirit:vendorExtensions>
+                    <lattice:attributes>
+                        <lattice:attribute lattice:name="export">sys_yes</lattice:attribute>
+                    </lattice:attributes>
+                </spirit:vendorExtensions>
+                <spirit:internalPortReference spirit:portRef="payload_o[23]" spirit:componentRef="csi_dphy_rx"/>
+                <spirit:externalPortReference spirit:portRef="csi_dphy_rx_payload_o[23]"/>
+            </spirit:adHocConnection>
+            <spirit:adHocConnection>
+                <spirit:name>csi_dphy_rx_payload_o[24]</spirit:name>
+                <spirit:displayName>csi_dphy_rx_payload_o[24]</spirit:displayName>
+                <spirit:vendorExtensions>
+                    <lattice:attributes>
+                        <lattice:attribute lattice:name="export">sys_yes</lattice:attribute>
+                    </lattice:attributes>
+                </spirit:vendorExtensions>
+                <spirit:internalPortReference spirit:portRef="payload_o[24]" spirit:componentRef="csi_dphy_rx"/>
+                <spirit:externalPortReference spirit:portRef="csi_dphy_rx_payload_o[24]"/>
+            </spirit:adHocConnection>
+            <spirit:adHocConnection>
+                <spirit:name>csi_dphy_rx_payload_o[25]</spirit:name>
+                <spirit:displayName>csi_dphy_rx_payload_o[25]</spirit:displayName>
+                <spirit:vendorExtensions>
+                    <lattice:attributes>
+                        <lattice:attribute lattice:name="export">sys_yes</lattice:attribute>
+                    </lattice:attributes>
+                </spirit:vendorExtensions>
+                <spirit:internalPortReference spirit:portRef="payload_o[25]" spirit:componentRef="csi_dphy_rx"/>
+                <spirit:externalPortReference spirit:portRef="csi_dphy_rx_payload_o[25]"/>
+            </spirit:adHocConnection>
+            <spirit:adHocConnection>
+                <spirit:name>csi_dphy_rx_payload_o[26]</spirit:name>
+                <spirit:displayName>csi_dphy_rx_payload_o[26]</spirit:displayName>
+                <spirit:vendorExtensions>
+                    <lattice:attributes>
+                        <lattice:attribute lattice:name="export">sys_yes</lattice:attribute>
+                    </lattice:attributes>
+                </spirit:vendorExtensions>
+                <spirit:internalPortReference spirit:portRef="payload_o[26]" spirit:componentRef="csi_dphy_rx"/>
+                <spirit:externalPortReference spirit:portRef="csi_dphy_rx_payload_o[26]"/>
+            </spirit:adHocConnection>
+            <spirit:adHocConnection>
+                <spirit:name>csi_dphy_rx_payload_o[27]</spirit:name>
+                <spirit:displayName>csi_dphy_rx_payload_o[27]</spirit:displayName>
+                <spirit:vendorExtensions>
+                    <lattice:attributes>
+                        <lattice:attribute lattice:name="export">sys_yes</lattice:attribute>
+                    </lattice:attributes>
+                </spirit:vendorExtensions>
+                <spirit:internalPortReference spirit:portRef="payload_o[27]" spirit:componentRef="csi_dphy_rx"/>
+                <spirit:externalPortReference spirit:portRef="csi_dphy_rx_payload_o[27]"/>
+            </spirit:adHocConnection>
+            <spirit:adHocConnection>
+                <spirit:name>csi_dphy_rx_payload_o[28]</spirit:name>
+                <spirit:displayName>csi_dphy_rx_payload_o[28]</spirit:displayName>
+                <spirit:vendorExtensions>
+                    <lattice:attributes>
+                        <lattice:attribute lattice:name="export">sys_yes</lattice:attribute>
+                    </lattice:attributes>
+                </spirit:vendorExtensions>
+                <spirit:internalPortReference spirit:portRef="payload_o[28]" spirit:componentRef="csi_dphy_rx"/>
+                <spirit:externalPortReference spirit:portRef="csi_dphy_rx_payload_o[28]"/>
+            </spirit:adHocConnection>
+            <spirit:adHocConnection>
+                <spirit:name>csi_dphy_rx_payload_o[29]</spirit:name>
+                <spirit:displayName>csi_dphy_rx_payload_o[29]</spirit:displayName>
+                <spirit:vendorExtensions>
+                    <lattice:attributes>
+                        <lattice:attribute lattice:name="export">sys_yes</lattice:attribute>
+                    </lattice:attributes>
+                </spirit:vendorExtensions>
+                <spirit:internalPortReference spirit:portRef="payload_o[29]" spirit:componentRef="csi_dphy_rx"/>
+                <spirit:externalPortReference spirit:portRef="csi_dphy_rx_payload_o[29]"/>
+            </spirit:adHocConnection>
+            <spirit:adHocConnection>
                 <spirit:name>csi_dphy_rx_payload_o[2]</spirit:name>
                 <spirit:displayName>csi_dphy_rx_payload_o[2]</spirit:displayName>
                 <spirit:vendorExtensions>
@@ -2208,6 +2362,28 @@
                 </spirit:vendorExtensions>
                 <spirit:internalPortReference spirit:portRef="payload_o[2]" spirit:componentRef="csi_dphy_rx"/>
                 <spirit:externalPortReference spirit:portRef="csi_dphy_rx_payload_o[2]"/>
+            </spirit:adHocConnection>
+            <spirit:adHocConnection>
+                <spirit:name>csi_dphy_rx_payload_o[30]</spirit:name>
+                <spirit:displayName>csi_dphy_rx_payload_o[30]</spirit:displayName>
+                <spirit:vendorExtensions>
+                    <lattice:attributes>
+                        <lattice:attribute lattice:name="export">sys_yes</lattice:attribute>
+                    </lattice:attributes>
+                </spirit:vendorExtensions>
+                <spirit:internalPortReference spirit:portRef="payload_o[30]" spirit:componentRef="csi_dphy_rx"/>
+                <spirit:externalPortReference spirit:portRef="csi_dphy_rx_payload_o[30]"/>
+            </spirit:adHocConnection>
+            <spirit:adHocConnection>
+                <spirit:name>csi_dphy_rx_payload_o[31]</spirit:name>
+                <spirit:displayName>csi_dphy_rx_payload_o[31]</spirit:displayName>
+                <spirit:vendorExtensions>
+                    <lattice:attributes>
+                        <lattice:attribute lattice:name="export">sys_yes</lattice:attribute>
+                    </lattice:attributes>
+                </spirit:vendorExtensions>
+                <spirit:internalPortReference spirit:portRef="payload_o[31]" spirit:componentRef="csi_dphy_rx"/>
+                <spirit:externalPortReference spirit:portRef="csi_dphy_rx_payload_o[31]"/>
             </spirit:adHocConnection>
             <spirit:adHocConnection>
                 <spirit:name>csi_dphy_rx_payload_o[3]</spirit:name>
