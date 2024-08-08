@@ -45,7 +45,7 @@ LOCATE COMP "pktend_o" SITE "K10" ;
 LOCATE COMP "sl_addr_o[0]" SITE "K4" ;# Address lines for 32/16 bit bus Widths
 LOCATE COMP "sl_addr_o[1]" SITE "E9" ;# Address lines for 32/16 bit bus Widths
 LOCATE COMP "mic_clk_o" SITE "K8" ;
-LOCATE COMP "mic_pdm_data_i" SITE "J9" ;
+//LOCATE COMP "mic_pdm_data_i" SITE "J9" ;
 
 # System I2C
 LOCATE COMP "sx3_i2c_sda_io" SITE "J1" ;
@@ -111,7 +111,7 @@ IOBUF PORT "sx3_i2c_sda_io" IO_TYPE=LVCMOS33 PULLMODE=NONE ;
 IOBUF PORT "sloe_o" IO_TYPE=LVCMOS33 ;
 IOBUF PORT "slrd_o" IO_TYPE=LVCMOS33 ;
 IOBUF PORT "mic_clk_o" IO_TYPE=LVCMOS33 ;
-IOBUF PORT "mic_pdm_data_i" IO_TYPE=LVCMOS33 PULLMODE=NONE ;
+//IOBUF PORT "mic_pdm_data_i" IO_TYPE=LVCMOS33 PULLMODE=NONE ;
 
 
 ###########		Timing Constarints			############
