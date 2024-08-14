@@ -172,7 +172,7 @@ rx_dphy_ip rx_dphy
 	.csi_dphy_rx_clk_byte_o			(rx_clk_byte),
 	.csi_dphy_rx_clk_byte_hs_o		(rx_clk_byte_hs),
 	.csi_dphy_rx_cd_d0_o			(),
-	.csi_dphy_rx_lp_d0_rx_p_o		(test_out),
+	.csi_dphy_rx_lp_d0_rx_p_o		(),
 	.csi_dphy_rx_lp_d0_rx_n_o		(),
 	.csi_dphy_rx_lp_d1_rx_p_o		(),
 	.csi_dphy_rx_lp_d1_rx_n_o		(),
@@ -195,6 +195,12 @@ rx_dphy_ip rx_dphy
 	.csi_dphy_rx_lp_hs_state_d_o		(rx_lp_hs_state_d)
 );
 
+reg [32:0] rx_byte_counter;
+always @(posedge rx_clk_byte) begin
+	rx_byte_counter <= rx_byte_counter +1;
+end
+assign test_out = rx_byte_counter[7];
+// okay when i hit this it shits the bed damnit
 /////////////////////////////////////////////////////////////////////////////////////
 ///// Byte2Pixel module instantiation                                   		/////
 ///// Customer has to recreate a Soft-IP for their own configuration settings	/////

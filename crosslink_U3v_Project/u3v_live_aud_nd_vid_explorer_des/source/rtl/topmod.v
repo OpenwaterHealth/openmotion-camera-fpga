@@ -341,8 +341,10 @@ ODDRX1F SX3_CLOCK ( .D0(1'b1), .D1(1'b0), .SCLK(clk_pixel), .RST(1'b0), .Q(slclk
  	.rx_clk_byte_fr_o	(rx_clk_byte_fr),
  	.clk_pixel_i		(clk_pixel1),
  	.pll_lock_i			(pll_lock),
-	.test_out      (mic_clk_o)
+	.test_out           (mic_clk_o)
  );
+ 
+//assign  mic_clk_o = rx_clk_byte_fr;
  
 assign sldata_o= UVC_FL ?  cmos_data : sldata_r;
 assign slrd_o =  UVC_FL ?  cmos_lv : slrd_r;
