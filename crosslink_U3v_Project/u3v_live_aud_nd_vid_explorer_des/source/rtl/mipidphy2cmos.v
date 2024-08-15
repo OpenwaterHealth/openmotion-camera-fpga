@@ -196,10 +196,11 @@ rx_dphy_ip rx_dphy
 );
 
 reg [32:0] rx_byte_counter;
-always @(posedge rx_clk_byte) begin
+always @(posedge rx_clk_byte_hs) begin
 	rx_byte_counter <= rx_byte_counter +1;
 end
 assign test_out = rx_byte_counter[0];
+
 // okay when i hit this it shits the bed damnit
 /////////////////////////////////////////////////////////////////////////////////////
 ///// Byte2Pixel module instantiation                                   		/////
