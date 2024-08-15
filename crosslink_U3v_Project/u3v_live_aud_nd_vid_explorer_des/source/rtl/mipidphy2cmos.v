@@ -52,7 +52,7 @@ assign tp_data = 32'h00800080;
 parameter RX_LANE_COUNT = 2;
 parameter RX_PD_BUS_WIDTH = 8;	
 parameter TX_PD_BUS_WIDTH = 24;
-parameter RX_GEAR = 8;	// DPHY Rx Clock Gear
+parameter RX_GEAR = 16;	// DPHY Rx Clock Gear
 parameter RX_CLK_MODE = "HS_ONLY";
 parameter NUM_TX_CH = 2;
 parameter TX_GEAR = 14;// DPHY Tx Clock Gear
@@ -199,7 +199,7 @@ reg [32:0] rx_byte_counter;
 always @(posedge rx_clk_byte) begin
 	rx_byte_counter <= rx_byte_counter +1;
 end
-assign test_out = rx_byte_counter[7];
+assign test_out = rx_byte_counter[0];
 // okay when i hit this it shits the bed damnit
 /////////////////////////////////////////////////////////////////////////////////////
 ///// Byte2Pixel module instantiation                                   		/////
