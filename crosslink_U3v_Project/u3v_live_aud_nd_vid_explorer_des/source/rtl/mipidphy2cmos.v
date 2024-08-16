@@ -34,7 +34,7 @@ module mipidphy2cmos
 	inout 			rx_d0_n_i,
 	inout 			rx_d1_p_i,
 	inout 			rx_d1_n_i,
-	output [15:0]	pd0_o,
+	output [9:0]	pd0_o,
 	output 			fv_o,
 	output 			lv_o,
 	output 			rx_clk_byte_fr_o,
@@ -200,7 +200,7 @@ always @(posedge rx_clk_byte_hs) begin
 	rx_byte_counter <= rx_byte_counter +1;
 end
 //assign test_out = rx_byte_counter[0];
-assign test_out = rx_sp_en;//rx_byte_counter[0];
+assign test_out = rx_lp_en;//rx_byte_counter[0];
 
 // okay when i hit this it shits the bed damnit
 /////////////////////////////////////////////////////////////////////////////////////
@@ -213,7 +213,7 @@ byte_pixel byte_pixel (
 	.byte2pix_clk_pixel_i		(clk_pixel_pll),
 	.byte2pix_reset_pixel_n_i	(reset_pixel_n_sync),
 	.byte2pix_sp_en_i			(rx_sp_en),
-	.byte2pix_lp_av_en_i			(rx_lp_av_en),
+	.byte2pix_lp_av_en_i		(rx_lp_av_en),
 	.byte2pix_dt_i				(rx_dt),
 	.byte2pix_wc_i				(rx_wc),
 	.byte2pix_payload_i			(rx_payload),

@@ -52,7 +52,7 @@ module topmod
 	input			flagb_i,
 
 	output [1:0]	sl_addr_o,
-	output [15:0]	sldata_o,
+	output [9:0]	sldata_o,
 	
 	//output pll_lock,
 	output			slwr_o,
@@ -129,7 +129,7 @@ wire cam_app_en;
 wire aud_app_en;
 wire slfifo_st_vidrst;
 wire slfifo_st_audrst;
-wire [15:0] cmos_data;
+wire [9:0] cmos_data;
 wire [15:0] vid_buf_dout;
 wire [31:0] img_size;
 wire [15:0] img_wt;
