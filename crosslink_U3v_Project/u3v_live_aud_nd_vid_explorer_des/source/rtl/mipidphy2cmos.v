@@ -43,7 +43,8 @@ module mipidphy2cmos
 	
 	output rx_payload_en,
 	output [15:0] tp_data,
-	output test_out
+	output test_out,
+	output [5:0] debug
 );
 assign tp_data = 32'h00800080;
 //-----------------------------------------------------------------------------
@@ -194,13 +195,23 @@ rx_dphy_ip rx_dphy
 	.csi_dphy_rx_lp_hs_state_clk_o		(rx_lp_hs_state_clk),
 	.csi_dphy_rx_lp_hs_state_d_o		(rx_lp_hs_state_d)
 );
-
+ reg [5:0] debug;
+always @(posedge rx_sp_en, posedge rx_lp_en) begin
+	debug <=rx_dt;
+end
+/*debug[0] <= 0;
+debug[1] <= 0;
+debug[2] <= 0;
+debug[3] <= 0;
+debug[4] <= 0;
+debug[5] <= 0;
+*/
 reg [32:0] rx_byte_counter;
 always @(posedge rx_clk_byte_hs) begin
 	rx_byte_counter <= rx_byte_counter +1;
 end
 //assign test_out = rx_byte_counter[0];
-assign test_out = rx_lp_en;//rx_byte_counter[0];
+assign test_out = rx_sp_en || rx_lp_en;//rx_byte_counter[0];
 
 // okay when i hit this it shits the bed damnit
 /////////////////////////////////////////////////////////////////////////////////////
