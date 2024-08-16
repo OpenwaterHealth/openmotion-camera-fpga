@@ -357,7 +357,7 @@ assign sloe_o =  UVC_FL ?  cmos_fv : sloe_r;
 // PDM Mic Data Manager Module
 //
 //----------------------------------------
-
+/*
 aud_buffer_manager
   abm
     (
@@ -378,7 +378,7 @@ aud_buffer_manager
      .sync_bclk_reset_n_i       ( sync_bclk_reset_n ),
      .change_rd_bufr_idx_pl_i   ( 1'b0 ) // Packet End is sent at every 4KB audio buffer.
     );
-
+*/
 //	Video Buffer Module : Buffers the video data whne the Slave FIFO interface is busy
 vid_buf_mod vid_buf_mod
 (
