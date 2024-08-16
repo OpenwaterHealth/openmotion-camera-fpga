@@ -60,7 +60,7 @@ parameter TX_GEAR = 14;// DPHY Tx Clock Gear
 //-----------------------------------------------------------------------------
 //	Wire and Register declarations
 //-----------------------------------------------------------------------------
-wire [5:0] ref_dt = 6'h1E;
+wire [5:0] ref_dt = 6'h2b;
 
 wire rx_clk_byte_fr , rx_clk_byte_hs, rx_clk_lp_ctrl, rx_reset_lp_n;
 wire clk_pixel_pll ;
@@ -199,7 +199,8 @@ reg [32:0] rx_byte_counter;
 always @(posedge rx_clk_byte_hs) begin
 	rx_byte_counter <= rx_byte_counter +1;
 end
-assign test_out = rx_byte_counter[0];
+//assign test_out = rx_byte_counter[0];
+assign test_out = rx_sp_en;//rx_byte_counter[0];
 
 // okay when i hit this it shits the bed damnit
 /////////////////////////////////////////////////////////////////////////////////////
