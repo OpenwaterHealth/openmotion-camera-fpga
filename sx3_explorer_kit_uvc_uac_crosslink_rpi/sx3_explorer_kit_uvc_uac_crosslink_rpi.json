@@ -3,7 +3,7 @@
   "TOOL_VERSION": "1.1.0.5",
   "CONFIG_TABLE_GENERAL": {
     "SIGNATURE": "CY",
-    "CONFIG_TABLE_CHECKSUM": "0x28944",
+    "CONFIG_TABLE_CHECKSUM": "0x28937",
     "CONFIG_TABLE_LENGTH": "0x00000CFD",
     "VERSION_MAJOR": 1,
     "VERSION_MINOR": 0,
@@ -46,14 +46,14 @@
       "AUTO_INCREMENT_SERIAL_NUMBER": 0,
       "REMOTE_WAKEUP_ENABLE": "Disable",
       "POWER_CONFIGURATION": "Bus Powered",
-      "CONFIG_DSCR_LENGTH_SS": 306,
-      "CONFIG_DSCR_LENGTH_HS": 218,
+      "CONFIG_DSCR_LENGTH_SS": 289,
+      "CONFIG_DSCR_LENGTH_HS": 229,
       "CONFIG_DSCR_LENGTH_FS": 160,
       "ENDPOINT1_TYPE": "UVC",
       "ENDPOINT2_TYPE": "",
-      "FIFO_BUS_WIDTH": 8,
+      "FIFO_BUS_WIDTH": 16,
       "FIFO_CLOCK": 100,
-      "FIFO_INTERFACE_TYPE": "Slave FIFO Interface",
+      "FIFO_INTERFACE_TYPE": "Image Sensor Parallel Interface",
       "UVC_VERSION": "1.5",
       "UVC_HEADER_ADDITION": "UVC HEADER BY SX3",
       "RESERVED": "FF"
@@ -95,7 +95,7 @@
       "VIDEO_SOURCE_TYPE": "Image Sensor",
       "VIDEO_SOURCE_SUBTYPE": "",
       "ENABLE_VIDEO_SOURCE_CONFIGURATION_DOWNLOAD": "Enable",
-      "VIDEO_SOURCE_CONFIGURATION_LEN": 665,
+      "VIDEO_SOURCE_CONFIGURATION_LEN": 664,
       "VIDEO_SOURCE_CONFIGURATION": [
         {
           "REGISTER_ADDRESS": "0x0100",
@@ -110,22 +110,22 @@
         {
           "REGISTER_ADDRESS": "0x0000",
           "REGISTER_VALUE": "0x0000",
-          "SLAVE_ADDRESS": "0x0000"
+          "SLAVE_ADDRESS": "0x006c"
         },
         {
           "REGISTER_ADDRESS": "0x0000",
           "REGISTER_VALUE": "0x0000",
-          "SLAVE_ADDRESS": "0x0000"
+          "SLAVE_ADDRESS": "0x006c"
         },
         {
           "REGISTER_ADDRESS": "0x0000",
           "REGISTER_VALUE": "0x0000",
-          "SLAVE_ADDRESS": "0x0000"
+          "SLAVE_ADDRESS": "0x006c"
         },
         {
           "REGISTER_ADDRESS": "0x0000",
           "REGISTER_VALUE": "0x0000",
-          "SLAVE_ADDRESS": "0x0000"
+          "SLAVE_ADDRESS": "0x006c"
         },
         {
           "REGISTER_ADDRESS": "0x0105",
@@ -799,7 +799,7 @@
         },
         {
           "REGISTER_ADDRESS": "0x4316",
-          "REGISTER_VALUE": "0x0017",
+          "REGISTER_VALUE": "0x0014",
           "SLAVE_ADDRESS": "0x006c"
         },
         {
@@ -870,11 +870,6 @@
         {
           "REGISTER_ADDRESS": "0x4699",
           "REGISTER_VALUE": "0x00f0",
-          "SLAVE_ADDRESS": "0x006c"
-        },
-        {
-          "REGISTER_ADDRESS": "0x4800",
-          "REGISTER_VALUE": "0x0014",
           "SLAVE_ADDRESS": "0x006c"
         },
         {
@@ -3364,12 +3359,12 @@
         },
         {
           "REGISTER_ADDRESS": "0x3501",
-          "REGISTER_VALUE": "0x0000",
+          "REGISTER_VALUE": "0x0006",
           "SLAVE_ADDRESS": "0x006c"
         },
         {
           "REGISTER_ADDRESS": "0x3502",
-          "REGISTER_VALUE": "0x0020",
+          "REGISTER_VALUE": "0x0014",
           "SLAVE_ADDRESS": "0x006c"
         },
         {
@@ -3443,17 +3438,17 @@
       },
       "FORMAT_RESOLUTION": {
         "TOTAL_NUMBER_OF_RESOLUTIONS": 3,
-        "TOTAL_NUMBER_OF_IMAGE_FORMATS_SS_ENABLED": 2,
+        "TOTAL_NUMBER_OF_IMAGE_FORMATS_SS_ENABLED": 1,
         "TOTAL_NUMBER_OF_IMAGE_FORMATS_HS_ENABLED": 1,
         "TOTAL_NUMBER_OF_IMAGE_FORMATS_FS_ENABLED": 0,
         "TOTAL_NUMBER_OF_RESOLUTIONS_SS_ENABLED": 3,
         "TOTAL_NUMBER_OF_RESOLUTIONS_HS_ENABLED": 1,
         "TOTAL_NUMBER_OF_RESOLUTIONS_FS_ENABLED": 0,
-        "TOTAL_NUMBER_OF_IMAGE_FORMATS_WITH_STILL_CAPTURE_ENABLED_SS": 0,
-        "TOTAL_NUMBER_OF_IMAGE_FORMATS_WITH_STILL_CAPTURE_ENABLED_HS": 0,
+        "TOTAL_NUMBER_OF_IMAGE_FORMATS_WITH_STILL_CAPTURE_ENABLED_SS": 1,
+        "TOTAL_NUMBER_OF_IMAGE_FORMATS_WITH_STILL_CAPTURE_ENABLED_HS": 1,
         "TOTAL_NUMBER_OF_IMAGE_FORMATS_WITH_STILL_CAPTURE_ENABLED_FS": 0,
-        "TOTAL_NUMBER_OF_RESOLUTIONS_WITH_STILL_CAPTURE_ENABLED_SS": 0,
-        "TOTAL_NUMBER_OF_RESOLUTIONS_WITH_STILL_CAPTURE_ENABLED_HS": 0,
+        "TOTAL_NUMBER_OF_RESOLUTIONS_WITH_STILL_CAPTURE_ENABLED_SS": 1,
+        "TOTAL_NUMBER_OF_RESOLUTIONS_WITH_STILL_CAPTURE_ENABLED_HS": 1,
         "TOTAL_NUMBER_OF_RESOLUTIONS_WITH_STILL_CAPTURE_ENABLED_FS": 0,
         "STILL_CAPTURE_SIGNALING_REGISTER_ADDRESS": "0x0E",
         "FORMAT_RESOLUTIONS": [
@@ -4155,11 +4150,11 @@
           },
           {
             "S_NO": 1,
-            "IMAGE_FORMAT": "GREY",
-            "BITS_PER_PIXEL": 8,
+            "IMAGE_FORMAT": "YUY2",
+            "BITS_PER_PIXEL": 16,
             "H_RESOLUTION": 1920,
             "V_RESOLUTION": 1280,
-            "STILL_CAPTURE": "Disable",
+            "STILL_CAPTURE": "Enable",
             "SUPPORTED_IN_FS": "Disable",
             "SUPPORTED_IN_HS": "Enable",
             "SUPPORTED_IN_SS": "Enable",

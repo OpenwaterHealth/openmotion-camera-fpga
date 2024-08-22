@@ -342,11 +342,11 @@ ODDRX1F SX3_CLOCK ( .D0(1'b1), .D1(1'b0), .SCLK(clk_pixel), .RST(1'b0), .Q(slclk
  	.rx_clk_byte_fr_o	(rx_clk_byte_fr),
  	.clk_pixel_i		(clk_pixel1),
  	.pll_lock_i			(pll_lock),
-	.test_out           (mic_clk_o),
+	//.test_out           (mic_clk_o),
 	.debug				(debug)
  );
  
-//assign  mic_clk_o = rx_clk_byte_fr;
+assign  mic_clk_o = cmos_fv;
  
 assign sldata_o= UVC_FL ?  cmos_data : sldata_r;
 assign slrd_o =  UVC_FL ?  cmos_lv : slrd_r;
@@ -467,6 +467,17 @@ gpif_interface_top
 //	.pktend_g_o					(pktend_g_o)
 
 );
+
+reg [15:0] img_height = 16'd1280;
+assign img_ht_osc = img_height;
+reg [15:0] img_width = 16'd1920;
+assign img_wt_osc = img_width;
+reg [31:0] img_size = 16'd2457600;
+assign img_size_osc = img_size;
+
+
+reg HIGH = 1'b1;
+assign cam_app_en_osc = HIGH;
 wire pktend_g_o;
 //	I2C Slave module
 i2c_slave
@@ -483,10 +494,10 @@ fx3_i2c_slave_if
 	//	Control Signals
 	.slfifo_st_vidrst_o	(slfifo_st_vidrst_osc),	// video channel reset
 	.slfifo_st_audrst_o	(slfifo_st_audrst_osc),	// audio channel reset
-	.img_wt_o			(img_wt_osc),	// Number of pixels in a line
-	.img_ht_o			(img_ht_osc),	// Number of lines ina  frame
-	.img_size_o			(img_size_osc),	// Number of pixels in a frame
-	.cam_app_en_o		(cam_app_en_osc),	// Video Streaming Applicaton enable
+	.img_wt_o			(),	// Number of pixels in a line
+	.img_ht_o			(),	// Number of lines ina  frame
+	.img_size_o			(),	// Number of pixels in a frame
+	.cam_app_en_o		(),	// Video Streaming Applicaton enable
 	.aud_app_en_o		(aud_app_en_osc),	// Audio Applicaton enable
 	.still_cap_en_o		(still_cap_en_osc),// Still capture pin
 	.gpif_buf_wdt_o		(gpif_buf_wdt),
