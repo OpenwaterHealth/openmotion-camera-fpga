@@ -306,6 +306,7 @@ assign slrd_o =  UVC_FL ?  cmos_lv : slrd_r;
 assign sloe_o =  UVC_FL ?  cmos_fv : sloe_r;
 
 //	Video Buffer Module : Buffers the video data whne the Slave FIFO interface is busy
+
 vid_buf_mod vid_buf_mod
 (
 	.clk_i					  (clk_pixel),
@@ -316,7 +317,7 @@ vid_buf_mod vid_buf_mod
 	.vid_fifo_rd_req_i   	  (vid_fifo_rd_req),
 	.cam_fv_i				  (cmos_fv),
 	.cam_lv_i				  (cmos_lv),
-	.cam_data_i				  ({16'd0,cmos_data} /*tp_data*/),  // 32 bit data
+	.cam_data_i				  ({16'd0,cmos_data} ),  // 32 bit data
     .pktend_st_i              (vid_pktend_st),
 	.vid_fifo_rd_data_o		  (vid_buf_dout),
 	.vid_fifo_data_vld_o	  (vid_buf_dvld),
@@ -404,134 +405,14 @@ assign img_size_osc = img_size;
 reg HIGH = 1'b1;
 assign cam_app_en_osc = HIGH;
 assign cam_app_en = HIGH;
-//	I2C Slave module
-/*i2c_slave
-fx3_i2c_slave_if
-(
-	//	Interface Inouts
-	.sl_sda_io			(sx3_i2c_sda_io),// I2C SDA input
-	.sl_scl_io			(sx3_i2c_scl_io),	// I2C SCL input
-
-	//	Global Inputs
-	.reset_n_i			(reset_n_HFCLKOUT),
-	.clock_i			(clk_osc),
-
-	//	Control Signals
-	.slfifo_st_vidrst_o	(slfifo_st_vidrst_osc),	// video channel reset
-	.slfifo_st_audrst_o	(slfifo_st_audrst_osc),	// audio channel reset
-	.img_wt_o			(),	// Number of pixels in a line
-	.img_ht_o			(),	// Number of lines ina  frame
-	.img_size_o			(),	// Number of pixels in a frame
-	.cam_app_en_o		(),	// Video Streaming Applicaton enable
-	.aud_app_en_o		(aud_app_en_osc),	// Audio Applicaton enable
-	.still_cap_en_o		(still_cap_en_osc),// Still capture pin
-	.gpif_buf_wdt_o		(gpif_buf_wdt),
-	.vid_fps_o          (vid_fps_osc),
-	.h_blanking_o		(line_blanking_osc),
-	.app_stop			(app_stop)
-
-);*/
-
-//	I2C Control Signals Clock Domain Crossing between the clk_osc and clk_pixel
-/*bus_sync_mod
-#( .BUS_WDT(IMG_SZ_BUS_WDT))
-sync_img_size
-(
-  .clk_src_i	(clk_osc),	// Source clock
-  .clk_sync_i	(clk_pixel),	// Synchronizing clock
-  .en_sync_i	(cam_app_en),	// Synchronizing clock enable
-  .data_src_i	(img_size_osc),	// Input signal
-  .data_sync_o	(img_size)	// Synchronized data out
-);*/
-
 assign img_size =img_size_osc;
-/*bus_sync_mod
-#( .BUS_WDT(IMG_SZ_BUS_WDT))
-sync_img_width
-(
-  .clk_src_i	(clk_osc),	// Source clock
-  .clk_sync_i	(clk_pixel),	// Synchronizing clock
-  .en_sync_i	(cam_app_en),	// Synchronizing clock enable
-  .data_src_i	({16'h0, img_wt_osc}),	// Input signal
-  .data_sync_o	(img_width)	// Synchronized data out
-);*/
-
 assign img_width = {16'h0, img_wt_osc};
-
-/*bus_sync_mod
-#( .BUS_WDT(IMG_SZ_BUS_WDT))
-sync_img_height
-(
-  .clk_src_i	(clk_osc),	// Source clock
-  .clk_sync_i	(clk_pixel),	// Synchronizing clock
-  .en_sync_i	(cam_app_en),	// Synchronizing clock enable
-  .data_src_i	({16'h0, img_ht_osc}),	// Input signal
-  .data_sync_o	(img_height)	// Synchronized data out
-);*/
 assign img_height = {16'h0, img_ht_osc};
-/*
-bit_synchronizer sync_cam_en(
-  .clk_src_i	(clk_osc),	// Source clock
-  .clk_sync_i	(clk_pixel),	// Synchronizing clock
-  .data_src_i	(cam_app_en_osc),	// Input signal
-  .data_sync_o	(cam_app_en)	// Synchronized data out
-);*/
-
-/*bit_synchronizer sync_aud_en(
-  .clk_src_i	(clk_osc),	// Source clock
-  .clk_sync_i	(clk_pixel),	// Synchronizing clock
-  .data_src_i	(aud_app_en_osc),	// Input signal
-  .data_sync_o	(aud_app_en)	// Synchronized data out
-);*/
 assign aud_app_en = HIGH;
-
-/*bit_synchronizer sync_vidrst(
-  .clk_src_i	(clk_osc),	// Source clock
-  .clk_sync_i	(clk_pixel),	// Synchronizing clock
-  .data_src_i	(slfifo_st_vidrst_osc),	// Input signal
-  .data_sync_o	(slfifo_st_vidrst)	// Synchronized data out
-);*/
 assign slfifo_st_vidrst =slfifo_st_vidrst_osc;
-
-/*bit_synchronizer sync_audrst(
-  .clk_src_i	(clk_osc),	// Source clock
-  .clk_sync_i	(clk_pixel),	// Synchronizing clock
-  .data_src_i	(slfifo_st_audrst_osc),	// Input signal
-  .data_sync_o	(slfifo_st_audrst)	// Synchronized data out
-);*/
 assign slfifo_st_audrst = slfifo_st_audrst_osc;
-
-/*bit_synchronizer sync_still_cap(
-  .clk_src_i	(clk_osc),	// Source clock
-  .clk_sync_i	(clk_pixel),	// Synchronizing clock
-  .data_src_i	(still_cap_en_osc),	// Input signal
-  .data_sync_o	(still_cap_en)	// Synchronized data out
-);*/
-
 assign still_cap_en = still_cap_en_osc;
-
-/*bus_sync_mod
-#( .BUS_WDT(IMG_SZ_BUS_WDT))
-sync_vid_fps
-(
-  .clk_src_i	(clk_osc),	// Source clock
-  .clk_sync_i	(clk_pixel),	// Synchronizing clock
-  .en_sync_i	(cam_app_en),	// Synchronizing clock enable
-  .data_src_i	(vid_fps_osc),	// Input signal
-  .data_sync_o	(vid_fps)	// Synchronized data out
-);*/
 assign vid_fps = vid_fps_osc;
-
-/*bus_sync_mod
-#( .BUS_WDT(IMG_SZ_BUS_WDT))
-sync_line_blanking
-(
-  .clk_src_i	(clk_osc),	// Source clock
-  .clk_sync_i	(clk_pixel),	// Synchronizing clock
-  .en_sync_i	(cam_app_en),	// Synchronizing clock enable
-  .data_src_i	(line_blanking_osc),	// Input signal
-  .data_sync_o	(line_blanking)	// Synchronized data out
-); */
 assign line_blanking = line_blanking_osc;
 
 reg cam_clk = 1'b0;
