@@ -72,24 +72,21 @@ module topmod
 //	output 	pktend_frc_r,
 	//output cam_app_en,
 	
-//	output pktend_g_o,
 	output buf_done_o,
 	output cam_clk,
 	output [5:0] debug
 
 
 );
-wire pktend_g_o;
+
+
+// sx3
+
 wire [1:0]cur_gpif_st_o;
 wire buf_done_o;
-wire flaga_toggle;
-wire flaga_count_index;
 wire app_stop;
-//-----------------------------------------------------------------------------
-//	Local parameter declarations
-//-----------------------------------------------------------------------------
 
-//	The Bus width of the data in sync_img_size module instansiated
+
 localparam IMG_SZ_BUS_WDT = 'd32;
 
 // Internal Oscillator
@@ -111,7 +108,7 @@ localparam REV3 	=	1;
 // UVC_FV_LV / U3V/ UVC_SlaveFIFO  Standard 
 localparam UVC_SF=1;
 localparam U3V=0;
-localparam UVC_FL=0;
+localparam UVC_FL=1;
 
 //-----------------------------------------------------------------------------
 //	Wire and Register declarations
@@ -246,14 +243,6 @@ reset_bridge aud_mod_reset(
   .sync_resetn_out	(reset_n_aud_pixclk)// Synchronized reset signal
 );
 
-/*//	Reset Bridge for mic_clk_o
-reset_bridge rst_brg_mic(
-  .clk_i			(mic_clk_o),// Destination clock
-  // .ext_resetn_i		(reset_n_i & pll_lock), // Asynchronous reset signal
-  .ext_resetn_i		( reset_n_i &  aud_app_en_osc & pll_lock), // Asynchronous reset signal
-  .sync_resetn_out	(sync_bclk_reset_n)// Synchronized reset signal
-);
-*/
 //	Reset Bridge for clk_osc
 reset_bridge rst_brg_osc(
   .clk_i			(clk_osc),// Destination clock
@@ -298,32 +287,8 @@ endgenerate
    );
 
 
-// --------------------------------
-//
-// Module to generate 3.072 MHz
-//
-// --------------------------------
-
-localparam [31:0] MIC_CLK = 32'd3_000_000;
-
-// For 720p and 1080p resolutions.
-/*mic_clk_generator
-   #
-   (
-    .INPUT_CLK_VALUE  ( INT_OSC_CLK_VALUE ),  // 48 MHz Internal Oscillator Clock
-    .OUTPUT_CLK_VALUE ( MIC_CLK )    // 3072 KHz We are using this typical value mentioned in mic datasheet
-   )
-  gc (
-      .clk            (clk_osc),
-      .reset_n        (reset_n_HFCLKOUT),
-      .data_o         (mic_clk_o)
-     );
-	 */
-
-
 // ODDR to drive GPIF Clock out
 ODDRX1F SX3_CLOCK ( .D0(1'b1), .D1(1'b0), .SCLK(clk_pixel), .RST(1'b0), .Q(slclk_o) );
-
 
 
 //	MIPI DPHY to CMOS module : It converts the MIPI camera input to Parallel video data at clock "clk_pixel"
@@ -348,37 +313,10 @@ ODDRX1F SX3_CLOCK ( .D0(1'b1), .D1(1'b0), .SCLK(clk_pixel), .RST(1'b0), .Q(slclk
  
 assign  mic_clk_o = cmos_fv;
  
-assign sldata_o= UVC_FL ?  cmos_data : sldata_r;
+assign sldata_o= 10'b1010101010;//UVC_FL ?  cmos_data : sldata_r;
 assign slrd_o =  UVC_FL ?  cmos_lv : slrd_r;
 assign sloe_o =  UVC_FL ?  cmos_fv : sloe_r;
 
-//----------------------------------------
-//
-// PDM Mic Data Manager Module
-//
-//----------------------------------------
-/*
-aud_buffer_manager
-  abm
-    (
-     .clk_i                     ( clk_pixel ),
-     .rstn_i                    ( reset_n_aud_pixclk ),
-     .cam_fv_i                  ( cmos_fv ),
-     .i2s_fifo_rd_en_i          ( aud_fifo_rd_req ),
-     .i2s_fifo_data_o           ( aud_fifo_rd_data ),
-     .i2s_fifo_data_vld_o       ( aud_fifo_data_vld ),
-     .i2s_fifo_rcnt_o           ( aud_fifo_rd_count ),
-     .i2s_fifo_data_pre         (  ),
-     .i2s_fifo_empty_o          ( aud_fifo_empty ),
-     .i2s_fifo_almostempty_o    ( aud_fifo_almost_empty ),
-     .aud_pktend_i              ( aud_pktend ),
-     .wr_fifo_cnt_o             (  ),
-     .mic_clk_i                 ( mic_clk_o ),
-     .mic_pdm_data_i            ( mic_pdm_data_i ),
-     .sync_bclk_reset_n_i       ( sync_bclk_reset_n ),
-     .change_rd_bufr_idx_pl_i   ( 1'b0 ) // Packet End is sent at every 4KB audio buffer.
-    );
-*/
 //	Video Buffer Module : Buffers the video data whne the Slave FIFO interface is busy
 vid_buf_mod vid_buf_mod
 (
@@ -464,7 +402,6 @@ gpif_interface_top
 	.app_stop_i 					(app_stop)
 	
 //	.pktend_frc_r				(pktend_frc_r),
-//	.pktend_g_o					(pktend_g_o)
 
 );
 
@@ -478,7 +415,6 @@ assign img_size_osc = img_size;
 
 reg HIGH = 1'b1;
 assign cam_app_en_osc = HIGH;
-wire pktend_g_o;
 //	I2C Slave module
 i2c_slave
 fx3_i2c_slave_if
