@@ -16,8 +16,8 @@ CoreRevision=1.3
 ModuleName=byte2pix
 SourceFormat=Verilog
 ParameterFileVersion=1.0
-Date=08/16/2024
-Time=09:57:56
+Date=08/29/2024
+Time=15:47:00
 
 [Parameters]
 numrxch=1
@@ -37,7 +37,7 @@ data_type=RAW10
 data_type_str=RAW10
 data_type_val=6'h2B
 rgb666_type=0
-miscon=1
+miscon=0
 pixwidth=10
 pdbuswidth=20
 numpixtotal=1

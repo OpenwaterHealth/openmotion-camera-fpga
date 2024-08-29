@@ -3,8 +3,8 @@
 component byte_pixel is
     port (byte2pix_dt_i: in std_logic_vector(5 downto 0);
         byte2pix_p_odd_o: out std_logic_vector(1 downto 0);
-        byte2pix_payload_i: in std_logic_vector(15 downto 0);
-        byte2pix_pd_o: out std_logic_vector(15 downto 0);
+        byte2pix_payload_i: in std_logic_vector(31 downto 0);
+        byte2pix_pd_o: out std_logic_vector(19 downto 0);
         byte2pix_wc_i: in std_logic_vector(15 downto 0);
         byte2pix_clk_byte_i: in std_logic;
         byte2pix_clk_pixel_i: in std_logic;

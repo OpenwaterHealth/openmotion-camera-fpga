@@ -116,7 +116,7 @@ wire cam_app_en;
 wire aud_app_en;
 wire slfifo_st_vidrst;
 wire slfifo_st_audrst;
-wire [9:0] cmos_data;
+wire [19:0] cmos_data;
 wire [15:0] vid_buf_dout;
 wire [31:0] img_size;
 wire [15:0] img_wt;
@@ -301,7 +301,7 @@ ODDRX1F SX3_CLOCK ( .D0(1'b1), .D1(1'b0), .SCLK(clk_pixel), .RST(1'b0), .Q(slclk
  
 assign  mic_clk_o = cmos_fv;
  
-assign sldata_o= 10'b1010101010;//UVC_FL ?  cmos_data : sldata_r;
+assign sldata_o= cmos_data[9:0];//10'b1010101010;//UVC_FL ?  cmos_data : sldata_r;
 assign slrd_o =  UVC_FL ?  cmos_lv : slrd_r;
 assign sloe_o =  UVC_FL ?  cmos_fv : sloe_r;
 
@@ -317,7 +317,7 @@ vid_buf_mod vid_buf_mod
 	.vid_fifo_rd_req_i   	  (vid_fifo_rd_req),
 	.cam_fv_i				  (cmos_fv),
 	.cam_lv_i				  (cmos_lv),
-	.cam_data_i				  ({16'd0,cmos_data} ),  // 32 bit data
+	.cam_data_i				  ({12'd0,cmos_data} ),  // 32 bit data
     .pktend_st_i              (vid_pktend_st),
 	.vid_fifo_rd_data_o		  (vid_buf_dout),
 	.vid_fifo_data_vld_o	  (vid_buf_dvld),
