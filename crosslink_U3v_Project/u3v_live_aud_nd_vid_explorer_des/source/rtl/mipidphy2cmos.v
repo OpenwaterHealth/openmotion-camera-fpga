@@ -27,19 +27,14 @@ assign tp_data = 32'h00800080;
 //	Parameters Declarations
 //-----------------------------------------------------------------------------
 parameter RX_LANE_COUNT = 2;
-parameter RX_PD_BUS_WIDTH = 8;	
-parameter TX_PD_BUS_WIDTH = 24;
 parameter RX_GEAR = 16;	// DPHY Rx Clock Gear
-parameter RX_CLK_MODE = "HS_ONLY";
-parameter NUM_TX_CH = 2;
-parameter TX_GEAR = 14;// DPHY Tx Clock Gear
 
 //-----------------------------------------------------------------------------
 //	Wire and Register declarations
 //-----------------------------------------------------------------------------
 
-
 wire int_rst_n;
+
 //Byte Clock Domain
 wire [5:0] ref_dt = 6'h2b;
 wire rx_clk_byte_fr , rx_clk_byte_hs, rx_clk_lp_ctrl, rx_reset_lp_n;
@@ -59,15 +54,10 @@ reg rx_reset_byte_fr_n_meta, rx_reset_byte_fr_n_sync;
 reg reset_pixel_n_meta, reset_pixel_n_sync;
 
 
-///// Debug signals /////
+// MIPI Output debug signals
 wire rx_hs_d_en, rx_hs_sync, rx_term_clk_en;
 wire [1:0] rx_lp_hs_state_clk, rx_lp_hs_state_d;
-wire [1:0] p_odd, read_cycle;
-wire [3:0] write_cycle;
-wire mem_we, mem_re;
-wire [2:0] mem_radr;
-
-
+wire [1:0] p_odd;
 
 // RESET BRIDGES
 //	Reset Bridge for clk_pixel_pll clock

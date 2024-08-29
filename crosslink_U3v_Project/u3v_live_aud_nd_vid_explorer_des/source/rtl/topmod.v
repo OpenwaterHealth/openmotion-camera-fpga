@@ -62,21 +62,11 @@ module topmod
 	output 			pktend_o,
 	output 			slclk_o,
 	
-	// Temp signals
 	output 	cam_fifo_overflow,
-	//output send_leading_zlp,
-	
-	//output cam_app_en_osc,
-	//output cmos_fv
-	
-//	output 	pktend_frc_r,
-	//output cam_app_en,
 	
 	output buf_done_o,
 	output cam_clk,
 	output [5:0] debug
-
-
 );
 
 
@@ -106,7 +96,6 @@ localparam REV2		=	0;
 localparam REV3 	=	1;
 
 // UVC_FV_LV / U3V/ UVC_SlaveFIFO  Standard 
-localparam UVC_SF=1;
 localparam U3V=0;
 localparam UVC_FL=1;
 
@@ -192,7 +181,6 @@ wire slrd_r;
 wire  sloe_r;
 reg uvc_fl=1'd0;
 reg u3v =1'd0;
-reg uvc_sf =1'd0;
 
 /******** flag_a and flag_b registers ********/
 reg flag_a;
@@ -415,6 +403,7 @@ assign img_size_osc = img_size;
 
 reg HIGH = 1'b1;
 assign cam_app_en_osc = HIGH;
+assign cam_app_en = HIGH;
 //	I2C Slave module
 i2c_slave
 fx3_i2c_slave_if
@@ -454,7 +443,6 @@ sync_img_size
   .data_src_i	(img_size_osc),	// Input signal
   .data_sync_o	(img_size)	// Synchronized data out
 );
-
 bus_sync_mod
 #( .BUS_WDT(IMG_SZ_BUS_WDT))
 sync_img_width
@@ -476,20 +464,21 @@ sync_img_height
   .data_src_i	({16'h0, img_ht_osc}),	// Input signal
   .data_sync_o	(img_height)	// Synchronized data out
 );
-
+/*
 bit_synchronizer sync_cam_en(
   .clk_src_i	(clk_osc),	// Source clock
   .clk_sync_i	(clk_pixel),	// Synchronizing clock
   .data_src_i	(cam_app_en_osc),	// Input signal
   .data_sync_o	(cam_app_en)	// Synchronized data out
-);
+);*/
 
-bit_synchronizer sync_aud_en(
+/*bit_synchronizer sync_aud_en(
   .clk_src_i	(clk_osc),	// Source clock
   .clk_sync_i	(clk_pixel),	// Synchronizing clock
   .data_src_i	(aud_app_en_osc),	// Input signal
   .data_sync_o	(aud_app_en)	// Synchronized data out
-);
+);*/
+assign aud_app_en = HIGH;
 
 bit_synchronizer sync_vidrst(
   .clk_src_i	(clk_osc),	// Source clock
