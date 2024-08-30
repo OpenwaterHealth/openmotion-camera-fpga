@@ -1,17 +1,17 @@
-// Verilog netlist produced by program LSE :  version Diamond (64-bit) 3.12.0.240.2
-// Netlist written on Thu Nov 11 11:03:33 2021
+// Verilog netlist produced by program LSE :  version Diamond (64-bit) 3.13.0.56.2
+// Netlist written on Thu Aug 29 17:48:33 2024
 //
 // Verilog Description of module pll_ip
 //
 
-module pll_ip (CLKI, CLKOP, CLKOS, LOCK) /* synthesis NGD_DRC_MASK=1, syn_module_defined=1 */ ;   // c:/project_files/u3vision_project/crosslink_u3v_project/u3v_live_aud_nd_vid_explorer_des/source/ip/pll/pll_ip/pll_ip.v(8[8:14])
-    input CLKI;   // c:/project_files/u3vision_project/crosslink_u3v_project/u3v_live_aud_nd_vid_explorer_des/source/ip/pll/pll_ip/pll_ip.v(9[16:20])
-    output CLKOP;   // c:/project_files/u3vision_project/crosslink_u3v_project/u3v_live_aud_nd_vid_explorer_des/source/ip/pll/pll_ip/pll_ip.v(10[17:22])
-    output CLKOS;   // c:/project_files/u3vision_project/crosslink_u3v_project/u3v_live_aud_nd_vid_explorer_des/source/ip/pll/pll_ip/pll_ip.v(11[17:22])
-    output LOCK;   // c:/project_files/u3vision_project/crosslink_u3v_project/u3v_live_aud_nd_vid_explorer_des/source/ip/pll/pll_ip/pll_ip.v(12[17:21])
+module pll_ip (CLKI, CLKOP, CLKOS, LOCK) /* synthesis NGD_DRC_MASK=1, syn_module_defined=1 */ ;   // c:/users/ethanhead/desktop/gen3-cam-fw/crosslink_u3v_project/u3v_live_aud_nd_vid_explorer_des/source/ip/pll/pll_ip/pll_ip.v(8[8:14])
+    input CLKI;   // c:/users/ethanhead/desktop/gen3-cam-fw/crosslink_u3v_project/u3v_live_aud_nd_vid_explorer_des/source/ip/pll/pll_ip/pll_ip.v(9[16:20])
+    output CLKOP;   // c:/users/ethanhead/desktop/gen3-cam-fw/crosslink_u3v_project/u3v_live_aud_nd_vid_explorer_des/source/ip/pll/pll_ip/pll_ip.v(10[17:22])
+    output CLKOS;   // c:/users/ethanhead/desktop/gen3-cam-fw/crosslink_u3v_project/u3v_live_aud_nd_vid_explorer_des/source/ip/pll/pll_ip/pll_ip.v(11[17:22])
+    output LOCK;   // c:/users/ethanhead/desktop/gen3-cam-fw/crosslink_u3v_project/u3v_live_aud_nd_vid_explorer_des/source/ip/pll/pll_ip/pll_ip.v(12[17:21])
     
-    wire CLKI /* synthesis is_clock=1 */ ;   // c:/project_files/u3vision_project/crosslink_u3v_project/u3v_live_aud_nd_vid_explorer_des/source/ip/pll/pll_ip/pll_ip.v(9[16:20])
-    wire CLKOP /* synthesis is_clock=1 */ ;   // c:/project_files/u3vision_project/crosslink_u3v_project/u3v_live_aud_nd_vid_explorer_des/source/ip/pll/pll_ip/pll_ip.v(10[17:22])
+    wire CLKI /* synthesis is_clock=1 */ ;   // c:/users/ethanhead/desktop/gen3-cam-fw/crosslink_u3v_project/u3v_live_aud_nd_vid_explorer_des/source/ip/pll/pll_ip/pll_ip.v(9[16:20])
+    wire CLKOP /* synthesis is_clock=1 */ ;   // c:/users/ethanhead/desktop/gen3-cam-fw/crosslink_u3v_project/u3v_live_aud_nd_vid_explorer_des/source/ip/pll/pll_ip/pll_ip.v(10[17:22])
     
     wire scuba_vlo, VCC_net;
     
@@ -21,7 +21,7 @@ module pll_ip (CLKI, CLKOP, CLKOS, LOCK) /* synthesis NGD_DRC_MASK=1, syn_module
             .PHASELOADREG(scuba_vlo), .USRSTDBY(scuba_vlo), .PLLWAKESYNC(scuba_vlo), 
             .RST(scuba_vlo), .ENCLKOP(scuba_vlo), .ENCLKOS(scuba_vlo), 
             .ENCLKOS2(scuba_vlo), .ENCLKOS3(scuba_vlo), .CLKOP(CLKOP), 
-            .CLKOS(CLKOS), .LOCK(LOCK)) /* synthesis FREQUENCY_PIN_CLKOS="83.750000", FREQUENCY_PIN_CLKOP="83.750000", FREQUENCY_PIN_CLKI="83.750000", ICP_CURRENT="9", LPF_RESISTOR="32", syn_instantiated=1 */ ;
+            .CLKOS(CLKOS), .LOCK(LOCK)) /* synthesis FREQUENCY_PIN_CLKOS="83.000000", FREQUENCY_PIN_CLKOP="83.000000", FREQUENCY_PIN_CLKI="83.000000", ICP_CURRENT="13", LPF_RESISTOR="16", syn_instantiated=1 */ ;
     defparam PLLInst_0.FIN = "100.0000";
     defparam PLLInst_0.CLKI_DIV = 1;
     defparam PLLInst_0.CLKFB_DIV = 1;
