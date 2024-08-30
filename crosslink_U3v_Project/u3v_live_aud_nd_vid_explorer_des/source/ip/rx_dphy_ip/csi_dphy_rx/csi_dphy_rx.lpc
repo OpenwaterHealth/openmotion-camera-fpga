@@ -16,8 +16,8 @@ CoreRevision=1.5
 ModuleName=csi_dphy_rx
 SourceFormat=Verilog
 ParameterFileVersion=1.4
-Date=08/08/2024
-Time=11:09:40
+Date=08/30/2024
+Time=14:59:01
 
 [Parameters]
 numrxch=1

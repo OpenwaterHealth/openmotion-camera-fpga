@@ -165,6 +165,8 @@ reg [5:0] debug;
 always @(posedge rx_sp_en, posedge rx_lp_en) begin
 	debug <=rx_dt;
 end
+assign test_out = rx_sp_en || rx_lp_en;//rx_byte_counter[0];
+
 /*debug[0] <= 0;
 debug[1] <= 0;
 debug[2] <= 0;
@@ -177,5 +179,4 @@ always @(posedge rx_clk_byte_hs) begin
 	rx_byte_counter <= rx_byte_counter +1;
 end
 //assign test_out = rx_byte_counter[0];
-assign test_out = rx_sp_en || rx_lp_en;//rx_byte_counter[0];
 endmodule 

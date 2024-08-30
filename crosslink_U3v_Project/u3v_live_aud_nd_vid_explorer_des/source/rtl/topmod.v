@@ -295,11 +295,11 @@ ODDRX1F SX3_CLOCK ( .D0(1'b1), .D1(1'b0), .SCLK(clk_pixel), .RST(1'b0), .Q(slclk
  	.rx_clk_byte_fr_o	(rx_clk_byte_fr),
  	.clk_pixel_i		(clk_pixel1),
  	.pll_lock_i			(pll_lock),
-	//.test_out           (mic_clk_o),
+	.test_out           (mic_clk_o),
 	.debug				(debug)
  );
  
-assign  mic_clk_o = cmos_fv;
+//assign  mic_clk_o = cmos_lv;
  
 assign sldata_o= cmos_data[9:0];//10'b1010101010;//UVC_FL ?  cmos_data : sldata_r;
 assign slrd_o =  UVC_FL ?  cmos_lv : slrd_r;
@@ -317,7 +317,7 @@ vid_buf_mod vid_buf_mod
 	.vid_fifo_rd_req_i   	  (vid_fifo_rd_req),
 	.cam_fv_i				  (cmos_fv),
 	.cam_lv_i				  (cmos_lv),
-	.cam_data_i				  ({12'd0,cmos_data} ),  // 32 bit data
+	.cam_data_i				  (32'd0 ),  // 32 bit data
     .pktend_st_i              (vid_pktend_st),
 	.vid_fifo_rd_data_o		  (vid_buf_dout),
 	.vid_fifo_data_vld_o	  (vid_buf_dvld),
