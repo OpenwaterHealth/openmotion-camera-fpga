@@ -9,7 +9,7 @@ module mipidphy2cmos
 	inout 			rx_d0_n_i,
 	inout 			rx_d1_p_i,
 	inout 			rx_d1_n_i,
-	output [19:0]	pd0_o,
+	output [9:0]	pd0_o,
 	output 			fv_o,
 	output 			lv_o,
 	output 			rx_clk_byte_fr_o,
