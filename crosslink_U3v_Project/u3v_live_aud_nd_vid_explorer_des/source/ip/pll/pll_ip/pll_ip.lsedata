@@ -1,8 +1,8 @@
 <top name = "pll_ip"  library = "work"  arch = ""  entry = "Verilog">
 
 <clocks>
-    <clockitem name = "CLKI"  type = "port" />
     <clockitem name = "CLKOP"  type = "net" />
+    <clockitem name = "CLKI"  type = "port" />
 </clocks>
 
 <!--
