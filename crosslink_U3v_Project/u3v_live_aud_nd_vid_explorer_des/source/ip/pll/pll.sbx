@@ -52,18 +52,6 @@
                     </spirit:vendorExtensions>
                 </spirit:port>
                 <spirit:port>
-                    <spirit:name>pll_ip_CLKOS</spirit:name>
-                    <spirit:displayName>pll_ip_CLKOS</spirit:displayName>
-                    <spirit:wire>
-                        <spirit:direction>out</spirit:direction>
-                    </spirit:wire>
-                    <spirit:vendorExtensions>
-                        <lattice:attributes>
-                            <lattice:attribute lattice:name="exportFrom">pll_ip.CLKOS</lattice:attribute>
-                        </lattice:attributes>
-                    </spirit:vendorExtensions>
-                </spirit:port>
-                <spirit:port>
                     <spirit:name>pll_ip_LOCK</spirit:name>
                     <spirit:displayName>pll_ip_LOCK</spirit:displayName>
                     <spirit:wire>
@@ -81,7 +69,7 @@
             <lattice:device>LIF-MD6000-6KMG80I</lattice:device>
             <lattice:synthesis>lse</lattice:synthesis>
             <lattice:date>2021-04-26.17:47:00</lattice:date>
-            <lattice:modified>2024-08-30.15:30:16</lattice:modified>
+            <lattice:modified>2024-09-03.14:57:29</lattice:modified>
             <lattice:diamond>3.13.0.56.2</lattice:diamond>
             <lattice:language>Verilog</lattice:language>
             <lattice:attributes>
@@ -171,13 +159,6 @@
                                 </spirit:wire>
                             </spirit:port>
                             <spirit:port>
-                                <spirit:name>CLKOS</spirit:name>
-                                <spirit:displayName>CLKOS</spirit:displayName>
-                                <spirit:wire>
-                                    <spirit:direction>out</spirit:direction>
-                                </spirit:wire>
-                            </spirit:port>
-                            <spirit:port>
                                 <spirit:name>CLKOS2</spirit:name>
                                 <spirit:displayName>CLKOS2</spirit:displayName>
                                 <spirit:wire>
@@ -195,7 +176,7 @@
                     </spirit:model>
                     <spirit:vendorExtensions>
                         <lattice:synthesis>lse</lattice:synthesis>
-                        <lattice:modified>2024-08-30.15:30:16</lattice:modified>
+                        <lattice:modified>2024-09-03.14:57:29</lattice:modified>
                         <lattice:attributes>
                             <lattice:attribute lattice:name="AddComponent">false</lattice:attribute>
                             <lattice:attribute lattice:name="BBox">false</lattice:attribute>
@@ -263,7 +244,7 @@
                             </lattice:lpcentry>
                             <lattice:lpcentry>
                                 <lattice:lpckey>Date</lattice:lpckey>
-                                <lattice:lpcvalue lattice:resolve="constant">08/30/2024</lattice:lpcvalue>
+                                <lattice:lpcvalue lattice:resolve="constant">09/03/2024</lattice:lpcvalue>
                             </lattice:lpcentry>
                             <lattice:lpcentry>
                                 <lattice:lpckey>ModuleName</lattice:lpckey>
@@ -279,7 +260,7 @@
                             </lattice:lpcentry>
                             <lattice:lpcentry>
                                 <lattice:lpckey>Time</lattice:lpckey>
-                                <lattice:lpcvalue lattice:resolve="constant">15:30:10</lattice:lpcvalue>
+                                <lattice:lpcvalue lattice:resolve="constant">14:57:26</lattice:lpcvalue>
                             </lattice:lpcentry>
                             <lattice:lpcentry>
                                 <lattice:lpckey>VendorName</lattice:lpckey>
@@ -308,7 +289,7 @@
                             </lattice:lpcentry>
                             <lattice:lpcentry>
                                 <lattice:lpckey>CLKOP_DIV</lattice:lpckey>
-                                <lattice:lpcvalue lattice:resolve="constant">8</lattice:lpcvalue>
+                                <lattice:lpcvalue lattice:resolve="constant">13</lattice:lpcvalue>
                             </lattice:lpcentry>
                             <lattice:lpcentry>
                                 <lattice:lpckey>CLKOP_DPHASE</lattice:lpckey>
@@ -336,7 +317,7 @@
                             </lattice:lpcentry>
                             <lattice:lpcentry>
                                 <lattice:lpckey>CLKOS2_ACTUAL_FREQ</lattice:lpckey>
-                                <lattice:lpcvalue lattice:resolve="constant">132.800000</lattice:lpcvalue>
+                                <lattice:lpcvalue lattice:resolve="constant">269.750000</lattice:lpcvalue>
                             </lattice:lpcentry>
                             <lattice:lpcentry>
                                 <lattice:lpckey>CLKOS2_APHASE</lattice:lpckey>
@@ -344,7 +325,7 @@
                             </lattice:lpcentry>
                             <lattice:lpcentry>
                                 <lattice:lpckey>CLKOS2_DIV</lattice:lpckey>
-                                <lattice:lpcvalue lattice:resolve="constant">5</lattice:lpcvalue>
+                                <lattice:lpcvalue lattice:resolve="constant">4</lattice:lpcvalue>
                             </lattice:lpcentry>
                             <lattice:lpcentry>
                                 <lattice:lpckey>CLKOS2_DPHASE</lattice:lpckey>
@@ -356,7 +337,7 @@
                             </lattice:lpcentry>
                             <lattice:lpcentry>
                                 <lattice:lpckey>CLKOS2_FREQ</lattice:lpckey>
-                                <lattice:lpcvalue lattice:resolve="constant">132.8</lattice:lpcvalue>
+                                <lattice:lpcvalue lattice:resolve="constant">265.6</lattice:lpcvalue>
                             </lattice:lpcentry>
                             <lattice:lpcentry>
                                 <lattice:lpckey>CLKOS2_MUXC</lattice:lpckey>
@@ -364,7 +345,7 @@
                             </lattice:lpcentry>
                             <lattice:lpcentry>
                                 <lattice:lpckey>CLKOS2_TOL</lattice:lpckey>
-                                <lattice:lpcvalue lattice:resolve="constant">0.0</lattice:lpcvalue>
+                                <lattice:lpcvalue lattice:resolve="constant">2.0</lattice:lpcvalue>
                             </lattice:lpcentry>
                             <lattice:lpcentry>
                                 <lattice:lpckey>CLKOS2_TRIM_DELAY</lattice:lpckey>
@@ -424,7 +405,7 @@
                             </lattice:lpcentry>
                             <lattice:lpcentry>
                                 <lattice:lpckey>CLKOS_DIV</lattice:lpckey>
-                                <lattice:lpcvalue lattice:resolve="constant">8</lattice:lpcvalue>
+                                <lattice:lpcvalue lattice:resolve="constant">1</lattice:lpcvalue>
                             </lattice:lpcentry>
                             <lattice:lpcentry>
                                 <lattice:lpckey>CLKOS_DPHASE</lattice:lpckey>
@@ -432,7 +413,7 @@
                             </lattice:lpcentry>
                             <lattice:lpcentry>
                                 <lattice:lpckey>CLKOS_Enable</lattice:lpckey>
-                                <lattice:lpcvalue lattice:resolve="constant">ENABLED</lattice:lpcvalue>
+                                <lattice:lpcvalue lattice:resolve="constant">DISABLED</lattice:lpcvalue>
                             </lattice:lpcentry>
                             <lattice:lpcentry>
                                 <lattice:lpckey>CLKOS_FREQ</lattice:lpckey>
@@ -524,7 +505,7 @@
                             </lattice:lpcentry>
                             <lattice:lpcentry>
                                 <lattice:lpckey>PLL_BW</lattice:lpckey>
-                                <lattice:lpcvalue lattice:resolve="constant">20.054</lattice:lpcvalue>
+                                <lattice:lpcvalue lattice:resolve="constant">19.392</lattice:lpcvalue>
                             </lattice:lpcentry>
                             <lattice:lpcentry>
                                 <lattice:lpckey>PLL_LOCK_MODE</lattice:lpckey>
@@ -548,7 +529,7 @@
                             </lattice:lpcentry>
                             <lattice:lpcentry>
                                 <lattice:lpckey>VCO_RATE</lattice:lpckey>
-                                <lattice:lpcvalue lattice:resolve="constant">664.000</lattice:lpcvalue>
+                                <lattice:lpcvalue lattice:resolve="constant">1079.000</lattice:lpcvalue>
                             </lattice:lpcentry>
                             <lattice:lpcentry>
                                 <lattice:lpckey>VHDL</lattice:lpckey>
@@ -561,7 +542,7 @@
                             <lattice:lpcsection lattice:name="Command"/>
                             <lattice:lpcentry>
                                 <lattice:lpckey>cmd_line</lattice:lpckey>
-                                <lattice:lpcvalue lattice:resolve="constant">-w -n pll_ip -lang verilog -synth lse -bus_exp 7 -bb -arch sn5w00 -type pll -fin 83 -fclkop 83 -fclkop_tol 0.0 -fclkos 83 -fclkos_tol 0.0 -phases 0 -fclkos2 132.8 -fclkos2_tol 0.0 -phases2 0 -phase_cntl STATIC -lock -fb_mode 1 -bw HIGH</lattice:lpcvalue>
+                                <lattice:lpcvalue lattice:resolve="constant">-w -n pll_ip -lang verilog -synth lse -bus_exp 7 -bb -arch sn5w00 -type pll -fin 83 -fclkop 83 -fclkop_tol 0.0 -fclkos2 265.6 -fclkos2_tol 2.0 -phases2 0 -phase_cntl STATIC -lock -fb_mode 1 -bw HIGH</lattice:lpcvalue>
                             </lattice:lpcentry>
                         </lattice:lpc>
                         <lattice:groups/>
@@ -581,12 +562,6 @@
                 <spirit:displayName>pll_ip_CLKOP</spirit:displayName>
                 <spirit:internalPortReference spirit:portRef="CLKOP" spirit:componentRef="pll_ip"/>
                 <spirit:externalPortReference spirit:portRef="pll_ip_CLKOP"/>
-            </spirit:adHocConnection>
-            <spirit:adHocConnection>
-                <spirit:name>pll_ip_CLKOS</spirit:name>
-                <spirit:displayName>pll_ip_CLKOS</spirit:displayName>
-                <spirit:internalPortReference spirit:portRef="CLKOS" spirit:componentRef="pll_ip"/>
-                <spirit:externalPortReference spirit:portRef="pll_ip_CLKOS"/>
             </spirit:adHocConnection>
             <spirit:adHocConnection>
                 <spirit:name>pll_ip_LOCK</spirit:name>

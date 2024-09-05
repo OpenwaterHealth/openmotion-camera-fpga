@@ -204,8 +204,9 @@ OSCI int_osc
 //	PLL Instance for 720p and 1080p resolution.
 pll_ip pll_inst (
 	.CLKI	( rx_clk_byte_fr /* clk_osc*/ ),
-	.CLKOP	(clk_pixel1),    // 84 MHz
-	.CLKOS	(clk_pixel),  // 84 MHz
+	.CLKOP	(clk_pixel),    // 84 MHz
+	//.CLKOS	(clk_pixel),  // 84 MHz
+	.CLKOS2 (clk_pixel_hs),
 	.LOCK	(pll_lock)
 );
 
@@ -278,6 +279,20 @@ endgenerate
 // ODDR to drive GPIF Clock out
 ODDRX1F SX3_CLOCK ( .D0(1'b1), .D1(1'b0), .SCLK(clk_pixel), .RST(1'b0), .Q(slclk_o) );
 
+wire clk_px4;
+//ODDRX1F PX_CLOCK ( .D0(1'b1), .D1(1'b0), .SCLK(clk_pixel2), .RST(1'b0), .Q(clk_px4) );
+
+reg clk_pixel3;
+always @(posedge clk_pixel_hs or negedge mipi_reset_n_o) begin
+	if (~mipi_reset_n_o) begin
+		clk_pixel3 <= 0;
+	end
+	else begin
+		clk_pixel3 <= ~clk_pixel3;
+	end
+end
+
+//assign clk_pixel3 = clk_pixel3;//  && mipi_reset_n_o;
 
 //	MIPI DPHY to CMOS module : It converts the MIPI camera input to Parallel video data at clock "clk_pixel"
  mipidphy2cmos mipidphy2cmos
@@ -293,13 +308,13 @@ ODDRX1F SX3_CLOCK ( .D0(1'b1), .D1(1'b0), .SCLK(clk_pixel), .RST(1'b0), .Q(slclk
  	.fv_o				(  cmos_fv ),
  	.lv_o				(  cmos_lv ),
  	.rx_clk_byte_fr_o	(rx_clk_byte_fr),
- 	.clk_pixel_i		(clk_pixel1),
+ 	.clk_pixel_i		(clk_pixel3),
  	.pll_lock_i			(pll_lock),
-	.test_out           (mic_clk_o),
+	//.test_out           (mic_clk_o),
 	.debug				(debug)
  );
  
-//assign  mic_clk_o = cmos_lv;
+assign  mic_clk_o = clk_pixel3;
  
 assign sldata_o= cmos_data[9:0];//10'b1010101010;//UVC_FL ?  cmos_data : sldata_r;
 assign slrd_o =  UVC_FL ?  cmos_lv : slrd_r;

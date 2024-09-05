@@ -142,18 +142,26 @@ rx_dphy_ip rx_dphy
 	.csi_dphy_rx_lp_hs_state_d_o		(rx_lp_hs_state_d)
 );
 
+reg reset_pixel_n_sync_x;
+always @(posedge clk_pixel_pll) begin 
+	reset_pixel_n_sync_x <= reset_pixel_n_sync;
+end
+
 /*--------- BYTE2PIXEL-----------------*/
 byte_pixel byte_pixel (
 	.byte2pix_clk_byte_i			(rx_clk_byte_fr),
 	.byte2pix_reset_byte_n_i		(rx_reset_byte_fr_n_sync),
+	
 	.byte2pix_clk_pixel_i		(clk_pixel_pll),
-	.byte2pix_reset_pixel_n_i	(reset_pixel_n_sync),
+	.byte2pix_reset_pixel_n_i	(reset_pixel_n_sync_x),
+	
 	.byte2pix_sp_en_i			(rx_sp_en),
 	.byte2pix_lp_av_en_i		(rx_lp_av_en),
 	.byte2pix_dt_i				(rx_dt),
 	.byte2pix_wc_i				(rx_wc),
 	.byte2pix_payload_i			(rx_payload),
 	.byte2pix_payload_en_i		(rx_payload_en),
+	
 	.byte2pix_fv_o				(fv_o),
 	.byte2pix_lv_o				(lv_o),
 	.byte2pix_pd_o				(pd0_o),
