@@ -95,7 +95,7 @@
       "VIDEO_SOURCE_TYPE": "Image Sensor",
       "VIDEO_SOURCE_SUBTYPE": "",
       "ENABLE_VIDEO_SOURCE_CONFIGURATION_DOWNLOAD": "Enable",
-      "VIDEO_SOURCE_CONFIGURATION_LEN": 671,
+      "VIDEO_SOURCE_CONFIGURATION_LEN": 675,
       "VIDEO_SOURCE_CONFIGURATION": [
         {
           "REGISTER_ADDRESS": "0x0100",
@@ -3415,6 +3415,26 @@
         {
           "REGISTER_ADDRESS": "0x3826",
           "REGISTER_VALUE": "0x0000",
+          "SLAVE_ADDRESS": "0x006c"
+        },
+        {
+          "REGISTER_ADDRESS": "0x5000",
+          "REGISTER_VALUE": "0x003f",
+          "SLAVE_ADDRESS": "0x006c"
+        },
+        {
+          "REGISTER_ADDRESS": "0x5100",
+          "REGISTER_VALUE": "0x0080",
+          "SLAVE_ADDRESS": "0x006c"
+        },
+        {
+          "REGISTER_ADDRESS": "0x5102",
+          "REGISTER_VALUE": "0x0020",
+          "SLAVE_ADDRESS": "0x006c"
+        },
+        {
+          "REGISTER_ADDRESS": "0x5103",
+          "REGISTER_VALUE": "0x0004",
           "SLAVE_ADDRESS": "0x006c"
         },
         {
