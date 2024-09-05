@@ -310,11 +310,11 @@ end
  	.rx_clk_byte_fr_o	(rx_clk_byte_fr),
  	.clk_pixel_i		(clk_pixel3),
  	.pll_lock_i			(pll_lock),
-	//.test_out           (mic_clk_o),
+	.test_out           (mic_clk_o),
 	.debug				(debug)
  );
  
-assign  mic_clk_o = clk_pixel3;
+//assign  mic_clk_o = clk_pixel3;
  
 assign sldata_o= cmos_data[9:0];//10'b1010101010;//UVC_FL ?  cmos_data : sldata_r;
 assign slrd_o =  UVC_FL ?  cmos_lv : slrd_r;

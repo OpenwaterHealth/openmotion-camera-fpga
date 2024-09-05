@@ -16,8 +16,8 @@ CoreRevision=1.5
 ModuleName=csi_dphy_rx
 SourceFormat=Verilog
 ParameterFileVersion=1.4
-Date=08/30/2024
-Time=14:59:01
+Date=09/05/2024
+Time=15:43:53
 
 [Parameters]
 numrxch=1
@@ -54,7 +54,7 @@ CORE_SYNP=0
 txgear=1
 tgtpixclkint=110.6667
 parser=ON
-settleper=1
+settleper=10
 fifotype=LUT
 expsettleper=8
 rxfifotype=LUT
