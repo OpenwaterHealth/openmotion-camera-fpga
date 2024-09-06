@@ -189,7 +189,7 @@
                     <spirit:wire>
                         <spirit:direction>out</spirit:direction>
                         <spirit:vector>
-                            <spirit:left>19</spirit:left>
+                            <spirit:left>9</spirit:left>
                             <spirit:right>0</spirit:right>
                         </spirit:vector>
                     </spirit:wire>
@@ -221,7 +221,7 @@
             <lattice:device>LIF-MD6000-6KMG80I</lattice:device>
             <lattice:synthesis>lse</lattice:synthesis>
             <lattice:date>2021-04-26.18:51:30</lattice:date>
-            <lattice:modified>2024-08-30.14:05:11</lattice:modified>
+            <lattice:modified>2024-09-06.15:00:02</lattice:modified>
             <lattice:diamond>3.13.0.56.2</lattice:diamond>
             <lattice:language>Verilog</lattice:language>
             <lattice:attributes>
@@ -458,7 +458,7 @@
                                 <spirit:wire>
                                     <spirit:direction>out</spirit:direction>
                                     <spirit:vector>
-                                        <spirit:left>19</spirit:left>
+                                        <spirit:left>9</spirit:left>
                                         <spirit:right>0</spirit:right>
                                     </spirit:vector>
                                 </spirit:wire>
@@ -489,7 +489,7 @@
                     <spirit:vendorExtensions>
                         <lattice:synthesis>lse</lattice:synthesis>
                         <lattice:date>22-04-16.00:00:00</lattice:date>
-                        <lattice:modified>2024-08-30.14:05:11</lattice:modified>
+                        <lattice:modified>2024-09-06.15:00:02</lattice:modified>
                         <lattice:attributes>
                             <lattice:attribute lattice:name="AddComponent">false</lattice:attribute>
                             <lattice:attribute lattice:name="Change4to5">false</lattice:attribute>
@@ -556,7 +556,7 @@
                             </lattice:lpcentry>
                             <lattice:lpcentry>
                                 <lattice:lpckey>Date</lattice:lpckey>
-                                <lattice:lpcvalue lattice:resolve="constant">08/30/2024</lattice:lpcvalue>
+                                <lattice:lpcvalue lattice:resolve="constant">09/06/2024</lattice:lpcvalue>
                             </lattice:lpcentry>
                             <lattice:lpcentry>
                                 <lattice:lpckey>ModuleName</lattice:lpckey>
@@ -572,7 +572,7 @@
                             </lattice:lpcentry>
                             <lattice:lpcentry>
                                 <lattice:lpckey>Time</lattice:lpckey>
-                                <lattice:lpcvalue lattice:resolve="constant">14:05:04</lattice:lpcvalue>
+                                <lattice:lpcvalue lattice:resolve="constant">14:59:05</lattice:lpcvalue>
                             </lattice:lpcentry>
                             <lattice:lpcentry>
                                 <lattice:lpckey>VendorName</lattice:lpckey>
@@ -653,11 +653,11 @@
                             </lattice:lpcentry>
                             <lattice:lpcentry>
                                 <lattice:lpckey>pdbuswidth</lattice:lpckey>
-                                <lattice:lpcvalue lattice:resolve="constant">20</lattice:lpcvalue>
+                                <lattice:lpcvalue lattice:resolve="constant">10</lattice:lpcvalue>
                             </lattice:lpcentry>
                             <lattice:lpcentry>
                                 <lattice:lpckey>pixperclk</lattice:lpckey>
-                                <lattice:lpcvalue lattice:resolve="constant">2</lattice:lpcvalue>
+                                <lattice:lpcvalue lattice:resolve="constant">1</lattice:lpcvalue>
                             </lattice:lpcentry>
                             <lattice:lpcentry>
                                 <lattice:lpckey>pixwidth</lattice:lpckey>
@@ -1310,8 +1310,8 @@
                         <lattice:attribute lattice:name="export">sys_yes</lattice:attribute>
                     </lattice:attributes>
                 </spirit:vendorExtensions>
-                <spirit:externalPortReference spirit:right="0" spirit:portRef="byte2pix_pd_o" spirit:left="19"/>
-                <spirit:internalPortReference spirit:right="0" spirit:portRef="pd_o" spirit:componentRef="byte2pix" spirit:left="19"/>
+                <spirit:externalPortReference spirit:right="0" spirit:portRef="byte2pix_pd_o" spirit:left="9"/>
+                <spirit:internalPortReference spirit:right="0" spirit:portRef="pd_o" spirit:componentRef="byte2pix" spirit:left="9"/>
             </spirit:adHocConnection>
             <spirit:adHocConnection>
                 <spirit:name>byte2pix_pd_o[0]</spirit:name>
@@ -1323,116 +1323,6 @@
                 </spirit:vendorExtensions>
                 <spirit:internalPortReference spirit:portRef="pd_o[0]" spirit:componentRef="byte2pix"/>
                 <spirit:externalPortReference spirit:portRef="byte2pix_pd_o[0]"/>
-            </spirit:adHocConnection>
-            <spirit:adHocConnection>
-                <spirit:name>byte2pix_pd_o[10]</spirit:name>
-                <spirit:displayName>byte2pix_pd_o[10]</spirit:displayName>
-                <spirit:vendorExtensions>
-                    <lattice:attributes>
-                        <lattice:attribute lattice:name="export">sys_yes</lattice:attribute>
-                    </lattice:attributes>
-                </spirit:vendorExtensions>
-                <spirit:internalPortReference spirit:portRef="pd_o[10]" spirit:componentRef="byte2pix"/>
-                <spirit:externalPortReference spirit:portRef="byte2pix_pd_o[10]"/>
-            </spirit:adHocConnection>
-            <spirit:adHocConnection>
-                <spirit:name>byte2pix_pd_o[11]</spirit:name>
-                <spirit:displayName>byte2pix_pd_o[11]</spirit:displayName>
-                <spirit:vendorExtensions>
-                    <lattice:attributes>
-                        <lattice:attribute lattice:name="export">sys_yes</lattice:attribute>
-                    </lattice:attributes>
-                </spirit:vendorExtensions>
-                <spirit:internalPortReference spirit:portRef="pd_o[11]" spirit:componentRef="byte2pix"/>
-                <spirit:externalPortReference spirit:portRef="byte2pix_pd_o[11]"/>
-            </spirit:adHocConnection>
-            <spirit:adHocConnection>
-                <spirit:name>byte2pix_pd_o[12]</spirit:name>
-                <spirit:displayName>byte2pix_pd_o[12]</spirit:displayName>
-                <spirit:vendorExtensions>
-                    <lattice:attributes>
-                        <lattice:attribute lattice:name="export">sys_yes</lattice:attribute>
-                    </lattice:attributes>
-                </spirit:vendorExtensions>
-                <spirit:internalPortReference spirit:portRef="pd_o[12]" spirit:componentRef="byte2pix"/>
-                <spirit:externalPortReference spirit:portRef="byte2pix_pd_o[12]"/>
-            </spirit:adHocConnection>
-            <spirit:adHocConnection>
-                <spirit:name>byte2pix_pd_o[13]</spirit:name>
-                <spirit:displayName>byte2pix_pd_o[13]</spirit:displayName>
-                <spirit:vendorExtensions>
-                    <lattice:attributes>
-                        <lattice:attribute lattice:name="export">sys_yes</lattice:attribute>
-                    </lattice:attributes>
-                </spirit:vendorExtensions>
-                <spirit:internalPortReference spirit:portRef="pd_o[13]" spirit:componentRef="byte2pix"/>
-                <spirit:externalPortReference spirit:portRef="byte2pix_pd_o[13]"/>
-            </spirit:adHocConnection>
-            <spirit:adHocConnection>
-                <spirit:name>byte2pix_pd_o[14]</spirit:name>
-                <spirit:displayName>byte2pix_pd_o[14]</spirit:displayName>
-                <spirit:vendorExtensions>
-                    <lattice:attributes>
-                        <lattice:attribute lattice:name="export">sys_yes</lattice:attribute>
-                    </lattice:attributes>
-                </spirit:vendorExtensions>
-                <spirit:internalPortReference spirit:portRef="pd_o[14]" spirit:componentRef="byte2pix"/>
-                <spirit:externalPortReference spirit:portRef="byte2pix_pd_o[14]"/>
-            </spirit:adHocConnection>
-            <spirit:adHocConnection>
-                <spirit:name>byte2pix_pd_o[15]</spirit:name>
-                <spirit:displayName>byte2pix_pd_o[15]</spirit:displayName>
-                <spirit:vendorExtensions>
-                    <lattice:attributes>
-                        <lattice:attribute lattice:name="export">sys_yes</lattice:attribute>
-                    </lattice:attributes>
-                </spirit:vendorExtensions>
-                <spirit:internalPortReference spirit:portRef="pd_o[15]" spirit:componentRef="byte2pix"/>
-                <spirit:externalPortReference spirit:portRef="byte2pix_pd_o[15]"/>
-            </spirit:adHocConnection>
-            <spirit:adHocConnection>
-                <spirit:name>byte2pix_pd_o[16]</spirit:name>
-                <spirit:displayName>byte2pix_pd_o[16]</spirit:displayName>
-                <spirit:vendorExtensions>
-                    <lattice:attributes>
-                        <lattice:attribute lattice:name="export">sys_yes</lattice:attribute>
-                    </lattice:attributes>
-                </spirit:vendorExtensions>
-                <spirit:internalPortReference spirit:portRef="pd_o[16]" spirit:componentRef="byte2pix"/>
-                <spirit:externalPortReference spirit:portRef="byte2pix_pd_o[16]"/>
-            </spirit:adHocConnection>
-            <spirit:adHocConnection>
-                <spirit:name>byte2pix_pd_o[17]</spirit:name>
-                <spirit:displayName>byte2pix_pd_o[17]</spirit:displayName>
-                <spirit:vendorExtensions>
-                    <lattice:attributes>
-                        <lattice:attribute lattice:name="export">sys_yes</lattice:attribute>
-                    </lattice:attributes>
-                </spirit:vendorExtensions>
-                <spirit:internalPortReference spirit:portRef="pd_o[17]" spirit:componentRef="byte2pix"/>
-                <spirit:externalPortReference spirit:portRef="byte2pix_pd_o[17]"/>
-            </spirit:adHocConnection>
-            <spirit:adHocConnection>
-                <spirit:name>byte2pix_pd_o[18]</spirit:name>
-                <spirit:displayName>byte2pix_pd_o[18]</spirit:displayName>
-                <spirit:vendorExtensions>
-                    <lattice:attributes>
-                        <lattice:attribute lattice:name="export">sys_yes</lattice:attribute>
-                    </lattice:attributes>
-                </spirit:vendorExtensions>
-                <spirit:internalPortReference spirit:portRef="pd_o[18]" spirit:componentRef="byte2pix"/>
-                <spirit:externalPortReference spirit:portRef="byte2pix_pd_o[18]"/>
-            </spirit:adHocConnection>
-            <spirit:adHocConnection>
-                <spirit:name>byte2pix_pd_o[19]</spirit:name>
-                <spirit:displayName>byte2pix_pd_o[19]</spirit:displayName>
-                <spirit:vendorExtensions>
-                    <lattice:attributes>
-                        <lattice:attribute lattice:name="export">sys_yes</lattice:attribute>
-                    </lattice:attributes>
-                </spirit:vendorExtensions>
-                <spirit:internalPortReference spirit:portRef="pd_o[19]" spirit:componentRef="byte2pix"/>
-                <spirit:externalPortReference spirit:portRef="byte2pix_pd_o[19]"/>
             </spirit:adHocConnection>
             <spirit:adHocConnection>
                 <spirit:name>byte2pix_pd_o[1]</spirit:name>

@@ -16,8 +16,8 @@ CoreRevision=5.8
 ModuleName=pll_ip
 SourceFormat=verilog
 ParameterFileVersion=1.0
-Date=09/05/2024
-Time=13:35:37
+Date=09/06/2024
+Time=15:01:29
 
 [Parameters]
 Verilog=1
@@ -44,10 +44,10 @@ CLKOS_DIV=1
 CLKOS_ACTUAL_FREQ=83.000000
 CLKOS_MUXB=DISABLED
 CLKOS2_Enable=ENABLED
-CLKOS2_FREQ=260
+CLKOS2_FREQ=500
 CLKOS2_TOL=5.0
-CLKOS2_DIV=4
-CLKOS2_ACTUAL_FREQ=249.000000
+CLKOS2_DIV=2
+CLKOS2_ACTUAL_FREQ=498.000000
 CLKOS2_MUXC=DISABLED
 CLKOS3_Enable=DISABLED
 CLKOS3_FREQ=100.00
@@ -90,4 +90,4 @@ PLL_LOCK_STK=DISABLED
 PLL_USE_SMI=DISABLED
 
 [Command]
-cmd_line= -w -n pll_ip -lang verilog -synth lse -bus_exp 7 -bb -arch sn5w00 -type pll -fin 83 -fclkop 83 -fclkop_tol 0.0 -fclkos2 260 -fclkos2_tol 5.0 -phases2 0 -phase_cntl STATIC -lock -fb_mode 1 -bw HIGH
+cmd_line= -w -n pll_ip -lang verilog -synth lse -bus_exp 7 -bb -arch sn5w00 -type pll -fin 83 -fclkop 83 -fclkop_tol 0.0 -fclkos2 500 -fclkos2_tol 5.0 -phases2 0 -phase_cntl STATIC -lock -fb_mode 1 -bw HIGH

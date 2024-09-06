@@ -4,9 +4,9 @@
   (keywordMap (keywordLevel 0))
   (status
     (written
-      (timestamp 2024 9 5 13 36 20)
+      (timestamp 2024 9 6 15 2 49)
       (program "SCUBA" (version "Diamond (64-bit) 3.13.0.56.2"))))
-      (comment "C:\lscc\diamond\3.13\ispfpga\bin\nt64\scuba.exe -w -n pll_ip -lang verilog -synth lse -bus_exp 7 -bb -arch sn5w00 -type pll -fin 83 -fclkop 83 -fclkop_tol 0.0 -fclkos2 260 -fclkos2_tol 5.0 -phases2 0 -phase_cntl STATIC -lock -fb_mode 1 -bw HIGH -fdc C:/Users/ethanhead/Desktop/gen3-cam-fw/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des/source/ip/pll/pll_ip/pll_ip.fdc ")
+      (comment "C:\lscc\diamond\3.13\ispfpga\bin\nt64\scuba.exe -w -n pll_ip -lang verilog -synth lse -bus_exp 7 -bb -arch sn5w00 -type pll -fin 83 -fclkop 83 -fclkop_tol 0.0 -fclkos2 500 -fclkos2_tol 5.0 -phases2 0 -phase_cntl STATIC -lock -fb_mode 1 -bw HIGH -fdc C:/Users/ethanhead/Desktop/gen3-cam-fw/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des/source/ip/pll/pll_ip/pll_ip.fdc ")
   (library ORCLIB
     (edifLevel 0)
     (technology
@@ -113,7 +113,7 @@
             (property CLKOS2_FPHASE
               (string "0"))
             (property CLKOS2_CPHASE
-              (string "3"))
+              (string "1"))
             (property CLKOS_FPHASE
               (string "0"))
             (property CLKOS_CPHASE
@@ -137,7 +137,7 @@
             (property CLKOS3_ENABLE
               (string "DISABLED"))
             (property FREQUENCY_PIN_CLKOS2
-              (string "249.000000"))
+              (string "498.000000"))
             (property OUTDIVIDER_MUXC
               (string "DIVC"))
             (property CLKOS2_ENABLE
@@ -161,7 +161,7 @@
             (property CLKOS3_DIV
               (string "1"))
             (property CLKOS2_DIV
-              (string "4"))
+              (string "2"))
             (property CLKOS_DIV
               (string "1"))
             (property CLKOP_DIV

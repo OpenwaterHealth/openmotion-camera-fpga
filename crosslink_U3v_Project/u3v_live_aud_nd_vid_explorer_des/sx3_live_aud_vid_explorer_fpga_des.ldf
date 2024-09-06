@@ -3,12 +3,6 @@
     <Options/>
     <Implementation title="impl1" dir="impl1" description="impl1" synthesis="lse" default_strategy="Strategy1">
         <Options def_top="Serializer" top="topmod"/>
-        <Source name="source/rtl/bit_synchronizer.v" type="Verilog" type_short="Verilog" excluded="TRUE">
-            <Options/>
-        </Source>
-        <Source name="source/rtl/bus_synchronizer.v" type="Verilog" type_short="Verilog" excluded="TRUE">
-            <Options/>
-        </Source>
         <Source name="source/rtl/gpif_interface_mod.v" type="Verilog" type_short="Verilog">
             <Options/>
         </Source>
