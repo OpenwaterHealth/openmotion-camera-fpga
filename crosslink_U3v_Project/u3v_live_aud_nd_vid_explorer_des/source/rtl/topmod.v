@@ -61,10 +61,6 @@ localparam INT_OSC_CLK_VALUE = ( 32'd48_000_000 / INT_OSC_CLK_DIVIDER );
 // It must be changed when PLL configuration is changed.
 localparam PCLK_VALUE = 32'd84_000_000;
 
-// Revision of SX3 Board
-localparam REV2		=	0;
-localparam REV3 	=	1;
-
 // UVC_FV_LV / U3V/ UVC_SlaveFIFO  Standard 
 localparam U3V=0;
 localparam UVC_FL=1;
@@ -152,9 +148,6 @@ wire  sloe_r;
 reg uvc_fl=1'd0;
 reg u3v =1'd0;
 
-/******** flag_a and flag_b registers ********/
-reg flag_a;
-reg flag_b;
 
 wire [ 7:0] vid_fps_osc;
 wire [ 7:0] vid_fps;
@@ -209,18 +202,6 @@ reset_bridge rst_brg_osc(
   .sync_resetn_out	(reset_n_HFCLKOUT)// Synchronized reset signal
 );
 
-// Generate Block for selecting SX3 Revision
-generate 
-always @(*) begin
-	if(REV2) begin		 flag_a <= flagb_i;
-		 flag_b <= flaga_i;
-	end
-	else if(REV3) begin
-		 flag_a <= flaga_i;
-		 flag_b <= flagb_i;
-	end
-end
-endgenerate
 
 // --------------------------------
 //
@@ -340,8 +321,8 @@ gpif_interface_top
 	.aud_app_en_i		      (aud_app_en),
 	.vid_skt_rst_i		      (slfifo_st_vidrst),
 	.aud_skt_rst_i		      (slfifo_st_audrst),
-	.flaga_i			      (flag_a), 
-	.flagb_i			      (flag_b), 
+	.flaga_i			      (0), 
+	.flagb_i			      (0), 
 	.frame_size_i		      (img_size),
 	.vid_fifo_rd_data_i		  (vid_buf_dout),
 	.vid_fifo_data_vld_i	  (vid_buf_dvld),
