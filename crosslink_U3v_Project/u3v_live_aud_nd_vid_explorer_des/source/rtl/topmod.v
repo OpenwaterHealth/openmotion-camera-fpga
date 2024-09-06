@@ -44,11 +44,8 @@ module topmod
 
 
 // sx3
-
 wire [1:0]cur_gpif_st_o;
 wire buf_done_o;
-wire app_stop;
-
 
 localparam IMG_SZ_BUS_WDT = 'd32;
 
@@ -314,10 +311,11 @@ vid_buf_mod vid_buf_mod
 	.cam_app_en_i			  (cam_app_en),
 	// .gpif_fifo_almostfull_i	(gpif_fifo_almostfull),
 	.vid_fifo_rd_req_i   	  (vid_fifo_rd_req),
-	.cam_fv_i				  (cmos_fv),
-	.cam_lv_i				  (cmos_lv),
+	.cam_fv_i				  (1),////??????????
+	.cam_lv_i				  (1),
 	.cam_data_i				  (32'd0 ),  // 32 bit data
     .pktend_st_i              (vid_pktend_st),
+	
 	.vid_fifo_rd_data_o		  (vid_buf_dout),
 	.vid_fifo_data_vld_o	  (vid_buf_dvld),
 	.vid_fifo_almost_empty_o  (vid_fifo_almost_empty),
@@ -347,12 +345,12 @@ gpif_interface_top
 	.frame_size_i		      (img_size),
 	.vid_fifo_rd_data_i		  (vid_buf_dout),
 	.vid_fifo_data_vld_i	  (vid_buf_dvld),
-	.vid_fifo_almost_empty_i  (vid_fifo_almost_empty),
-	.cam_fifo_overflow_i      (cam_fifo_overflow),
-	.cam_fv_i			      (cmos_fv),
+	.vid_fifo_almost_empty_i  (0),
+	.cam_fifo_overflow_i      (0),
+	.cam_fv_i			      (1),
 	.cam_fv_pe_pl_i		      (cam_fv_pe_pl),
 	.cam_fv_ne_pl_i		      (cam_fv_ne_pl),
-	.cam_lv_i				  (cmos_lv),
+	.cam_lv_i				  (1),
     .vid_frame_width_i        (img_width),  // Video frame width
     .vid_fifo_rd_req_o        (vid_fifo_rd_req),
     .vid_pktend_st_o          (vid_pktend_st),
@@ -387,7 +385,7 @@ gpif_interface_top
 	.full_fx3_bufr_rd_o           (full_fx3_bufr_rd_o),
 	.full_fx3_bufr_wr_o           (full_fx3_bufr_wr_o),
 	.vid_frame_word_counter_max_value_o           (vid_frame_word_counter_max_value_o),
-	.app_stop_i 					(app_stop)
+	.app_stop_i 					(0)
 	
 //	.pktend_frc_r				(pktend_frc_r),
 
