@@ -1,5 +1,5 @@
 `timescale 1ns / 1ps
-`include "histogram_pipeline/camera_data_gen.v"
+`include "histogram_pipeline/camera_data_gen2.v"
 `include "histogram_pipeline/histogram2.v"
 `include "histogram_pipeline/serializer.v"
 
@@ -79,7 +79,7 @@ module camera_pipeline_tb;
     end
 
     always @(posedge serializer_done ) begin
-        if(bin == NUM_BINS-1) begin 
+        if(bin == NUM_BINS) begin 
             bin = 0;
             rw = 1;
         end else begin
