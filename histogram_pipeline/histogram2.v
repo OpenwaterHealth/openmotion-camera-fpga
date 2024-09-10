@@ -2,16 +2,16 @@
 `include "histogram_pipeline/ram_dq.v"
 
 module histogram2 (
-    input wire rst,          // reset - zeros the histogram
-    input wire clk,          // clock
-    input wire rw,           // read/write, when reading outputs histo data/bin num until done
-    input wire fast_clk,
-    input  wire [9:0] pixel,  // 10 bit data for each pixel
-    input wire pixel_valid,
-    input wire image_done,
-    output reg histo_done, // flips high when 
-    input wire[ 9:0] bin,
-    output reg [23:0] data       //    when writing, on every rising edge of CLK adds one to the histogram
+    input wire rst,             // reset - zeros the histogram
+    input wire clk,             // clock
+    input wire fast_clk,        // double speed clock for histogram read/write cycle
+    input wire rw,              // read/write, when reading outputs histo data/bin num until done
+    input wire [9:0] pixel,    // 10 bit data for each pixel
+    input wire pixel_valid,     // only on when the pixel is valid
+    input wire image_done,      // flip this input high when image is finished
+    output reg histo_done,      // flips high when histogram calculation is done
+    input wire [9:0] bin,       // bin number to read out
+    output reg [23:0] data      // data output of the bin being read
     );
 
     // Parameters
@@ -65,9 +65,17 @@ module histogram2 (
         end
     end
     
-    always @(negedge rw) begin  // reset mem_addr when going from write to read mode
-        mem_addr = 0;
+    // always @(negedge rw) begin  // reset mem_addr when going from write to read mode
+    //     mem_addr = 0;
+    // end
+
+
+    // set up negative edge detection for rw
+    reg rw_prev;
+    always @(posedge fast_clk) begin
+        rw_prev = rw;
     end
+    wire rw_negedge = (rw==0) && (rw_prev != rw);
 
     reg [9:0] prev_mem_addr = 0;
     reg new_addr;
@@ -78,6 +86,7 @@ module histogram2 (
     always @(negedge new_addr) begin
         data = hist_o;
     end
+
 /*    always @(negedge rw) begin          // on the negative edge of the clock, reset addr to 0
             /// figure out how to reset the mem address
     end
