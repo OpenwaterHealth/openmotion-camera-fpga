@@ -43,10 +43,6 @@ module topmod
 );
 
 
-// sx3
-wire [1:0]cur_gpif_st_o;
-wire buf_done_o;
-
 localparam IMG_SZ_BUS_WDT = 'd32;
 
 // Internal Oscillator
@@ -65,25 +61,20 @@ localparam PCLK_VALUE = 32'd84_000_000;
 //-----------------------------------------------------------------------------
 //	Wire and Register declarations
 //-----------------------------------------------------------------------------
-wire clk_pixel;
 wire clk_osc;
-
-wire reset_n_pixclk;
-wire reset_n_aud_pixclk;
-wire reset_n_vid_pixclk;
-wire sync_bclk_reset_n;
-wire reset_n_HFCLKOUT;
-
-wire [19:0] cmos_data;
-wire cmos_fv;
-wire cmos_lv;
-wire cam_fifo_overflow;
 wire rx_clk_byte_fr;
-
+wire clk_pixel;
+wire clk_pixel_hs;
 wire pll_lock;
 
+wire reset_n_HFCLKOUT;
+reg mipi_reset_n_o;
 
-//wire mic_clk_o;
+wire [9:0] cmos_data;
+wire cmos_fv;
+wire cmos_lv;
+
+
 // Internal Oscillator
 // 1 -> 48MHz, 2 -> 24MHz, 4 -> 12MHz, 8 -> 6MHz
 defparam int_osc.HFCLKDIV = INT_OSC_CLK_DIVIDER;
@@ -103,28 +94,6 @@ pll_ip pll_inst (
 	.LOCK	(pll_lock)
 );
 
-
-//	Reset Bridge for clk_pixel
-reset_bridge vid_mod_reset(
-  .clk_i			(clk_pixel),// Destination clock
-  .ext_resetn_i		(cam_app_en_osc &  reset_n_i &  pll_lock),// Asynchronous reset signal
-  .sync_resetn_out	(reset_n_vid_pixclk)// Synchronized reset signal
-);
-
-//	Reset Bridge for clk_pixel
-reset_bridge gpif_mod_reset(
-  .clk_i			(clk_pixel),// Destination clock
-  .ext_resetn_i		( reset_n_i &  pll_lock),// Asynchronous reset signal
-  .sync_resetn_out	(reset_n_pixclk)// Synchronized reset signal
-);
-
-//	Reset Bridge for clk_audio
-reset_bridge aud_mod_reset(
-  .clk_i			(clk_pixel),// Destination clock
-  .ext_resetn_i		(aud_app_en_osc &  reset_n_i &  pll_lock), // Asynchronous reset signal
-  .sync_resetn_out	(reset_n_aud_pixclk)// Synchronized reset signal
-);
-
 //	Reset Bridge for clk_osc
 reset_bridge rst_brg_osc(
   .clk_i			(clk_osc),// Destination clock
@@ -132,22 +101,17 @@ reset_bridge rst_brg_osc(
   .sync_resetn_out	(reset_n_HFCLKOUT)// Synchronized reset signal
 );
 
+// Reset synchronizer for mipi module
+always @ ( posedge clk_osc or negedge reset_n_HFCLKOUT )
+begin
+  if ( ~reset_n_HFCLKOUT )
+	begin
+	  mipi_reset_n_o <= 1'b0;
+	end
+  else begin mipi_reset_n_o <= 1'b1; end
+end
 
-reg mipi_reset_n_o;
-
-  always @ ( posedge clk_osc or negedge reset_n_HFCLKOUT )
-    begin
-      if ( ~reset_n_HFCLKOUT )
-        begin
-          mipi_reset_n_o <= 1'b0;
-        end
-	  else begin mipi_reset_n_o <= 1'b1; end
-  end
-		  
-
-wire clk_px4;
-//ODDRX1F PX_CLOCK ( .D0(1'b1), .D1(1'b0), .SCLK(clk_pixel2), .RST(1'b0), .Q(clk_px4) );
-
+// Clock generator for 250MHz pixel clock
 reg clk_pixel3;
 always @(posedge clk_pixel_hs or negedge mipi_reset_n_o) begin
 	if (~mipi_reset_n_o) begin
@@ -157,8 +121,6 @@ always @(posedge clk_pixel_hs or negedge mipi_reset_n_o) begin
 		clk_pixel3 <= ~clk_pixel3;
 	end
 end
-
-//assign clk_pixel3 = clk_pixel3;//  && mipi_reset_n_o;
 
 //	MIPI DPHY to CMOS module : It converts the MIPI camera input to Parallel video data at clock "clk_pixel"
  mipidphy2cmos mipidphy2cmos
@@ -180,11 +142,64 @@ end
 	.debug				(debug)
  );
  
+// assign the outputs from the camera to the GPIOS
 assign  mic_clk_o = clk_pixel3;
- 
-assign sldata_o= cmos_data[9:0];
+assign sldata_o = cmos_data;
 assign slrd_o =  cmos_lv;
 assign sloe_o =  cmos_fv;
+
+
+// histogram code going in
+/*
+//
+reg rw = 1;
+wire pixel_valid = cmos_lv && cmos_fv;
+
+histogram2 histo_i(
+	.rst (mipi_reset_n_o),
+	.clk (clk_pixel3)
+	.fast_clk (clk_pixel_hs),
+	.rw(rw),
+	.pixel (cmos_data),
+	.pixel_valid (pixel_valid), // assumes that both being high implies a valid pixel
+	.image_done(~cmos_fv),
+	.histo_done(),
+	.bin(),
+	.data()
+	);
+	
+wire serializer_done;
+Serializer seralizer_i (
+	.fast_clk_in(uart_clk),
+	.reset(rw),
+	.data_in(data),
+	.serial_out(uart),
+	.slow_clk_out(),
+	.done(serializer_done)
+);
+
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 /* in theory everything below this is superflous and should be deleted */
@@ -195,6 +210,10 @@ localparam UVC_FL=1;
 // ODDR to drive GPIF Clock out
 ODDRX1F SX3_CLOCK ( .D0(1'b1), .D1(1'b0), .SCLK(clk_pixel), .RST(1'b0), .Q(slclk_o) );
 
+
+// sx3
+wire [1:0]cur_gpif_st_o;
+wire buf_done_o;
 
 
 wire [15:0] vid_buf_dout;
@@ -260,6 +279,24 @@ wire [ 7:0] vid_fps_osc;
 wire [ 7:0] vid_fps;
 wire [15:0] line_blanking_osc;
 wire [15:0] line_blanking;
+
+wire cam_fifo_overflow;
+
+wire reset_n_vid_pixclk;
+//	Reset Bridge for clk_pixel
+reset_bridge vid_mod_reset(
+  .clk_i			(clk_pixel),// Destination clock
+  .ext_resetn_i		(cam_app_en_osc &  reset_n_i &  pll_lock),// Asynchronous reset signal
+  .sync_resetn_out	(reset_n_vid_pixclk)// Synchronized reset signal
+);
+
+wire reset_n_pixclk;
+//	Reset Bridge for clk_pixel
+reset_bridge gpif_mod_reset(
+  .clk_i			(clk_pixel),// Destination clock
+  .ext_resetn_i		( reset_n_i &  pll_lock),// Asynchronous reset signal
+  .sync_resetn_out	(reset_n_pixclk)// Synchronized reset signal
+);
 
 
 
