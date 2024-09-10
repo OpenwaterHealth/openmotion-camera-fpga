@@ -61,36 +61,20 @@ localparam INT_OSC_CLK_VALUE = ( 32'd48_000_000 / INT_OSC_CLK_DIVIDER );
 // It must be changed when PLL configuration is changed.
 localparam PCLK_VALUE = 32'd84_000_000;
 
-// UVC_FV_LV / U3V/ UVC_SlaveFIFO  Standard 
-localparam U3V=0;
-localparam UVC_FL=1;
 
 //-----------------------------------------------------------------------------
 //	Wire and Register declarations
 //-----------------------------------------------------------------------------
-wire [2:0] current_stream_in_state;
-
 wire clk_pixel;
+wire clk_osc;
+
 wire reset_n_pixclk;
 wire reset_n_aud_pixclk;
 wire reset_n_vid_pixclk;
 wire sync_bclk_reset_n;
-wire clk_osc;
 wire reset_n_HFCLKOUT;
 
-wire cam_app_en;
-wire aud_app_en;
-wire slfifo_st_vidrst;
-wire slfifo_st_audrst;
 wire [19:0] cmos_data;
-wire [15:0] vid_buf_dout;
-wire [31:0] img_size;
-wire [15:0] img_wt;
-wire [15:0] img_ht;
-wire vid_buf_dvld;
-wire cam_fv_pe_pl;
-wire cam_fv_ne_pl;
-
 wire cmos_fv;
 wire cmos_lv;
 wire cam_fifo_overflow;
@@ -98,61 +82,7 @@ wire rx_clk_byte_fr;
 
 wire pll_lock;
 
-wire vid_pktend_st;
-wire vid_fifo_rd_req;
-wire vid_fifo_almost_empty;
-wire vid_fifo_almost_full;
 
-wire slfifo_st_vidrst_osc;
-wire slfifo_st_audrst_osc;
-wire cam_app_en_osc;
-wire aud_app_en_osc;
-wire still_cap_en_osc;
-wire [15:0]img_wt_osc;
-wire [15:0]img_ht_osc;
-wire [31:0]img_size_osc;
-wire [15:0]img_width;
-wire [15:0]img_height;
-
-wire [15:0] aud_fifo_rd_data;
-wire [11:0] aud_fifo_rd_count;
-wire aud_fifo_data_vld;
-wire aud_fifo_almost_empty;
-wire aud_fifo_empty;
-wire aud_fifo_rd_req;
-wire aud_pktend;
-wire still_cap_en_osc;
-wire still_cap_en;
-wire vid_pktend;
-
-wire [ 1:0] gpif_buf_wdt;
-wire [15:0] tp_data;
-
-reg [31:0] clk_in_value;
-reg [15:0] img_ht_osc;
-reg [31:0] data_i;
-reg        still_cap_done;
-reg        vid_tp_en_r;
-reg vid_fifo_rst_1;
-reg vid_fifo_rst_2;
-reg data_vld_i;
-reg vsync_r;
-reg vsync_r1;
-reg vsync_r2;
-reg tp_busy_r;
-reg [23:0]vsync_rr;
-reg [31:0] data_cnt;
-wire [15:0]sldata_r;
-wire slrd_r;
-wire  sloe_r;
-reg uvc_fl=1'd0;
-reg u3v =1'd0;
-
-
-wire [ 7:0] vid_fps_osc;
-wire [ 7:0] vid_fps;
-wire [15:0] line_blanking_osc;
-wire [15:0] line_blanking;
 //wire mic_clk_o;
 // Internal Oscillator
 // 1 -> 48MHz, 2 -> 24MHz, 4 -> 12MHz, 8 -> 6MHz
@@ -203,29 +133,6 @@ reset_bridge rst_brg_osc(
 );
 
 
-// --------------------------------
-//
-// MIPI IP Reset Manager
-//
-// --------------------------------
-/*
- mipi_ip_reset_manager
-   #
-   (
-    .REF_CLOCK_VALUE_I              ( INT_OSC_CLK_VALUE ),
-    .MIPI_IP_RESET_LOW_TIME_IN_MS_I ( 32'd300 )
-   )
-   mirm
-   (
-    .clk                      ( clk_osc ),
-    .reset_n                  ( reset_n_HFCLKOUT ),
-    .cam_app_en_i             ( cam_app_en_osc ),
-    .aud_app_en_i             ( aud_app_en_osc ),
-    .mipi_reset_n_o           ( mipi_reset_n_o ),
-    .reset_counter_is_low_o   ( reset_counter_is_low_o ),
-    .reset_counter_is_high_o  ( reset_counter_is_high_o )
-   );
-*/
 reg mipi_reset_n_o;
 
   always @ ( posedge clk_osc or negedge reset_n_HFCLKOUT )
@@ -237,9 +144,6 @@ reg mipi_reset_n_o;
 	  else begin mipi_reset_n_o <= 1'b1; end
   end
 		  
-
-// ODDR to drive GPIF Clock out
-ODDRX1F SX3_CLOCK ( .D0(1'b1), .D1(1'b0), .SCLK(clk_pixel), .RST(1'b0), .Q(slclk_o) );
 
 wire clk_px4;
 //ODDRX1F PX_CLOCK ( .D0(1'b1), .D1(1'b0), .SCLK(clk_pixel2), .RST(1'b0), .Q(clk_px4) );
@@ -278,12 +182,88 @@ end
  
 assign  mic_clk_o = clk_pixel3;
  
-assign sldata_o= cmos_data[9:0];//10'b1010101010;//UVC_FL ?  cmos_data : sldata_r;
-assign slrd_o =  UVC_FL ?  cmos_lv : slrd_r;
-assign sloe_o =  UVC_FL ?  cmos_fv : sloe_r;
+assign sldata_o= cmos_data[9:0];
+assign slrd_o =  cmos_lv;
+assign sloe_o =  cmos_fv;
+
+
+/* in theory everything below this is superflous and should be deleted */
+// UVC_FV_LV / U3V/ UVC_SlaveFIFO  Standard 
+localparam U3V=0;
+localparam UVC_FL=1;
+
+// ODDR to drive GPIF Clock out
+ODDRX1F SX3_CLOCK ( .D0(1'b1), .D1(1'b0), .SCLK(clk_pixel), .RST(1'b0), .Q(slclk_o) );
+
+
+
+wire [15:0] vid_buf_dout;
+wire [15:0] img_wt;
+wire [15:0] img_ht;
+wire vid_buf_dvld;
+wire cam_fv_pe_pl;
+wire cam_fv_ne_pl;
+
+wire vid_pktend_st;
+wire vid_fifo_rd_req;
+wire vid_fifo_almost_empty;
+wire vid_fifo_almost_full;
+
+wire slfifo_st_vidrst_osc;
+wire slfifo_st_audrst_osc;
+wire cam_app_en_osc;
+wire aud_app_en_osc;
+wire still_cap_en_osc;
+wire [15:0]img_width;
+wire [15:0]img_height;
+
+wire [15:0] aud_fifo_rd_data;
+wire [11:0] aud_fifo_rd_count;
+wire aud_fifo_data_vld;
+wire aud_fifo_almost_empty;
+wire aud_fifo_empty;
+wire aud_fifo_rd_req;
+wire aud_pktend;
+wire still_cap_en_osc;
+wire still_cap_en;
+wire vid_pktend;
+wire cam_app_en;
+wire aud_app_en;
+wire slfifo_st_vidrst;
+wire slfifo_st_audrst;
+
+reg [31:0] data_i;
+reg        still_cap_done;
+reg        vid_tp_en_r;
+reg vid_fifo_rst_1;
+reg vid_fifo_rst_2;
+reg data_vld_i;
+reg vsync_r;
+reg vsync_r1;
+reg vsync_r2;
+reg tp_busy_r;
+reg [23:0]vsync_rr;
+reg [31:0] data_cnt;
+wire [15:0]sldata_r;
+wire slrd_r;
+wire  sloe_r;
+reg uvc_fl=1'd0;
+reg u3v =1'd0;
+
+wire [2:0] current_stream_in_state;
+wire [ 1:0] gpif_buf_wdt;
+
+
+
+wire [15:0]img_wt_osc;
+wire [ 7:0] vid_fps_osc;
+wire [ 7:0] vid_fps;
+wire [15:0] line_blanking_osc;
+wire [15:0] line_blanking;
+
+
 
 //	Video Buffer Module : Buffers the video data whne the Slave FIFO interface is busy
-
 vid_buf_mod vid_buf_mod
 (
 	.clk_i					  (clk_pixel),
@@ -367,23 +347,19 @@ gpif_interface_top
 	.full_fx3_bufr_wr_o           (full_fx3_bufr_wr_o),
 	.vid_frame_word_counter_max_value_o           (vid_frame_word_counter_max_value_o),
 	.app_stop_i 					(0)
-	
-//	.pktend_frc_r				(pktend_frc_r),
-
 );
+
+reg [31:0] img_size = 16'd2457600;
 
 reg [15:0] img_height = 16'd1280;
 assign img_ht_osc = img_height;
 reg [15:0] img_width = 16'd1920;
 assign img_wt_osc = img_width;
-reg [31:0] img_size = 16'd2457600;
-assign img_size_osc = img_size;
 
 
 reg HIGH = 1'b1;
 assign cam_app_en_osc = HIGH;
 assign cam_app_en = HIGH;
-assign img_size =img_size_osc;
 assign img_width = {16'h0, img_wt_osc};
 assign img_height = {16'h0, img_ht_osc};
 assign aud_app_en = HIGH;
