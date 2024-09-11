@@ -24,19 +24,10 @@ module histogram2 (
     wire mem_write;
     assign mem_write = fast_clk;
 
-    reg [9:0] mem_addr;
-
     // Histogram output
     reg [23:0] hist_i;
     wire [23:0] hist_o;
-
-    always @(posedge fast_clk) begin
-        if(image_done) begin
-            histo_done = 1;
-        end else begin
-            histo_done = 0;
-        end
-    end
+    reg [9:0] mem_addr;
 
     // RAM module instance
     ram_dq ram_inst (
@@ -48,8 +39,9 @@ module histogram2 (
         .Data(hist_i), // Data input 
         .Q(hist_o) // Output data
     );
+
     always @(posedge fast_clk) begin
-        if(rw == WRITE) begin           // if write mode, read and increment the counter
+        if(rw) begin           // if write mode, read and increment the counter
             if(pixel_valid) begin
                 mem_addr = pixel;
                 hist_i = hist_o + 1;
@@ -60,8 +52,8 @@ module histogram2 (
             data = 0;
         end else begin                  // if read mode... 
             mem_addr = bin;    // increment the address being read
-            //data = hist_o;
             hist_i = 0;
+            //data = hist_o;
         end
     end
     
@@ -69,13 +61,12 @@ module histogram2 (
     //     mem_addr = 0;
     // end
 
-
     // set up negative edge detection for rw
-    reg rw_prev;
-    always @(posedge fast_clk) begin
-        rw_prev = rw;
-    end
-    wire rw_negedge = (rw==0) && (rw_prev != rw);
+    // reg rw_prev;
+    // always @(posedge fast_clk) begin
+    //     rw_prev = rw;
+    // end
+    // wire rw_negedge = (rw==0) && (rw_prev != rw);
 
     reg [9:0] prev_mem_addr = 0;
     reg new_addr;
@@ -83,12 +74,16 @@ module histogram2 (
         new_addr = (mem_addr!= prev_mem_addr);
         prev_mem_addr = mem_addr;
     end
+
     always @(negedge new_addr) begin
         data = hist_o;
     end
 
-/*    always @(negedge rw) begin          // on the negative edge of the clock, reset addr to 0
-            /// figure out how to reset the mem address
+    always @(posedge fast_clk) begin
+        if(image_done) begin
+            histo_done = 1;
+        end else begin
+            histo_done = 0;
+        end
     end
-*/
 endmodule
