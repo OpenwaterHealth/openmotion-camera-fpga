@@ -1,5 +1,5 @@
 `timescale 1ns / 1ps
-`include "histogram_pipeline/camera_data_gen2.v"
+`include "histogram_pipeline/camera_data_gen.v"
 `include "histogram_pipeline/histogram2.v"
 `include "histogram_pipeline/serializer.v"
 
@@ -14,24 +14,49 @@ module camera_pipeline_tb;
     parameter UART_PERIOD = 80;            //                              80ns = 12.5MHz
     parameter SLOW_CLK_PERIOD = HISTO_BUCKET_SIZE*UART_PERIOD; // 
     
-    // Signals
+    // Clocks
     reg clk = 0;                // Clock signal
     reg fast_clk = 1;
     reg fsin = 0;
     reg uart_clk =0;
 
+    // Image generator
     wire line_valid;            // Line synchronization signal
     wire frame_valid;           // Frame synchronization signal
     wire [9:0] pixel_data;      // 16-bit bus for pixel data
+    wire pixel_valid = frame_valid && line_valid;
     reg cam_en = 0;
     
+    // Histogram generator
     wire [23:0] data; 
     reg [9:0] bin;
     
+    // Serializer
     wire uart;
 
+    // Control
     wire image_done; 
     wire histo_done;
+    wire serializer_done;
+    
+    parameter IDLE = 0, IMAGE = 1, HISTO = 2, SERIALIZE = 3;
+    reg [1:0] state = 0;
+
+    always @(posedge frame_valid, posedge histo_done, posedge serializer_done) begin
+        if(frame_valid && state == IDLE) begin
+            state <= HISTO;
+        end else if (histo_done && state == HISTO) begin
+            state <= SERIALIZE;
+            bin <= 0;
+        end else if (serializer_done && state == SERIALIZE) begin
+            if(bin == 1023) begin
+                state <= IDLE;
+            end else begin
+                bin <= bin + 1;
+            end
+        end
+    end
+
     // Instantiate image_processor module
     camera_data_gen camera_gen (
         .en(cam_en),
@@ -42,61 +67,40 @@ module camera_pipeline_tb;
         .done(image_done)
     );
 
-    reg rw = 1;
-    wire pixel_valid = frame_valid && line_valid;
     histogram2 histo_i (
         .clk(clk),          // reset - zeros the histogram
         .fast_clk(fast_clk),
         .rst(cam_en),          // clock
+        
         .pixel (pixel_data),  // 10 bit data for each pixel
         .pixel_valid (pixel_valid),
-        .rw(rw),           // read/write, when reading outputs histo data/bin num until done
         .data(data),       //    when writing, on every rising edge of CLK adds one to the histogram
         .bin(bin),
+        
+        .rw(frame_valid),           // read/write, when reading outputs histo data/bin num until done
         .image_done(~frame_valid),
         .histo_done(histo_done)
     );
 
-    wire serializer_done;
     Serializer seralizer_i (
         .fast_clk_in(uart_clk),
-        .reset(rw),
+        .reset((state != SERIALIZE)),
         .data_in(data),
         .serial_out(uart),
         .slow_clk_out(),
         .done(serializer_done)
     );
     
-
-    // Handle logic between the serializer and histogram modules
-    // when the histogram is done, set the system to read 
-    always @(posedge fsin) begin
-        rw = 1;
-    end
-    always @(posedge histo_done) begin
-        rw = 0;
-        bin = 0;
-    end
-
+    // Print out data for running agaist test
     always @(posedge serializer_done ) begin
-        if(bin == NUM_BINS) begin 
-            bin = 0;
-            rw = 1;
-        end else begin
-            $display(      "%d:%d", bin, data);
-            bin = bin + 1;
-
-        end
+        $display(      "%d:%d", bin, data);
     end
-
-    integer i;
 
     // Initial stimulus
     initial begin
         // Wait for a few clock cycles to stabilize
         clk = 0;
         fast_clk = 1;
-        // rw = 1;
         fsin =0;
         cam_en = 0;
 
@@ -105,18 +109,8 @@ module camera_pipeline_tb;
             @(posedge fsin);
             cam_en = 1;
             #1; cam_en = 0;
-            // @(posedge histo_done);
-            // rw = 0;
-            // bin = 0;
-            // $display("<< Histogram Start >>");
-            // for (i = 0; i < 1024; i = i + 1) begin
-            //     bin = i -1;
-            //     @(posedge clk);
-            //     $display("%d:%d", i-1, data);
-            // end
-            // $display("<< Histogram End >>");
-
         end
+
         // End simulation after testing
         $finish;
     end
@@ -125,7 +119,6 @@ module camera_pipeline_tb;
         $dumpfile("out/camera_pipeline_tb.vcd");
         $dumpvars(0, camera_pipeline_tb);  // Dump all signals
     end
-
 
     // Clock generation
     always #((CLK_PERIOD)/2) clk = ~clk;                // 50Mhz
