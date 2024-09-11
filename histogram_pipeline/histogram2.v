@@ -34,7 +34,7 @@ module histogram2 (
         .Clock(mem_clk),
         .ClockEn(~mem_reset), // Enable clock only when not in reset
         .Reset(mem_reset),
-        .WE(mem_write), // Always write-enable
+        .WE(1'b1), // Always write-enable
         .Address(mem_addr),
         .Data(hist_i), // Data input 
         .Q(hist_o) // Output data
@@ -43,8 +43,8 @@ module histogram2 (
     always @(posedge fast_clk) begin
         if(rw) begin           // if write mode, read and increment the counter
             if(pixel_valid) begin
-                mem_addr = pixel;
                 hist_i = hist_o + 1;
+                mem_addr = pixel;
             end else begin
                 hist_i = hist_o;
                 mem_addr = pixel;    
