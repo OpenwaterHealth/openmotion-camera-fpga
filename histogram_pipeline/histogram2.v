@@ -11,7 +11,7 @@ module histogram2 (
     input wire image_done,      // flip this input high when image is finished
     output reg histo_done,      // flips high when histogram calculation is done
     input wire [9:0] bin,       // bin number to read out
-    output reg [23:0] data      // data output of the bin being read
+    output wire [23:0] data      // data output of the bin being read
     );
 
     // Parameters
@@ -19,41 +19,47 @@ module histogram2 (
     parameter READ = 0, WRITE = 1;
 
     // Clock and reset
-    wire mem_clk = fast_clk;
+    //wire mem_clk = fast_clk;
     wire mem_reset = rst;
-    wire mem_write;
-    assign mem_write = fast_clk;
 
     // Histogram output
-    reg [23:0] hist_i;
-    wire [23:0] hist_o;
-    reg [9:0] mem_addr;
+    reg [23:0] mem_in;
+    wire [23:0] mem_out;
+    //reg [9:0] mem_addr;
 
     // RAM module instance
     ram_dq ram_inst (
-        .Clock(mem_clk),
+        .Clock(fast_clk),
         .ClockEn(~mem_reset), // Enable clock only when not in reset
         .Reset(mem_reset),
         .WE(1'b1), // Always write-enable
         .Address(mem_addr),
-        .Data(hist_i), // Data input 
-        .Q(hist_o) // Output data
+        .Data(mem_in), // Data input 
+        .Q(mem_out) // Output data
     );
 
-    always @(posedge fast_clk) begin
+    reg [9:0] prev_pixel;
+    
+    wire rpt = (prev_pixel == pixel);
+    
+    always @(posedge clk) begin 
+        prev_pixel <= pixel;
+    end
+    wire [9:0] mem_addr = rw ? pixel : bin;
+    wire [23:0] incremented_count = mem_out+1;
+
+    assign data = rw ? 24'b0 : mem_out;
+
+    always @(*) begin
         if(rw) begin           // if write mode, read and increment the counter
             if(pixel_valid) begin
-                hist_i = hist_o + 1;
-                mem_addr = pixel;
+                mem_in = incremented_count;
+                //mem_addr <= pixel;
             end else begin
-                hist_i = hist_o;
-                mem_addr = pixel;    
+                mem_in = mem_out;
             end
-            data = 0;
         end else begin                  // if read mode... 
-            mem_addr = bin;    // increment the address being read
-            hist_i = 0;
-            //data = hist_o;
+            mem_in = 0;
         end
     end
     
@@ -68,17 +74,18 @@ module histogram2 (
     // end
     // wire rw_negedge = (rw==0) && (rw_prev != rw);
 
-    reg [9:0] prev_mem_addr = 0;
-    reg new_addr;
-    always @(posedge fast_clk) begin
-        new_addr = (mem_addr!= prev_mem_addr);
-        prev_mem_addr = mem_addr;
-    end
+    // reg [9:0] prev_mem_addr = 0;
+    // reg new_addr;
+    // always @(posedge fast_clk) begin
+    //     new_addr = (mem_addr!= prev_mem_addr);
+    //     prev_mem_addr = mem_addr;
+    // end
 
-    always @(negedge new_addr) begin
-        data = hist_o;
-    end
-
+    // always @(negedge new_addr) begin
+    //     data <= hist_o;
+    // end
+    
+    
     always @(posedge fast_clk) begin
         if(image_done) begin
             histo_done = 1;
