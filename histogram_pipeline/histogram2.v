@@ -88,9 +88,9 @@ module histogram2 (
     
     always @(posedge fast_clk) begin
         if(image_done) begin
-            histo_done = 1;
+            histo_done <= 1;
         end else begin
-            histo_done = 0;
+            histo_done <= 0;
         end
     end
 endmodule

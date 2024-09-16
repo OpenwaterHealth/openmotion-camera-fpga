@@ -99,16 +99,16 @@ module camera_pipeline_tb;
     // Initial stimulus
     initial begin
         // Wait for a few clock cycles to stabilize
-        clk = 0;
-        fast_clk = 1;
-        fsin =0;
-        cam_en = 0;
+        clk <= 0;
+        fast_clk <= 1;
+        fsin <=0;
+        cam_en <= 0;
 
         // Test for a few frames
         repeat (2) begin // Adjust repeat count based on testing needs
             @(posedge fsin);
-            cam_en = 1;
-            #1; cam_en = 0;
+            cam_en <= 1;
+            #1; cam_en <= 0;
         end
 
         // End simulation after testing
