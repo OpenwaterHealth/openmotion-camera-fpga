@@ -26,7 +26,8 @@ module histogram2 (
     reg [23:0] mem_in;
     wire [23:0] mem_out;
     //reg [9:0] mem_addr;
-
+	wire [9:0] mem_addr = rw ? pixel : bin;
+    
     // RAM module instance
     ram_dq ram_inst (
         .Clock(fast_clk),
@@ -45,7 +46,6 @@ module histogram2 (
     always @(posedge clk) begin 
         prev_pixel <= pixel;
     end
-    wire [9:0] mem_addr = rw ? pixel : bin;
     wire [23:0] incremented_count = mem_out+1;
 
     assign data = rw ? 24'b0 : mem_out;

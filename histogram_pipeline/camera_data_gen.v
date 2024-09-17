@@ -64,7 +64,7 @@ module camera_data_gen (
         end
 
         // Output pixel data
-        pixel_number <= line_count*WIDTH + (pixel_count-1);
+        //pixel_number <= line_count*WIDTH + (pixel_count-1);
         pixel_data <= image_data[(line_count-1) * WIDTH + (pixel_count-1)]; // Ignore Blue channel (in this example)
       end
 

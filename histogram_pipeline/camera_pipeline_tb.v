@@ -82,33 +82,40 @@ module camera_pipeline_tb;
         .histo_done(histo_done)
     );
 
+	reg [23:0] data_persistent;
     Serializer seralizer_i (
         .fast_clk_in(uart_clk),
         .reset((state != SERIALIZE)),
-        .data_in(data),
+        .data_in(data_persistent),
         .serial_out(uart),
         .slow_clk_out(),
         .done(serializer_done)
     );
+
+	wire data_valid = (data != 0);
+	always @(posedge data_valid, posedge serializer_done) begin
+		if(data_valid) data_persistent <= data;
+		else data_persistent <= 24'b0;
+	end
     
     // Print out data for running agaist test
     always @(posedge serializer_done ) begin
-        $display(      "%d:%d", bin, data);
+        $display(      "%d:%d", bin, data_persistent);
     end
 
     // Initial stimulus
     initial begin
         // Wait for a few clock cycles to stabilize
-        clk <= 0;
-        fast_clk <= 1;
-        fsin <=0;
-        cam_en <= 0;
+        clk = 0;
+        fast_clk = 1;
+        fsin =0;
+        cam_en = 0;
 
         // Test for a few frames
         repeat (2) begin // Adjust repeat count based on testing needs
             @(posedge fsin);
-            cam_en <= 1;
-            #1; cam_en <= 0;
+            cam_en = 1;
+            #1; cam_en = 0;
         end
 
         // End simulation after testing
