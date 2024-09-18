@@ -4,9 +4,9 @@
   (keywordMap (keywordLevel 0))
   (status
     (written
-      (timestamp 2024 9 6 15 2 49)
+      (timestamp 2024 9 18 2 9 47)
       (program "SCUBA" (version "Diamond (64-bit) 3.13.0.56.2"))))
-      (comment "C:\lscc\diamond\3.13\ispfpga\bin\nt64\scuba.exe -w -n pll_ip -lang verilog -synth lse -bus_exp 7 -bb -arch sn5w00 -type pll -fin 83 -fclkop 83 -fclkop_tol 0.0 -fclkos2 500 -fclkos2_tol 5.0 -phases2 0 -phase_cntl STATIC -lock -fb_mode 1 -bw HIGH -fdc C:/Users/ethanhead/Desktop/gen3-cam-fw/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des/source/ip/pll/pll_ip/pll_ip.fdc ")
+      (comment "C:\lscc\diamond\3.13\ispfpga\bin\nt64\scuba.exe -w -n pll_ip -lang verilog -synth lse -bus_exp 7 -bb -arch sn5w00 -type pll -fin 83 -fclkop 83 -fclkop_tol 0.0 -fclkos 249 -fclkos_tol 0.0 -phases 0 -fclkos2 500 -fclkos2_tol 5.0 -phases2 0 -phase_cntl STATIC -lock -fb_mode 1 -bw HIGH -fdc C:/Users/ethanhead/Desktop/gen3-cam-fw/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des/source/ip/pll/pll_ip/pll_ip.fdc ")
   (library ORCLIB
     (edifLevel 0)
     (technology
@@ -83,6 +83,8 @@
             (direction INPUT))
           (port CLKOP
             (direction OUTPUT))
+          (port CLKOS
+            (direction OUTPUT))
           (port CLKOS2
             (direction OUTPUT))
           (port LOCK
@@ -117,7 +119,7 @@
             (property CLKOS_FPHASE
               (string "0"))
             (property CLKOS_CPHASE
-              (string "0"))
+              (string "3"))
             (property CLKOP_FPHASE
               (string "0"))
             (property CLKOP_CPHASE
@@ -142,10 +144,12 @@
               (string "DIVC"))
             (property CLKOS2_ENABLE
               (string "ENABLED"))
+            (property FREQUENCY_PIN_CLKOS
+              (string "249.000000"))
             (property OUTDIVIDER_MUXB
               (string "DIVB"))
             (property CLKOS_ENABLE
-              (string "DISABLED"))
+              (string "ENABLED"))
             (property FREQUENCY_PIN_CLKOP
               (string "83.000000"))
             (property OUTDIVIDER_MUXA
@@ -163,7 +167,7 @@
             (property CLKOS2_DIV
               (string "2"))
             (property CLKOS_DIV
-              (string "1"))
+              (string "4"))
             (property CLKOP_DIV
               (string "12"))
             (property CLKFB_DIV
@@ -201,6 +205,10 @@
             (joined
               (portRef CLKOS2)
               (portRef CLKOS2 (instanceRef PLLInst_0))))
+          (net CLKOS
+            (joined
+              (portRef CLKOS)
+              (portRef CLKOS (instanceRef PLLInst_0))))
           (net CLKOP
             (joined
               (portRef CLKOP)

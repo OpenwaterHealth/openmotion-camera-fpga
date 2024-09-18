@@ -1,14 +1,15 @@
 // Verilog netlist produced by program LSE :  version Diamond (64-bit) 3.13.0.56.2
-// Netlist written on Fri Sep 06 15:01:31 2024
+// Netlist written on Wed Sep 18 02:09:49 2024
 //
 // Verilog Description of module pll_ip
 //
 
-module pll_ip (CLKI, CLKOP, CLKOS2, LOCK) /* synthesis NGD_DRC_MASK=1, syn_module_defined=1 */ ;   // c:/users/ethanhead/desktop/gen3-cam-fw/crosslink_u3v_project/u3v_live_aud_nd_vid_explorer_des/source/ip/pll/pll_ip/pll_ip.v(8[8:14])
+module pll_ip (CLKI, CLKOP, CLKOS, CLKOS2, LOCK) /* synthesis NGD_DRC_MASK=1, syn_module_defined=1 */ ;   // c:/users/ethanhead/desktop/gen3-cam-fw/crosslink_u3v_project/u3v_live_aud_nd_vid_explorer_des/source/ip/pll/pll_ip/pll_ip.v(8[8:14])
     input CLKI;   // c:/users/ethanhead/desktop/gen3-cam-fw/crosslink_u3v_project/u3v_live_aud_nd_vid_explorer_des/source/ip/pll/pll_ip/pll_ip.v(9[16:20])
     output CLKOP;   // c:/users/ethanhead/desktop/gen3-cam-fw/crosslink_u3v_project/u3v_live_aud_nd_vid_explorer_des/source/ip/pll/pll_ip/pll_ip.v(10[17:22])
-    output CLKOS2;   // c:/users/ethanhead/desktop/gen3-cam-fw/crosslink_u3v_project/u3v_live_aud_nd_vid_explorer_des/source/ip/pll/pll_ip/pll_ip.v(11[17:23])
-    output LOCK;   // c:/users/ethanhead/desktop/gen3-cam-fw/crosslink_u3v_project/u3v_live_aud_nd_vid_explorer_des/source/ip/pll/pll_ip/pll_ip.v(12[17:21])
+    output CLKOS;   // c:/users/ethanhead/desktop/gen3-cam-fw/crosslink_u3v_project/u3v_live_aud_nd_vid_explorer_des/source/ip/pll/pll_ip/pll_ip.v(11[17:22])
+    output CLKOS2;   // c:/users/ethanhead/desktop/gen3-cam-fw/crosslink_u3v_project/u3v_live_aud_nd_vid_explorer_des/source/ip/pll/pll_ip/pll_ip.v(12[17:23])
+    output LOCK;   // c:/users/ethanhead/desktop/gen3-cam-fw/crosslink_u3v_project/u3v_live_aud_nd_vid_explorer_des/source/ip/pll/pll_ip/pll_ip.v(13[17:21])
     
     wire CLKI /* synthesis is_clock=1 */ ;   // c:/users/ethanhead/desktop/gen3-cam-fw/crosslink_u3v_project/u3v_live_aud_nd_vid_explorer_des/source/ip/pll/pll_ip/pll_ip.v(9[16:20])
     wire CLKOP /* synthesis is_clock=1 */ ;   // c:/users/ethanhead/desktop/gen3-cam-fw/crosslink_u3v_project/u3v_live_aud_nd_vid_explorer_des/source/ip/pll/pll_ip/pll_ip.v(10[17:22])
@@ -21,20 +22,20 @@ module pll_ip (CLKI, CLKOP, CLKOS2, LOCK) /* synthesis NGD_DRC_MASK=1, syn_modul
             .PHASELOADREG(scuba_vlo), .USRSTDBY(scuba_vlo), .PLLWAKESYNC(scuba_vlo), 
             .RST(scuba_vlo), .ENCLKOP(scuba_vlo), .ENCLKOS(scuba_vlo), 
             .ENCLKOS2(scuba_vlo), .ENCLKOS3(scuba_vlo), .CLKOP(CLKOP), 
-            .CLKOS2(CLKOS2), .LOCK(LOCK)) /* synthesis FREQUENCY_PIN_CLKOS2="498.000000", FREQUENCY_PIN_CLKOP="83.000000", FREQUENCY_PIN_CLKI="83.000000", ICP_CURRENT="9", LPF_RESISTOR="32", syn_instantiated=1 */ ;
+            .CLKOS(CLKOS), .CLKOS2(CLKOS2), .LOCK(LOCK)) /* synthesis FREQUENCY_PIN_CLKOS2="498.000000", FREQUENCY_PIN_CLKOS="249.000000", FREQUENCY_PIN_CLKOP="83.000000", FREQUENCY_PIN_CLKI="83.000000", ICP_CURRENT="9", LPF_RESISTOR="32", syn_instantiated=1 */ ;
     defparam PLLInst_0.FIN = "100.0000";
     defparam PLLInst_0.CLKI_DIV = 1;
     defparam PLLInst_0.CLKFB_DIV = 1;
     defparam PLLInst_0.CLKOP_DIV = 12;
-    defparam PLLInst_0.CLKOS_DIV = 1;
+    defparam PLLInst_0.CLKOS_DIV = 4;
     defparam PLLInst_0.CLKOS2_DIV = 2;
     defparam PLLInst_0.CLKOS3_DIV = 1;
     defparam PLLInst_0.CLKOP_ENABLE = "ENABLED";
-    defparam PLLInst_0.CLKOS_ENABLE = "DISABLED";
+    defparam PLLInst_0.CLKOS_ENABLE = "ENABLED";
     defparam PLLInst_0.CLKOS2_ENABLE = "ENABLED";
     defparam PLLInst_0.CLKOS3_ENABLE = "DISABLED";
     defparam PLLInst_0.CLKOP_CPHASE = 11;
-    defparam PLLInst_0.CLKOS_CPHASE = 0;
+    defparam PLLInst_0.CLKOS_CPHASE = 3;
     defparam PLLInst_0.CLKOS2_CPHASE = 1;
     defparam PLLInst_0.CLKOS3_CPHASE = 0;
     defparam PLLInst_0.CLKOP_FPHASE = 0;
@@ -59,10 +60,10 @@ module pll_ip (CLKI, CLKOP, CLKOS2, LOCK) /* synthesis NGD_DRC_MASK=1, syn_modul
     defparam PLLInst_0.STDBY_ENABLE = "DISABLED";
     defparam PLLInst_0.PLLRST_ENA = "DISABLED";
     defparam PLLInst_0.INTFB_WAKE = "DISABLED";
+    GSR GSR_INST (.GSR(VCC_net));
     PUR PUR_INST (.PUR(VCC_net));
     defparam PUR_INST.RST_PULSE = 1;
-    GSR GSR_INST (.GSR(VCC_net));
-    VHI i83 (.Z(VCC_net));
+    VHI i84 (.Z(VCC_net));
     
 endmodule
 //

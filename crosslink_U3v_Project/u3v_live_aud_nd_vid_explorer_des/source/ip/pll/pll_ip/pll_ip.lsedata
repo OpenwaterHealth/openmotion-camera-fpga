@@ -20,12 +20,13 @@
 <unit name = "pll_ip">
 
     <!--
-        Top Level Pins: 4
+        Top Level Pins: 5
     -->
 
     <pins>
         <pitem  name = "CLKI"  direction = "in"  />
         <pitem  name = "CLKOP"  direction = "out"  />
+        <pitem  name = "CLKOS"  direction = "out"  />
         <pitem  name = "CLKOS2"  direction = "out"  />
         <pitem  name = "LOCK"  direction = "out"  />
     </pins>
@@ -69,6 +70,7 @@
         <pitem  name = "ENCLKOS2"  direction = "in"  />
         <pitem  name = "ENCLKOS3"  direction = "in"  />
         <pitem  name = "CLKOP"  direction = "out"  />
+        <pitem  name = "CLKOS"  direction = "out"  />
         <pitem  name = "CLKOS2"  direction = "out"  />
         <pitem  name = "LOCK"  direction = "out"  />
         </pins>
@@ -77,6 +79,7 @@
         <nitem  name = "CLKI"  />
         <nitem  name = "CLKOP"  />
         <nitem  name = "scuba_vlo"  />
+        <nitem  name = "CLKOS"  />
         <nitem  name = "CLKOS2"  />
         <nitem  name = "LOCK"  />
         </nets>

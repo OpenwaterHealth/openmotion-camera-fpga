@@ -165,7 +165,7 @@
             <lattice:device>LIF-MD6000-6KMG80I</lattice:device>
             <lattice:synthesis>lse</lattice:synthesis>
             <lattice:date>2021-04-26.17:47:00</lattice:date>
-            <lattice:modified>2024-09-10.11:30:01</lattice:modified>
+            <lattice:modified>2024-09-18.02:10:01</lattice:modified>
             <lattice:diamond>3.13.0.56.2</lattice:diamond>
             <lattice:language>Verilog</lattice:language>
             <lattice:attributes>
@@ -255,6 +255,13 @@
                                 </spirit:wire>
                             </spirit:port>
                             <spirit:port>
+                                <spirit:name>CLKOS</spirit:name>
+                                <spirit:displayName>CLKOS</spirit:displayName>
+                                <spirit:wire>
+                                    <spirit:direction>out</spirit:direction>
+                                </spirit:wire>
+                            </spirit:port>
+                            <spirit:port>
                                 <spirit:name>CLKOS2</spirit:name>
                                 <spirit:displayName>CLKOS2</spirit:displayName>
                                 <spirit:wire>
@@ -272,12 +279,12 @@
                     </spirit:model>
                     <spirit:vendorExtensions>
                         <lattice:synthesis>lse</lattice:synthesis>
-                        <lattice:modified>2024-09-10.11:30:01</lattice:modified>
+                        <lattice:modified>2024-09-18.02:10:01</lattice:modified>
                         <lattice:attributes>
                             <lattice:attribute lattice:name="AddComponent">false</lattice:attribute>
                             <lattice:attribute lattice:name="BBox">false</lattice:attribute>
                             <lattice:attribute lattice:name="Change4to5">false</lattice:attribute>
-                            <lattice:attribute lattice:name="ChangeConfig">false</lattice:attribute>
+                            <lattice:attribute lattice:name="ChangeConfig">true</lattice:attribute>
                             <lattice:attribute lattice:name="ChangeConnect">false</lattice:attribute>
                             <lattice:attribute lattice:name="ChangeDevice">false</lattice:attribute>
                             <lattice:attribute lattice:name="ChangeLocate">false</lattice:attribute>
@@ -340,7 +347,7 @@
                             </lattice:lpcentry>
                             <lattice:lpcentry>
                                 <lattice:lpckey>Date</lattice:lpckey>
-                                <lattice:lpcvalue lattice:resolve="constant">09/06/2024</lattice:lpcvalue>
+                                <lattice:lpcvalue lattice:resolve="constant">09/18/2024</lattice:lpcvalue>
                             </lattice:lpcentry>
                             <lattice:lpcentry>
                                 <lattice:lpckey>ModuleName</lattice:lpckey>
@@ -356,7 +363,7 @@
                             </lattice:lpcentry>
                             <lattice:lpcentry>
                                 <lattice:lpckey>Time</lattice:lpckey>
-                                <lattice:lpcvalue lattice:resolve="constant">15:01:29</lattice:lpcvalue>
+                                <lattice:lpcvalue lattice:resolve="constant">02:09:46</lattice:lpcvalue>
                             </lattice:lpcentry>
                             <lattice:lpcentry>
                                 <lattice:lpckey>VendorName</lattice:lpckey>
@@ -493,7 +500,7 @@
                             </lattice:lpcentry>
                             <lattice:lpcentry>
                                 <lattice:lpckey>CLKOS_ACTUAL_FREQ</lattice:lpckey>
-                                <lattice:lpcvalue lattice:resolve="constant">83.000000</lattice:lpcvalue>
+                                <lattice:lpcvalue lattice:resolve="constant">249.000000</lattice:lpcvalue>
                             </lattice:lpcentry>
                             <lattice:lpcentry>
                                 <lattice:lpckey>CLKOS_APHASE</lattice:lpckey>
@@ -501,7 +508,7 @@
                             </lattice:lpcentry>
                             <lattice:lpcentry>
                                 <lattice:lpckey>CLKOS_DIV</lattice:lpckey>
-                                <lattice:lpcvalue lattice:resolve="constant">1</lattice:lpcvalue>
+                                <lattice:lpcvalue lattice:resolve="constant">4</lattice:lpcvalue>
                             </lattice:lpcentry>
                             <lattice:lpcentry>
                                 <lattice:lpckey>CLKOS_DPHASE</lattice:lpckey>
@@ -509,11 +516,11 @@
                             </lattice:lpcentry>
                             <lattice:lpcentry>
                                 <lattice:lpckey>CLKOS_Enable</lattice:lpckey>
-                                <lattice:lpcvalue lattice:resolve="constant">DISABLED</lattice:lpcvalue>
+                                <lattice:lpcvalue lattice:resolve="constant">ENABLED</lattice:lpcvalue>
                             </lattice:lpcentry>
                             <lattice:lpcentry>
                                 <lattice:lpckey>CLKOS_FREQ</lattice:lpckey>
-                                <lattice:lpcvalue lattice:resolve="constant">83</lattice:lpcvalue>
+                                <lattice:lpcvalue lattice:resolve="constant">249</lattice:lpcvalue>
                             </lattice:lpcentry>
                             <lattice:lpcentry>
                                 <lattice:lpckey>CLKOS_MUXB</lattice:lpckey>
@@ -638,7 +645,7 @@
                             <lattice:lpcsection lattice:name="Command"/>
                             <lattice:lpcentry>
                                 <lattice:lpckey>cmd_line</lattice:lpckey>
-                                <lattice:lpcvalue lattice:resolve="constant">-w -n pll_ip -lang verilog -synth lse -bus_exp 7 -bb -arch sn5w00 -type pll -fin 83 -fclkop 83 -fclkop_tol 0.0 -fclkos2 500 -fclkos2_tol 5.0 -phases2 0 -phase_cntl STATIC -lock -fb_mode 1 -bw HIGH</lattice:lpcvalue>
+                                <lattice:lpcvalue lattice:resolve="constant">-w -n pll_ip -lang verilog -synth lse -bus_exp 7 -bb -arch sn5w00 -type pll -fin 83 -fclkop 83 -fclkop_tol 0.0 -fclkos 249 -fclkos_tol 0.0 -phases 0 -fclkos2 500 -fclkos2_tol 5.0 -phases2 0 -phase_cntl STATIC -lock -fb_mode 1 -bw HIGH</lattice:lpcvalue>
                             </lattice:lpcentry>
                         </lattice:lpc>
                         <lattice:groups/>
@@ -752,7 +759,7 @@
                     </spirit:model>
                     <spirit:vendorExtensions>
                         <lattice:synthesis>lse</lattice:synthesis>
-                        <lattice:modified>2024-09-10.11:30:01</lattice:modified>
+                        <lattice:modified>2024-09-18.02:10:01</lattice:modified>
                         <lattice:attributes>
                             <lattice:attribute lattice:name="AddComponent">false</lattice:attribute>
                             <lattice:attribute lattice:name="BBox">false</lattice:attribute>
