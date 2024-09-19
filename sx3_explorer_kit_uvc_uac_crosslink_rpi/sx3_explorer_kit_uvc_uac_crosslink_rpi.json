@@ -3,7 +3,7 @@
   "TOOL_VERSION": "1.1.0.5",
   "CONFIG_TABLE_GENERAL": {
     "SIGNATURE": "CY",
-    "CONFIG_TABLE_CHECKSUM": "0x28937",
+    "CONFIG_TABLE_CHECKSUM": "0x28936",
     "CONFIG_TABLE_LENGTH": "0x00000CFD",
     "VERSION_MAJOR": 1,
     "VERSION_MINOR": 0,
@@ -86,7 +86,7 @@
     "BIT_FILE_PATH": "sx3_live_aud_vid_explorer_fpga_des_impl1.bit",
     "FPGA_FAMILY": "Lattice Crosslink",
     "I2C_SLAVE_ADDRESS": "0x1A",
-    "BIT_FILE_SIZE": 163513,
+    "BIT_FILE_SIZE": 163512,
     "RESERVED": "FF"
   },
   "VIDEO_SOURCE_CONFIG": [

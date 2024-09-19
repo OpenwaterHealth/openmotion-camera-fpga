@@ -2,7 +2,7 @@
 <BaliProject version="3.2" title="sx3_live_aud_vid_explorer_fpga_des" device="LIF-MD6000-6KMG80I" default_implementation="impl1">
     <Options/>
     <Implementation title="impl1" dir="impl1" description="impl1" synthesis="lse" default_strategy="Strategy1">
-        <Options def_top="Serializer" top="topmod"/>
+        <Options def_top="pll" top="topmod"/>
         <Source name="source/rtl/gpif_interface_mod.v" type="Verilog" type_short="Verilog">
             <Options/>
         </Source>
@@ -33,9 +33,6 @@
         <Source name="source/ip/vid_buf_fifo/vid_buf_fifo.sbx" type="sbx" type_short="SBX">
             <Options/>
         </Source>
-        <Source name="source/ip/pll/pll.sbx" type="sbx" type_short="SBX">
-            <Options/>
-        </Source>
         <Source name="source/rtl/aud_buffer_manager.v" type="Verilog" type_short="Verilog" excluded="TRUE">
             <Options/>
         </Source>
@@ -61,6 +58,15 @@
             <Options/>
         </Source>
         <Source name="histo_serializer.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="histo_module.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="pll/pll.sbx" type="sbx" type_short="SBX">
+            <Options/>
+        </Source>
+        <Source name="ram_dq_s/ram_dq_s.sbx" type="sbx" type_short="SBX">
             <Options/>
         </Source>
         <Source name="impl1/impl1.xcf" type="Programming Project File" type_short="Programming">

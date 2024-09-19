@@ -7,7 +7,8 @@ module histogram_module (
     input frame_valid,
     input line_valid,
     input uart_clk,
-    output uart
+    output uart,
+	output [5:0] debug
 );
 
     // Histogram generator
@@ -43,7 +44,7 @@ module histogram_module (
     histogram2 histo_i (
         .clk(clk),          // reset - zeros the histogram
         .fast_clk(fast_clk),
-        .rst(cam_en),          // clock
+        .rst(reset),          // clock
         
         .pixel (pixel_data),  // 10 bit data for each pixel
         .pixel_valid (pixel_valid),
@@ -55,12 +56,14 @@ module histogram_module (
         .histo_done(histo_done)
     );
 
+
+	assign uart = clk;
 	reg [23:0] data_persistent;
     Serializer seralizer_i (
         .fast_clk_in(uart_clk),
         .reset((state != SERIALIZE)),
         .data_in(data_persistent),
-        .serial_out(uart),
+        //.serial_out(uart),
         .slow_clk_out(),
         .done(serializer_done)
     );
@@ -70,9 +73,15 @@ module histogram_module (
 		if(data_valid) data_persistent <= data;
 		else data_persistent <= 24'b0;
 	end
-    
-    // Print out data for running agaist test
-    always @(posedge serializer_done ) begin
-        $display(      "%d:%d", bin, data_persistent);
-    end
+	
+	
+
+	assign debug[0] = uart;
+	assign debug[1] = fast_clk;
+	assign debug[2] = reset;
+	assign debug[3] = frame_valid;
+	assign debug[4] = state[0];
+	assign debug[5] = state[1];
+
+	
 endmodule

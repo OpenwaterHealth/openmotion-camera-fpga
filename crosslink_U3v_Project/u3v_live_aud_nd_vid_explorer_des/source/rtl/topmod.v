@@ -87,11 +87,11 @@ OSCI int_osc
 );
 
 //	PLL Instance for 720p and 1080p resolution.
-pll_ip pll_inst (
-	.CLKI	( rx_clk_byte_fr /* clk_osc*/ ),
+pll pll_inst (
+	.CLKI	( rx_clk_byte_fr  ),
 	.CLKOP	(clk_pixel),    // 84 MHz
-	.CLKOS	(clk_histo),  // 249 MHz
-	.CLKOS2 (clk_pixel_hs),// 500
+	.CLKOS	(clk_pixel_hs),  // 249 MHz
+	//.CLKOS2 (),// 500
 	.LOCK	(pll_lock)
 );
 
@@ -138,9 +138,9 @@ end
  	.lv_o				(  cmos_lv ),
  	.rx_clk_byte_fr_o	(rx_clk_byte_fr),
  	.clk_pixel_i		(clk_pixel3),
- 	.pll_lock_i			(pll_lock),
+ 	.pll_lock_i			(pll_lock)
 	//.test_out           (mic_clk_o),
-	.debug				(debug)
+	//.debug				(debug)
  );
  
 // assign the outputs from the camera to the GPIOS
@@ -156,27 +156,46 @@ wire frame_valid = cmos_fv;           // Frame synchronization signal
 wire [9:0] pixel_data = cmos_data;      // 16-bit bus for pixel data
 
 wire uart;
-wire uart_clk = clk_pixel;
-wire histo_clk = clk_histo;
-wire histo_clk_hs = clk_pixel_hs;
+wire clk_uart = clk_pixel;
+wire clk_histo_hs = clk_pixel_hs;
+
+
+defparam I1.DIV = "2.0";
+defparam I1.GSR = "DISABLED";
+
+CLKDIVG I1(
+	.RST 	(0),
+	.CLKI	(clk_pixel_hs),
+	.ALIGNWD (0),
+	.CDIVX	(clk_histo)
+	);
+//assign mic_clk_o = clk_histo;
+
+reg [9:0] cmos_data_x;
+reg cmos_fv_x;
+reg cmos_lv_x;
+
+always @(posedge clk_histo) begin
+	cmos_data_x <= cmos_data;
+	cmos_fv_x <= cmos_fv;	
+	cmos_lv_x <= cmos_lv;
+end
 
 histogram_module histogram_module_i(
-	.clk (histo_clk),
-	.fast_clk (histo_clk_hs),
-	.reset(cam_en),
-	.pixel_data (pixel_data),
-	.frame_valid (frame_valid),
-	.line_valid (line_valid),
-	.uart_clk (uart_clk),
-	.uart (uart)
+	.clk 		(clk_histo),
+	.fast_clk 	(clk_histo_hs),
+	.reset		(mipi_reset_n_o),
+	.pixel_data (pixel_data_x),
+	.frame_valid (frame_valid_x),
+	.line_valid (line_valid_x),
+	.uart_clk 	(clk_uart),
+	.uart 		(uart),
+	.debug		(debug)
 );
 
-assign mic_clk_o = uart;
 
 
-
-
-
+assign mic_clk_o = cmos_fv_x;
 
 
 
@@ -191,7 +210,7 @@ localparam U3V=0;
 localparam UVC_FL=1;
 
 // ODDR to drive GPIF Clock out
-ODDRX1F SX3_CLOCK ( .D0(1'b1), .D1(1'b0), .SCLK(clk_pixel), .RST(1'b0), .Q(slclk_o) );
+//ODDRX1F SX3_CLOCK ( .D0(1'b1), .D1(1'b0), .SCLK(clk_pixel), .RST(1'b0), .Q(slclk_o) );
 
 
 // sx3
