@@ -57,13 +57,12 @@ module histogram_module (
     );
 
 
-	assign uart = clk;
 	reg [23:0] data_persistent;
     Serializer seralizer_i (
         .fast_clk_in(uart_clk),
         .reset((state != SERIALIZE)),
         .data_in(data_persistent),
-        //.serial_out(uart),
+        .serial_out(uart),
         .slow_clk_out(),
         .done(serializer_done)
     );
