@@ -15,15 +15,15 @@ module Serializer(
         if (reset) begin
             count <= 24;
             serial_out <= 1'b0; // Start with a low output
-            done = 1;
+            done <= 1;
         end else begin
             if (count < 24) begin
                 serial_out <= data_in[23 - count]; // Output the current bit of data_in
                 count <= count + 1;
-                done = 0;
+                done <= 0;
             end else begin
                 count <= 0; // Reset count after serializing all bits
-                done = 1;
+                done <= 1;
             end
         end
     end

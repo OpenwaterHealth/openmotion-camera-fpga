@@ -23,10 +23,10 @@
 -use_io_reg 1
 
 -lpf 1
--p C:/project_Files/U3Vision_Project/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des/source/ip/pll/pll_ip
--ver "C:/lscc/diamond/3.12/cae_library/synthesis/verilog/lifmd.v"
-"C:/lscc/diamond/3.12/cae_library/synthesis/verilog/pmi_def.v"
-"C:/project_Files/U3Vision_Project/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des/source/ip/pll/pll_ip/pll_ip.v"
+-p C:/Users/ethanhead/Desktop/gen3-cam-fw/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des/source/ip/pll/pll_ip
+-ver "C:/lscc/diamond/3.13/cae_library/synthesis/verilog/lifmd.v"
+"C:/lscc/diamond/3.13/cae_library/synthesis/verilog/pmi_def.v"
+"C:/Users/ethanhead/Desktop/gen3-cam-fw/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des/source/ip/pll/pll_ip/pll_ip.v"
 -top pll_ip
--ngo "C:/project_Files/U3Vision_Project/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des/source/ip/pll/pll_ip/pll_ip.ngo"
+-ngo "C:/Users/ethanhead/Desktop/gen3-cam-fw/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des/source/ip/pll/pll_ip/pll_ip.ngo"
 		

@@ -1,11 +1,8 @@
 BLOCK RESETPATHS ;
 BLOCK ASYNCPATHS ;
-
 ############		Location and IO Constraints		############
-
 #	Input Reset
 LOCATE COMP "reset_n_i" SITE "J4" ;
-
 #	SX3 interface
 LOCATE COMP "slclk_o" SITE "J8" ;# pixel data clock output
 LOCATE COMP "sldata_o[0]" SITE "K6" ;# pixel data output
@@ -20,58 +17,41 @@ LOCATE COMP "sldata_o[8]" SITE "D9" ;
 #LOCATE COMP "flaga_count_index" SITE "D9" ;
 LOCATE COMP "sldata_o[9]" SITE "D10" ;
 #LOCATE COMP "buf_done_o" SITE "D10" ;
-LOCATE COMP "sldata_o[10]" SITE "E10" ;
 #LOCATE COMP "cur_gpif_st_o[0]" SITE "E10" ;
-LOCATE COMP "sldata_o[11]" SITE "F9" ;
 #LOCATE COMP "cur_gpif_st_o[1]" SITE "F9" ;
-LOCATE COMP "sldata_o[12]" SITE "F10" ;
 #LOCATE COMP "pktend_g_o" SITE "F10" ;
-LOCATE COMP "sldata_o[13]" SITE "G9" ;
 #LOCATE COMP "current_stream_in_state_o[0]" SITE "G9" ;
-LOCATE COMP "sldata_o[14]" SITE "G10" ;
 #LOCATE COMP "cam_app_en" SITE "G10" ;
-LOCATE COMP "sldata_o[15]" SITE "J7" ;
 #LOCATE COMP "cam_fifo_overflow" SITE "J7" ;
-
 LOCATE COMP "slcs_o" SITE "E2" ;
 LOCATE COMP "slwr_o" SITE "K5" ;
 LOCATE COMP "sloe_o" SITE "J5" ;
 LOCATE COMP "slrd_o" SITE "K9" ;
 ########## Rev03 ##########################
-LOCATE COMP "flagb_i" SITE "H9" ;	# DMA_Ready 
-LOCATE COMP "flaga_i" SITE "J10" ;	# DMA_Partial
-
+LOCATE COMP "flagb_i" SITE "H9" ;# DMA_Ready 
+LOCATE COMP "flaga_i" SITE "J10" ;# DMA_Partial
 LOCATE COMP "pktend_o" SITE "K10" ;
 LOCATE COMP "sl_addr_o[0]" SITE "K4" ;# Address lines for 32/16 bit bus Widths
 LOCATE COMP "sl_addr_o[1]" SITE "E9" ;# Address lines for 32/16 bit bus Widths
 LOCATE COMP "mic_clk_o" SITE "K8" ;
-LOCATE COMP "mic_pdm_data_i" SITE "J9" ;
-
+//LOCATE COMP "mic_pdm_data_i" SITE "J9" ;
 # System I2C
 LOCATE COMP "sx3_i2c_sda_io" SITE "J1" ;
 LOCATE COMP "sx3_i2c_scl_io" SITE "H1" ;
-
 # Following is the constrain for using MIPI port. By default, it uses port 0
 # but here, port 1 is used.
 LOCATE COMP "mipidphy2cmos/rx_dphy/csi_dphy_rx_inst/dphy_rx_inst/u_dphy_wrapper/MIXEL.mixel_dphy" SITE "MIPIDPHY1" ;
-
-
-
 # Temp outputs
 ##  LOCATE COMP "cam_fifo_overflow"            SITE "G1"   ;  # G1- MOSI -fv
 ##  LOCATE COMP "cam_app_en"            SITE "K1"   ;  # K1-MISO
 ##  LOCATE COMP "no_of_clk_pulses_in_fv_o"  SITE "K9"   ;  # SLRD
-
-  IOBUF PORT "cam_fifo_overflow"            IO_TYPE=LVCMOS33 ; 
-  IOBUF PORT "cam_app_en"            IO_TYPE=LVCMOS33 ;
-  IOBUF PORT "no_of_clk_pulses_in_fv_o"  IO_TYPE=LVCMOS33 ;
-
+IOBUF PORT "cam_fifo_overflow" IO_TYPE=LVCMOS33 ;
+IOBUF PORT "cam_app_en" IO_TYPE=LVCMOS33 ;
+IOBUF PORT "no_of_clk_pulses_in_fv_o" IO_TYPE=LVCMOS33 ;
 SYSCONFIG SLAVE_SPI_PORT=DISABLE I2C_PORT=DISABLE CDONE_PORT=CDONE_USER_IO BOOT_UP_SEQUENCE=NVCM ;
-
 BANK 0 VCCIO 3.3 V;
 BANK 1 VCCIO 3.3 V;
 BANK 2 VCCIO 3.3 V;
-
 IOBUF PORT "reset_n_i" IO_TYPE=LVCMOS33 PULLMODE=UP ;
 IOBUF PORT "slclk_o" IO_TYPE=LVCMOS33 ;
 IOBUF PORT "sldata_o[0]" IO_TYPE=LVCMOS33 ;
@@ -86,17 +66,11 @@ IOBUF PORT "sldata_o[8]" IO_TYPE=LVCMOS33 ;
 IOBUF PORT "flaga_count_index" IO_TYPE=LVCMOS33 ;
 IOBUF PORT "sldata_o[9]" IO_TYPE=LVCMOS33 ;
 IOBUF PORT "buf_done_o" IO_TYPE=LVCMOS33 ;
-IOBUF PORT "sldata_o[10]" IO_TYPE=LVCMOS33 ;
 IOBUF PORT "cur_gpif_st_o[0]" IO_TYPE=LVCMOS33 ;
-IOBUF PORT "sldata_o[11]" IO_TYPE=LVCMOS33 ;
 IOBUF PORT "cur_gpif_st_o[1]" IO_TYPE=LVCMOS33 ;
-IOBUF PORT "sldata_o[12]" IO_TYPE=LVCMOS33 ;
 //IOBUF PORT "pktend_g_o" IO_TYPE=LVCMOS33 ;
-IOBUF PORT "sldata_o[13]" IO_TYPE=LVCMOS33 ;
 IOBUF PORT "current_stream_in_state_o[0]" IO_TYPE=LVCMOS33 ;
-IOBUF PORT "sldata_o[14]" IO_TYPE=LVCMOS33 ;
 IOBUF PORT "current_stream_in_state_o[1]" IO_TYPE=LVCMOS33 ;
-IOBUF PORT "sldata_o[15]" IO_TYPE=LVCMOS33 ;
 IOBUF PORT "vid_buf_dvld" IO_TYPE=LVCMOS33 ;
 #IOBUF PORT "rx_sp_en" IO_TYPE=LVCMOS33 ;
 IOBUF PORT "slcs_o" IO_TYPE=LVCMOS33 ;
@@ -111,19 +85,14 @@ IOBUF PORT "sx3_i2c_sda_io" IO_TYPE=LVCMOS33 PULLMODE=NONE ;
 IOBUF PORT "sloe_o" IO_TYPE=LVCMOS33 ;
 IOBUF PORT "slrd_o" IO_TYPE=LVCMOS33 ;
 IOBUF PORT "mic_clk_o" IO_TYPE=LVCMOS33 ;
-IOBUF PORT "mic_pdm_data_i" IO_TYPE=LVCMOS33 PULLMODE=NONE ;
-
-
+//IOBUF PORT "mic_pdm_data_i" IO_TYPE=LVCMOS33 PULLMODE=NONE ;
 ###########		Timing Constarints			############
 BLOCK JTAGPATHS ;
-
-FREQUENCY NET "clk_osc" 48 MHz ;
-FREQUENCY NET "clk_pixel" 83.75 MHz ; # For 1080p and 720p resolutions
+FREQUENCY NET "clk_osc" 48.000000 MHz ;
+FREQUENCY NET "clk_pixel" 83.750000 MHz ;# For 1080p and 720p resolutions
 #FREQUENCY NET "clk_pixel" 16 MHz ; # For VGA resolution
 #FREQUENCY NET "clk_pixel" 80 MHz ; # For VGA resolution
 #FREQUENCY NET "mic_clk_o_c" 3.072 MHz ;
-
-
 # -----------------------------------------------------------------
 #
 # Input Delay
@@ -152,15 +121,12 @@ FREQUENCY NET "clk_pixel" 83.75 MHz ; # For 1080p and 720p resolutions
 # Input Delay for 83.75 MHz PCLK
 #  INPUT PORT "flaga_i" SETUP 3.554700 ns HOLD 0.300000 ns CLKNET "clk_pixel" ;
 #  INPUT PORT "flagb_i" SETUP 3.554700 ns HOLD 0.300000 ns CLKNET "clk_pixel" ;
-
 # For 16 MHz PCLK
 # INPUT PORT "flaga_i" SETUP 54.15 ns HOLD 0.300000 ns CLKNET "clk_pixel" ;
 # INPUT PORT "flagb_i" SETUP 54.15 ns HOLD 0.300000 ns CLKNET "clk_pixel" ;
-
 # For 80 MHz PCLK
- INPUT PORT "flaga_i" SETUP 4.15 ns HOLD 0.49700000 ns CLKNET "clk_pixel" ;
- INPUT PORT "flagb_i" SETUP 4.15 ns HOLD 0.6100000 ns CLKNET "clk_pixel" ;
-
+INPUT PORT "flaga_i" SETUP 4.150000 ns HOLD 0.497000 ns CLKNET "clk_pixel" ;
+INPUT PORT "flagb_i" SETUP 4.150000 ns HOLD 0.610000 ns CLKNET "clk_pixel" ;
 # -----------------------------------------------------------------
 #
 # Clock to Output Delay
@@ -188,34 +154,42 @@ FREQUENCY NET "clk_pixel" 83.75 MHz ; # For 1080p and 720p resolutions
 #               = 0 - 0.1 + 0.1 = 0 ns
 #
 # -----------------------------------------------------------------
-
 # CLOCK_TO_OUT PORT "sldata_o[*]" MAX 9.754700 ns MIN 0.000000 ns CLKNET "clk_pixel" CLKOUT PORT "slclk_o" ;
 # # For the following the ports, consider Thp = 0.5 ns
 # CLOCK_TO_OUT PORT "slwr_o" MAX 9.754700 ns MIN 0.500000 ns CLKNET "clk_pixel" CLKOUT PORT "slclk_o" ;
 # CLOCK_TO_OUT PORT "pktend_o" MAX 9.754700 ns MIN 0.500000 ns CLKNET "clk_pixel" CLKOUT PORT "slclk_o" ;
 # CLOCK_TO_OUT PORT "sl_addr_o[*]" MAX 9.754700 ns MIN 0.500000 ns CLKNET "clk_pixel" CLKOUT PORT "slclk_o" ;
-
 # CLOCK_TO_OUT PORT "sldata_o[*]"  MAX 60.15 ns MIN 0.000000 ns CLKNET "clk_pixel" CLKOUT PORT "slclk_o" ;
 # # For the following the ports, consider Thp = 0.5 ns
 # CLOCK_TO_OUT PORT "slwr_o"       MAX 60.15 ns MIN 0.500000 ns CLKNET "clk_pixel" CLKOUT PORT "slclk_o" ;
 # CLOCK_TO_OUT PORT "pktend_o"     MAX 60.15 ns MIN 0.500000 ns CLKNET "clk_pixel" CLKOUT PORT "slclk_o" ;
 # CLOCK_TO_OUT PORT "sl_addr_o[*]" MAX 60.15 ns MIN 0.500000 ns CLKNET "clk_pixel" CLKOUT PORT "slclk_o" ;
-
- CLOCK_TO_OUT PORT "sldata_o[*]"  MAX 10.15 ns MIN 0.000000 ns CLKNET "clk_pixel" CLKOUT PORT "slclk_o" ;
- # For the following the ports, consider Thp = 0.5 ns
- CLOCK_TO_OUT PORT "slwr_o"       MAX 10.15 ns MIN 0.500000 ns CLKNET "clk_pixel" CLKOUT PORT "slclk_o" ;
- CLOCK_TO_OUT PORT "pktend_o"     MAX 10.15 ns MIN 0.500000 ns CLKNET "clk_pixel" CLKOUT PORT "slclk_o" ;
- CLOCK_TO_OUT PORT "sl_addr_o[*]" MAX 10.15 ns MIN 0.500000 ns CLKNET "clk_pixel" CLKOUT PORT "slclk_o" ;
-
+CLOCK_TO_OUT PORT "sldata_o[*]" MAX 10.150000 ns MIN 0.000000 ns CLKNET "clk_pixel" CLKOUT PORT "slclk_o" ;
+# For the following the ports, consider Thp = 0.5 ns
+CLOCK_TO_OUT PORT "slwr_o" MAX 10.150000 ns MIN 0.500000 ns CLKNET "clk_pixel" CLKOUT PORT "slclk_o" ;
+CLOCK_TO_OUT PORT "pktend_o" MAX 10.150000 ns MIN 0.500000 ns CLKNET "clk_pixel" CLKOUT PORT "slclk_o" ;
+CLOCK_TO_OUT PORT "sl_addr_o[*]" MAX 10.150000 ns MIN 0.500000 ns CLKNET "clk_pixel" CLKOUT PORT "slclk_o" ;
 BLOCK PATH FROM CLKNET "clk_osc" TO CLKNET "clk_pixel" ;
 BLOCK PATH FROM CLKNET "clk_pixel" TO CLKNET "clk_osc" ;
-
-BLOCK PATH FROM CLKNET "mic_clk_o_c" TO CLKNET "clk_pixel" ;
-BLOCK PATH FROM CLKNET "clk_pixel" TO CLKNET "mic_clk_o_c" ;
-
-BLOCK PATH FROM CELL "rst_brg_osc/rst_meta_8"  ;
-BLOCK PATH FROM CELL "rst_brg_pix/rst_meta_8"  ;
-
+//BLOCK PATH FROM CLKNET "mic_clk_o_c" TO CLKNET "clk_pixel" ;
+//BLOCK PATH FROM CLKNET "clk_pixel" TO CLKNET "mic_clk_o_c" ;
+//BLOCK PATH FROM CELL "rst_brg_osc/rst_meta_8" ;
+//BLOCK PATH FROM CELL "rst_brg_pix/rst_meta_8" ;
 BLOCK PATH FROM CELL "sync_cam_en/data_src_r*" TO CELL "sync_cam_en/data_m1_r_8" ;
 BLOCK PATH FROM CELL "sync_vidrst/data_src_r_7" TO CELL "sync_vidrst/data_m1_r_8" ;
 BLOCK PATH FROM CELL "sync_img_size/data_src_r*" TO CELL "sync_img_size/data_m1_r*" ;
+LOCATE COMP "cam_clk" SITE "J9" ;
+IOBUF PORT "cam_clk" IO_TYPE=LVCMOS33 PULLMODE=NONE DRIVE=8 OPENDRAIN=OFF DIFFRESISTOR=OFF HYSTERESIS=NA DIFFDRIVE="NA" CLAMP=ON SLEWRATE=NA ;
+
+LOCATE COMP "debug[0]" SITE "E10" ;
+LOCATE COMP "debug[1]" SITE "F9" ;
+LOCATE COMP "debug[2]" SITE "F10" ;
+LOCATE COMP "debug[3]" SITE "G9" ;
+LOCATE COMP "debug[4]" SITE "G10" ;
+LOCATE COMP "debug[5]" SITE "J7" ;
+IOBUF PORT "debug[0]" IO_TYPE=LVCMOS33 ;
+IOBUF PORT "debug[1]" IO_TYPE=LVCMOS33 ;
+IOBUF PORT "debug[2]" IO_TYPE=LVCMOS33 ;
+IOBUF PORT "debug[3]" IO_TYPE=LVCMOS33 ;
+IOBUF PORT "debug[4]" IO_TYPE=LVCMOS33 ;
+IOBUF PORT "debug[5]" IO_TYPE=LVCMOS33 ;

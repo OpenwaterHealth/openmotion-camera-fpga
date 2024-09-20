@@ -34,49 +34,49 @@ module camera_data_gen (
   always @(posedge clk) begin
     if (out_en) begin
       if(wait_counter > 0) begin
-        wait_counter = wait_counter - 1;
-        line_valid = 0;
-        pixel_data = 0;
+        wait_counter <= wait_counter - 1;
+        line_valid <= 0;
+        pixel_data <= 0;
       end else begin
         // Increment pixel count
-        pixel_count = pixel_count + 1;
+        pixel_count <= pixel_count + 1;
 
         // Check for end of line
         if (pixel_count == WIDTH + 1 ) begin
-          pixel_count = 0;
-          line_valid   = 0;  // Assert line sync at the beginning of a line
-          wait_counter = TICKS_TO_WAIT_LV; 
+          pixel_count <= 0;
+          line_valid   <= 0;  // Assert line sync at the beginning of a line
+          wait_counter <= TICKS_TO_WAIT_LV; 
         end else begin
-          line_valid = 1;
+          line_valid <= 1;
         end
 
         // Check for end of frame
         if (pixel_count == 0 && line_count == HEIGHT ) begin  // at the end of the frame...
-          line_count = 0;
-          frame_valid = 0; 
-          //wait_counter = TICKS_TO_WAIT_FV; // not necessary since the frames are synced to FSIN
+          line_count <= 0;
+          frame_valid <= 0; 
+          //wait_counter <= TICKS_TO_WAIT_FV; // not necessary since the frames are synced to FSIN
 
         end else if (pixel_count == 0) begin
-          line_count = line_count + 1;
-          frame_valid = 1;
+          line_count <= line_count + 1;
+          frame_valid <= 1;
         end else if (pixel_count ==1 && line_count == 0) begin
-          frame_valid = 1;
+          frame_valid <= 1;
         end
 
         // Output pixel data
-        pixel_number = line_count*WIDTH + (pixel_count-1);
-        pixel_data = image_data[(line_count) * WIDTH + (pixel_count-1)]; // Ignore Blue channel (in this example)
+        //pixel_number <= line_count*WIDTH + (pixel_count-1);
+        pixel_data <= image_data[(line_count-1) * WIDTH + (pixel_count-1)]; // Ignore Blue channel (in this example)
       end
 
     end else begin
-        line_count = 0;
-        pixel_count = 0;
-        frame_valid = 0;
+        line_count <= 0;
+        pixel_count <= 0;
+        frame_valid <= 0;
     end
   end
 
   always @(posedge en, posedge done) begin 
-    if(done) begin out_en = 0; end
-    else  begin out_en = 1; end
+    if(done) begin out_en <= 0; end
+    else  begin out_en <= 1; end
   end
 endmodule

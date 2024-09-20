@@ -26,7 +26,7 @@ module rx_dphy_ip (csi_dphy_rx_bd_o, csi_dphy_rx_dt_o, csi_dphy_rx_ecc_o,
     output [7:0]csi_dphy_rx_ecc_o;
     output [1:0]csi_dphy_rx_lp_hs_state_clk_o;
     output [1:0]csi_dphy_rx_lp_hs_state_d_o;
-    output [15:0]csi_dphy_rx_payload_o;
+    output [31:0]csi_dphy_rx_payload_o;
     input [5:0]csi_dphy_rx_ref_dt_i;
     output [1:0]csi_dphy_rx_vc_o;
     output [15:0]csi_dphy_rx_wc_o;

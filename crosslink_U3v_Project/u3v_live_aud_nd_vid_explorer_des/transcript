@@ -1,0 +1,31 @@
+# Reading pref.tcl
+# do {C:/Users/ethanhead/Desktop/gen3-cam-fw/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des/histo_module_tb/histo_module_tb.mdo}
+# Loading project histo_module_tb
+# Model Technology ModelSim - Lattice FPGA Edition vlog 2020.3 Compiler 2020.10 Oct 14 2020
+# Start time: 13:22:07 on Sep 19,2024
+# vlog -reportprogress 300 "+incdir+C:/Users/ethanhead/Desktop/gen3-cam-fw/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des/source/rtl" -work work C:/Users/ethanhead/Desktop/gen3-cam-fw/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des/source/rtl/gpif_interface_mod.v 
+# -- Compiling module gpif_interface_mod
+# 
+# Top level modules:
+# 	gpif_interface_mod
+# End time: 13:22:07 on Sep 19,2024, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim - Lattice FPGA Edition vlog 2020.3 Compiler 2020.10 Oct 14 2020
+# Start time: 13:22:07 on Sep 19,2024
+# vlog -reportprogress 300 "+incdir+C:/Users/ethanhead/Desktop/gen3-cam-fw/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des/source/rtl" -work work C:/Users/ethanhead/Desktop/gen3-cam-fw/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des/source/rtl/gpif_interface_top.v 
+# -- Compiling module gpif_interface_top
+# ** Error (suppressible): C:/Users/ethanhead/Desktop/gen3-cam-fw/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des/source/rtl/gpif_interface_top.v(126): (vlog-2388) 'cur_gpif_st' already declared in this scope (gpif_interface_top) at C:/Users/ethanhead/Desktop/gen3-cam-fw/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des/source/rtl/gpif_interface_top.v(85).
+# ** Error (suppressible): C:/Users/ethanhead/Desktop/gen3-cam-fw/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des/source/rtl/gpif_interface_top.v(132): (vlog-2388) 'send_traling_zlp' already declared in this scope (gpif_interface_top) at C:/Users/ethanhead/Desktop/gen3-cam-fw/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des/source/rtl/gpif_interface_top.v(93).
+# ** Error (suppressible): C:/Users/ethanhead/Desktop/gen3-cam-fw/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des/source/rtl/gpif_interface_top.v(133): (vlog-2388) 'send_leading_zlp' already declared in this scope (gpif_interface_top) at C:/Users/ethanhead/Desktop/gen3-cam-fw/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des/source/rtl/gpif_interface_top.v(94).
+# ** Error (suppressible): C:/Users/ethanhead/Desktop/gen3-cam-fw/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des/source/rtl/gpif_interface_top.v(134): (vlog-2388) 'vid_frame_end' already declared in this scope (gpif_interface_top) at C:/Users/ethanhead/Desktop/gen3-cam-fw/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des/source/rtl/gpif_interface_top.v(92).
+# ** Error (suppressible): C:/Users/ethanhead/Desktop/gen3-cam-fw/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des/source/rtl/gpif_interface_top.v(139): (vlog-2388) 'buf_done_o' already declared in this scope (gpif_interface_top) at C:/Users/ethanhead/Desktop/gen3-cam-fw/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des/source/rtl/gpif_interface_top.v(86).
+# ** Error (suppressible): C:/Users/ethanhead/Desktop/gen3-cam-fw/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des/source/rtl/gpif_interface_top.v(141): (vlog-2388) 'fifo_ae' already declared in this scope (gpif_interface_top) at C:/Users/ethanhead/Desktop/gen3-cam-fw/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des/source/rtl/gpif_interface_top.v(90).
+# End time: 13:22:07 on Sep 19,2024, Elapsed time: 0:00:00
+# Errors: 6, Warnings: 0
+# ** Error: C:/lscc/diamond/3.12/modeltech/win32loem/vlog failed.
+# Error in macro C:\Users\ethanhead\Desktop\gen3-cam-fw\crosslink_U3v_Project\u3v_live_aud_nd_vid_explorer_des\histo_module_tb\histo_module_tb.mdo line 77
+# C:/lscc/diamond/3.12/modeltech/win32loem/vlog failed.
+#     while executing
+# "vlog  +incdir+C:/Users/ethanhead/Desktop/gen3-cam-fw/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des/source/rtl  -work work  "C:/Users/ethanhea..."
+#     invoked from within
+# "if {![file exists "C:/Users/ethanhead/Desktop/gen3-cam-fw/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des/histo_module_tb/histo_module_tb.mpf"]..."

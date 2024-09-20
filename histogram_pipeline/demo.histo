@@ -145,12 +145,12 @@ VCD info: dumpfile out/camera_pipeline_tb.vcd opened for output.
         141:       0
         142:       0
         143:       0
-        144:   31073
+        144:   31076
         145:       0
         146:       0
-        147:       1
-        148:   27951
-        149:       1
+        147:       0
+        148:   27950
+        149:       0
         150:       0
         151:       0
         152:   23773
@@ -1024,5 +1024,7 @@ VCD info: dumpfile out/camera_pipeline_tb.vcd opened for output.
        1020:   27577
        1021:       0
        1022:       0
+       1023:       0
+
 << Histogram End >>
 camera_pipeline_tb.v:89: $finish called at 44679236000 (1ps)

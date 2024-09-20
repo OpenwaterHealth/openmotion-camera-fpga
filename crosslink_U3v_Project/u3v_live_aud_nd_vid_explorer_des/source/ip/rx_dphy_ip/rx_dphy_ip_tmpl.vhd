@@ -6,7 +6,7 @@ component rx_dphy_ip is
         csi_dphy_rx_ecc_o: out std_logic_vector(7 downto 0);
         csi_dphy_rx_lp_hs_state_clk_o: out std_logic_vector(1 downto 0);
         csi_dphy_rx_lp_hs_state_d_o: out std_logic_vector(1 downto 0);
-        csi_dphy_rx_payload_o: out std_logic_vector(15 downto 0);
+        csi_dphy_rx_payload_o: out std_logic_vector(31 downto 0);
         csi_dphy_rx_ref_dt_i: in std_logic_vector(5 downto 0);
         csi_dphy_rx_vc_o: out std_logic_vector(1 downto 0);
         csi_dphy_rx_wc_o: out std_logic_vector(15 downto 0);
