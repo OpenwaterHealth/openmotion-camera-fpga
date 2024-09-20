@@ -42,7 +42,8 @@ module camera_pipeline_tb;
         .frame_valid (frame_valid),
         .line_valid (line_valid),
         .uart_clk (uart_clk),
-        .uart (uart)
+        .uart (uart),
+		.debug ()
     );
 
     // Initial stimulus
@@ -64,10 +65,14 @@ module camera_pipeline_tb;
         $finish;
     end
 
-    initial begin
+   PUR PUR_INST(.PUR(1'b1));
+   GSR GSR_INST(.GSR(1'b1));
+
+/*    initial begin
         $dumpfile("out/histogram_module_tb.vcd");
         $dumpvars(0, camera_pipeline_tb);  // Dump all signals
     end
+*/
 
     // Clock generation
     always #((CLK_PERIOD)/2) clk = ~clk;                // 50Mhz

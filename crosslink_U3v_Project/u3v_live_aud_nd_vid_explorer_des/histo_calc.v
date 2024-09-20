@@ -18,14 +18,12 @@ module histogram2 (
     parameter READ = 0, WRITE = 1;
 
     // Clock and reset
-    //wire mem_clk = fast_clk;
     wire mem_reset = rst;
 
     // Histogram output
     reg [23:0] mem_in;
     wire [23:0] mem_out;
-    //reg [9:0] mem_addr;
-	wire [9:0] mem_addr = rw ? pixel : bin;
+    wire [9:0] mem_addr = rw ? pixel : bin;
     
     // RAM module instance
     ram_dq_s ram_inst (
@@ -61,28 +59,6 @@ module histogram2 (
             mem_in = 0;
         end
     end
-    
-    // always @(negedge rw) begin  // reset mem_addr when going from write to read mode
-    //     mem_addr = 0;
-    // end
-
-    // set up negative edge detection for rw
-    // reg rw_prev;
-    // always @(posedge fast_clk) begin
-    //     rw_prev = rw;
-    // end
-    // wire rw_negedge = (rw==0) && (rw_prev != rw);
-
-    // reg [9:0] prev_mem_addr = 0;
-    // reg new_addr;
-    // always @(posedge fast_clk) begin
-    //     new_addr = (mem_addr!= prev_mem_addr);
-    //     prev_mem_addr = mem_addr;
-    // end
-
-    // always @(negedge new_addr) begin
-    //     data <= hist_o;
-    // end
     
     
     always @(posedge fast_clk) begin

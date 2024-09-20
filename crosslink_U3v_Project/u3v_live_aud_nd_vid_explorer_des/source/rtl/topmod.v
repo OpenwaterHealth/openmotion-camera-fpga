@@ -174,20 +174,22 @@ CLKDIVG I1(
 reg [9:0] cmos_data_x;
 reg cmos_fv_x;
 reg cmos_lv_x;
+reg rst_histo_x;
 
 always @(posedge clk_histo) begin
 	cmos_data_x <= cmos_data;
 	cmos_fv_x <= cmos_fv;	
 	cmos_lv_x <= cmos_lv;
+	rst_histo_x <= reset_n_i;
 end
 
 histogram_module histogram_module_i(
 	.clk 		(clk_histo),
 	.fast_clk 	(clk_histo_hs),
-	.reset		(mipi_reset_n_o),
-	.pixel_data (pixel_data_x),
-	.frame_valid (frame_valid_x),
-	.line_valid (line_valid_x),
+	.reset		(rst_histo_x),
+	.pixel_data (cmos_data_x),
+	.frame_valid (cmos_fv_x),
+	.line_valid (cmos_lv_x),
 	.uart_clk 	(clk_uart),
 	.uart 		(uart),
 	.debug		(debug)
