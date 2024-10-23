@@ -1,0 +1,5 @@
+topmod,/,C:/Users/openwater/Projects/gen3-cam-fw/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des/source/rtl/topmod.v
+tb,/,C:/Users/openwater/Projects/gen3-cam-fw/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des/source/ip/rx_dphy_ip/csi_dphy_rx/dphy_rx_eval/testbench/csi_dphy_rx_tb.v
+intermediate_dc_fifo,/,C:/Users/openwater/Projects/gen3-cam-fw/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des/source/ip/intermediate_dc_fifo/intermediate_dc_fifo.v
+ping_pong_buffer,/,C:/Users/openwater/Projects/gen3-cam-fw/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des/source/ip/ping_pong_buffer/ping_pong_buffer.v
+mipi_ip_reset_manager,/,C:/Users/openwater/Projects/gen3-cam-fw/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des/source/rtl/mipi_ip_reset_manager.v

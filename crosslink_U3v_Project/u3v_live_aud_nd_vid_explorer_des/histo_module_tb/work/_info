@@ -1,0 +1,36 @@
+m255
+K4
+z2
+!s11f vlog 2020.3 2020.10, Oct 14 2020
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z0 dC:/Users/ethanhead/Desktop/gen3-cam-fw/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des/histo_module_tb
+vgpif_interface_mod
+!s110 1726777327
+!i10b 1
+!s100 VijhN:a4=dRNMHAkdAF:`1
+!s11b Dg1SIo80bB@j0V0VzS_@n1
+I>Yo^cfQ`O13BzUFo9UUlB0
+R0
+w1723745609
+8C:/Users/ethanhead/Desktop/gen3-cam-fw/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des/source/rtl/gpif_interface_mod.v
+FC:/Users/ethanhead/Desktop/gen3-cam-fw/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des/source/rtl/gpif_interface_mod.v
+!i122 0
+L0 29 1013
+VDg1SIo80bB@j0V0VzS_@n1
+OT;L;2020.3;71
+r1
+!s85 0
+31
+!s108 1726777327.000000
+!s107 C:/Users/ethanhead/Desktop/gen3-cam-fw/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des/source/rtl/gpif_interface_mod.v|
+!s90 -reportprogress|300|+incdir+C:/Users/ethanhead/Desktop/gen3-cam-fw/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des/source/rtl|-work|work|C:/Users/ethanhead/Desktop/gen3-cam-fw/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des/source/rtl/gpif_interface_mod.v|
+!s101 -O0
+!i113 1
+o-work work -O0
+!s92 +incdir+C:/Users/ethanhead/Desktop/gen3-cam-fw/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des/source/rtl -work work -O0
+tCvgOpt 0

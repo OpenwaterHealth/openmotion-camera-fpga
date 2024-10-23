@@ -1,0 +1,26 @@
+if {![file exists "C:/Users/openwater/Projects/gen3-cam-fw/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des/histo_module/histo_module.mpf"]} { 
+	project new "C:/Users/openwater/Projects/gen3-cam-fw/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des/histo_module" histo_module
+	project addfile "C:/Users/openwater/Projects/gen3-cam-fw/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des/histo_serializer.v"
+	project addfile "C:/Users/openwater/Projects/gen3-cam-fw/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des/ram_dq_s/ram_dq_s.v"
+	project addfile "C:/Users/openwater/Projects/gen3-cam-fw/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des/histo_calc.v"
+	project addfile "C:/Users/openwater/Projects/gen3-cam-fw/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des/histo_module.v"
+	project addfile "C:/Users/openwater/Projects/gen3-cam-fw/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des/camera_data_gen.v"
+	project addfile "C:/Users/openwater/Projects/gen3-cam-fw/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des/histo_module_tb.v"
+	project addfile "C:/Users/openwater/Projects/gen3-cam-fw/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des/impl1/test_1920x1280.txt"
+	vlib  work
+	vdel -lib work -all 
+	vlib work
+	vlog  +incdir+C:/Users/openwater/Projects/gen3-cam-fw/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des  -work work  "C:/Users/openwater/Projects/gen3-cam-fw/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des/histo_serializer.v"
+	vlog  +incdir+C:/Users/openwater/Projects/gen3-cam-fw/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des/ram_dq_s  -work work  "C:/Users/openwater/Projects/gen3-cam-fw/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des/ram_dq_s/ram_dq_s.v"
+	vlog  +incdir+C:/Users/openwater/Projects/gen3-cam-fw/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des  -work work  "C:/Users/openwater/Projects/gen3-cam-fw/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des/histo_calc.v"
+	vlog  +incdir+C:/Users/openwater/Projects/gen3-cam-fw/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des  -work work  "C:/Users/openwater/Projects/gen3-cam-fw/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des/histo_module.v"
+	vlog  +incdir+C:/Users/openwater/Projects/gen3-cam-fw/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des  -work work  "C:/Users/openwater/Projects/gen3-cam-fw/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des/camera_data_gen.v"
+	vlog  +incdir+C:/Users/openwater/Projects/gen3-cam-fw/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des  -work work  "C:/Users/openwater/Projects/gen3-cam-fw/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des/histo_module_tb.v"
+} else {
+	project open "C:/Users/openwater/Projects/gen3-cam-fw/crosslink_U3v_Project/u3v_live_aud_nd_vid_explorer_des/histo_module/histo_module"
+	project compileoutofdate
+}
+vsim -L work -L pmi_work -L ovi_lifmd  camera_pipeline_tb
+view wave
+add wave /*
+run 1000ns
