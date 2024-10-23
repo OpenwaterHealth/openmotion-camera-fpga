@@ -1,0 +1,53 @@
+[Device]
+Family=machxo3lf
+PartType=LCMXO3LF-1300E
+PartName=LCMXO3LF-1300E-5MG121C
+SpeedGrade=5
+Package=CSFBGA121
+OperatingCondition=COM
+Status=S
+
+[IP]
+VendorName=Lattice Semiconductor Corporation
+CoreType=LPM
+CoreStatus=Demo
+CoreName=RAM_DP
+CoreRevision=6.5
+ModuleName=dp_ram
+SourceFormat=Verilog HDL
+ParameterFileVersion=1.0
+Date=10/21/2024
+Time=18:24:55
+
+[Parameters]
+Verilog=1
+VHDL=0
+EDIF=1
+Destination=Synplicity
+Expression=BusA(0 to 7)
+Order=[MSB:LSB]
+IO=0
+RAddress=1024
+RData=24
+WAddress=1024
+WData=24
+enByte=0
+ByteSize=9
+OutputEn=0
+ClockEn=0
+Optimization=Speed
+Reset=Sync
+Reset1=Sync
+Init=0
+MemFile=
+MemFormat=bin
+EnECC=0
+Pipeline=0
+init_data=0
+no_init=0
+
+[FilesGenerated]
+=mem
+
+[Command]
+cmd_line= -w -n dp_ram -lang verilog -synth lse -bus_exp 7 -bb -arch xo3c00f -type ramdps -device LCMXO3LF-1300E -raddr_width 10 -rwidth 24 -waddr_width 10 -wwidth 24 -rnum_words 1024 -wnum_words 1024 -cascade -1 -mem_init0
