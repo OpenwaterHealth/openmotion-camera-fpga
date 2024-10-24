@@ -1,10 +1,10 @@
-<Project ModBy="Inserter" SigType="0" Name="C:/Users/ethanhead/Desktop/gen3-cam-fw/MachXO2_TestpatternGen/reveal.rvl" Date="2024-10-23">
+<Project ModBy="Inserter" SigType="0" Name="C:/Users/ethanhead/Desktop/gen3-cam-fw/MachXO2_TestpatternGen/reveal.rvl" Date="2024-10-24">
     <IP Version="1_6_042617"/>
     <Design DesignEntry="Schematic/Verilog HDL" Synthesis="lse" DeviceFamily="MachXO2" DesignName="MachXO2_TestpatternGen"/>
-    <Core InsertDataset="0" Insert="1" Reveal_sig="581926640" Name="top_LA1" ID="0">
+    <Core InsertDataset="0" Insert="1" Reveal_sig="582023670" Name="top_LA1" ID="0">
         <Setting>
             <Clock SampleClk="clk_hs" SampleEnable="0" EnableClk="" EnableClk_Pri="0"/>
-            <TraceBuffer Implementation="0" BitTimeStamp="0" hasTimeStamp="0" IncTrigSig="0" BufferDepth="256"/>
+            <TraceBuffer Implementation="0" BitTimeStamp="0" hasTimeStamp="0" IncTrigSig="0" BufferDepth="1024"/>
             <Capture Mode="0" MinSamplesPerTrig="8"/>
             <Event CntEnable="0" MaxEventCnt="8"/>
             <TrigOut Polarity="0" MinPulseWidth="0" TrigOutNetType="1" EnableTrigOut="0" TrigOutNet="reveal_debug_top_LA1_net"/>
@@ -120,6 +120,7 @@
             </Trace>
             <Trigger>
                 <TU Serialbits="0" Type="0" ID="1" Sig="test_lv_x,"/>
+                <TU Serialbits="0" Type="0" ID="2" Sig="test_fv_x,"/>
                 <TE MaxSequence="2" MaxEvnCnt="1" ID="1" Resource="0"/>
             </Trigger>
         </Dataset>

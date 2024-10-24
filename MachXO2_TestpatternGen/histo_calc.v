@@ -16,6 +16,10 @@ module histogram3 (
 	reg prev_pixel_valid;
 	reg prev_rpt;
 	reg prev_rw;
+	reg prev_prev_rw;
+	reg prev_prev_prev_rw;
+	reg prev_prev_prev_prev_rw;
+	
 	reg [9:0] prev_bin;
 	reg [9:0] prev_pixel = 10'b0;
     reg [23:0] rpt_inc  = 24'b0;
@@ -64,6 +68,9 @@ module histogram3 (
 				data_out_persistent <= data_out;
 		end
 		prev_rw <= rw;
+		prev_prev_rw <= prev_rw;
+		prev_prev_prev_rw <= prev_prev_rw;
+		prev_prev_prev_prev_rw <= prev_prev_prev_rw;
 	end
 	
 	dp_ram ram_dp_i (
@@ -78,7 +85,7 @@ module histogram3 (
         .WrClockEn(~rst), 
         .WrAddress(ram_wr_addr), 
         .Data(ram_wr_data), 
-        .WE(~rw | (~rpt & prev_pixel_valid))
+        .WE(~prev_prev_prev_prev_rw | (~rpt & prev_pixel_valid)) // write when in "READ" mode, aka wipe everything out as you read it, and only write when the pixel before was valid and is not being repeated
 	);
     
 	assign debug_line = (ram_wr_data == 0);
