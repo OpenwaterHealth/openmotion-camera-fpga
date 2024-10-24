@@ -41,7 +41,7 @@ module grayscale_color_bar (
                     // Line valid signal during active pixels
                     if (pixel_counter < PIXELS_PER_LINE) begin
                         line_valid <= 1;
-                        pixel_out <= pixel_counter % 1024;  //10'b0000111111;// Wrapping grayscale values
+                        pixel_out <= 10'b0000111111;// Wrapping grayscale valuespixel_counter % 1024;  //
                         pixel_counter <= pixel_counter + 1;
                     end else begin
                         // Start blanking period

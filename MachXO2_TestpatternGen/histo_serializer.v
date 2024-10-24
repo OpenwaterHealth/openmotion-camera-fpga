@@ -27,13 +27,17 @@ module Serializer(
 	// signal when done with the 4 byte packet, 
 	wire m_tready;
 	reg prev_m_tready;
+	reg prev_prev_m_tready;
 	reg m_tvalid;
 
 	always @(posedge fast_clk_in) begin
-		if(reset)
+		if(reset) begin
 			prev_m_tready <= 0;
-		else 
+			prev_prev_m_tready <= 0;
+		end else begin 
 			prev_m_tready <= m_tready;
+			prev_prev_m_tready <= prev_m_tready;
+		end
 	end
 	
 	always @(posedge fast_clk_in) begin
@@ -41,7 +45,7 @@ module Serializer(
 			select <= 2'b11;
 			m_tvalid <= 1'b0;
 		end else begin
-			if ( m_tready && !prev_m_tready) begin
+			if ( m_tready && prev_m_tready && prev_prev_m_tready && !m_tvalid) begin
 				m_tvalid <= 1'b1;
 				select <= select + 2'b01; // Increment on the positive edge of serializer_done
 			end else begin

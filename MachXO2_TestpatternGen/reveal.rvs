@@ -34,68 +34,6 @@
                     <Sig Name="histogram_module_i/histo_i/data_out_persistent:22"/>
                     <Sig Name="histogram_module_i/histo_i/data_out_persistent:23"/>
                 </Bus>
-                <Sig Name="histogram_module_i/seralizer_i/serial_out"/>
-                <Sig Name="histogram_module_i/seralizer_i/slow_clk_out"/>
-                <Bus Name="histogram_module_i/seralizer_i/data_in" Radix="0">
-                    <Sig Name="histogram_module_i/seralizer_i/data_in:0"/>
-                    <Sig Name="histogram_module_i/seralizer_i/data_in:1"/>
-                    <Sig Name="histogram_module_i/seralizer_i/data_in:2"/>
-                    <Sig Name="histogram_module_i/seralizer_i/data_in:3"/>
-                    <Sig Name="histogram_module_i/seralizer_i/data_in:4"/>
-                    <Sig Name="histogram_module_i/seralizer_i/data_in:5"/>
-                    <Sig Name="histogram_module_i/seralizer_i/data_in:6"/>
-                    <Sig Name="histogram_module_i/seralizer_i/data_in:7"/>
-                    <Sig Name="histogram_module_i/seralizer_i/data_in:8"/>
-                    <Sig Name="histogram_module_i/seralizer_i/data_in:9"/>
-                    <Sig Name="histogram_module_i/seralizer_i/data_in:10"/>
-                    <Sig Name="histogram_module_i/seralizer_i/data_in:11"/>
-                    <Sig Name="histogram_module_i/seralizer_i/data_in:12"/>
-                    <Sig Name="histogram_module_i/seralizer_i/data_in:13"/>
-                    <Sig Name="histogram_module_i/seralizer_i/data_in:14"/>
-                    <Sig Name="histogram_module_i/seralizer_i/data_in:15"/>
-                    <Sig Name="histogram_module_i/seralizer_i/data_in:16"/>
-                    <Sig Name="histogram_module_i/seralizer_i/data_in:17"/>
-                    <Sig Name="histogram_module_i/seralizer_i/data_in:18"/>
-                    <Sig Name="histogram_module_i/seralizer_i/data_in:19"/>
-                    <Sig Name="histogram_module_i/seralizer_i/data_in:20"/>
-                    <Sig Name="histogram_module_i/seralizer_i/data_in:21"/>
-                    <Sig Name="histogram_module_i/seralizer_i/data_in:22"/>
-                    <Sig Name="histogram_module_i/seralizer_i/data_in:23"/>
-                    <Sig Name="histogram_module_i/seralizer_i/data_in:24"/>
-                    <Sig Name="histogram_module_i/seralizer_i/data_in:25"/>
-                    <Sig Name="histogram_module_i/seralizer_i/data_in:26"/>
-                    <Sig Name="histogram_module_i/seralizer_i/data_in:27"/>
-                    <Sig Name="histogram_module_i/seralizer_i/data_in:28"/>
-                    <Sig Name="histogram_module_i/seralizer_i/data_in:29"/>
-                    <Sig Name="histogram_module_i/seralizer_i/data_in:30"/>
-                    <Sig Name="histogram_module_i/seralizer_i/data_in:31"/>
-                </Bus>
-                <Bus Name="histogram_module_i/seralizer_i/data_out" Radix="0">
-                    <Sig Name="histogram_module_i/seralizer_i/data_out:0"/>
-                    <Sig Name="histogram_module_i/seralizer_i/data_out:1"/>
-                    <Sig Name="histogram_module_i/seralizer_i/data_out:2"/>
-                    <Sig Name="histogram_module_i/seralizer_i/data_out:3"/>
-                    <Sig Name="histogram_module_i/seralizer_i/data_out:4"/>
-                    <Sig Name="histogram_module_i/seralizer_i/data_out:5"/>
-                    <Sig Name="histogram_module_i/seralizer_i/data_out:6"/>
-                    <Sig Name="histogram_module_i/seralizer_i/data_out:7"/>
-                </Bus>
-                <Sig Name="histogram_module_i/seralizer_i/m_tready"/>
-                <Sig Name="histogram_module_i/seralizer_i/m_tvalid"/>
-                <Bus Name="histogram_module_i/seralizer_i/select" Radix="0">
-                    <Sig Name="histogram_module_i/seralizer_i/select:0"/>
-                    <Sig Name="histogram_module_i/seralizer_i/select:1"/>
-                </Bus>
-                <Bus Name="histogram_module_i/seralizer_i/spi_inst/i_TX_Byte" Radix="0">
-                    <Sig Name="histogram_module_i/seralizer_i/spi_inst/i_TX_Byte:0"/>
-                    <Sig Name="histogram_module_i/seralizer_i/spi_inst/i_TX_Byte:1"/>
-                    <Sig Name="histogram_module_i/seralizer_i/spi_inst/i_TX_Byte:2"/>
-                    <Sig Name="histogram_module_i/seralizer_i/spi_inst/i_TX_Byte:3"/>
-                    <Sig Name="histogram_module_i/seralizer_i/spi_inst/i_TX_Byte:4"/>
-                    <Sig Name="histogram_module_i/seralizer_i/spi_inst/i_TX_Byte:5"/>
-                    <Sig Name="histogram_module_i/seralizer_i/spi_inst/i_TX_Byte:6"/>
-                    <Sig Name="histogram_module_i/seralizer_i/spi_inst/i_TX_Byte:7"/>
-                </Bus>
                 <Bus Name="histogram_module_i/data" Radix="0">
                     <Sig Name="histogram_module_i/data:0"/>
                     <Sig Name="histogram_module_i/data:1"/>
@@ -179,9 +117,65 @@
                     <Sig Name="histogram_module_i/histo_i/prev_bin:8"/>
                     <Sig Name="histogram_module_i/histo_i/prev_bin:9"/>
                 </Bus>
+                <Sig Name="histogram_module_i/histo_done"/>
+                <Bus Name="histogram_module_i/seralizer_i/select" Radix="0">
+                    <Sig Name="histogram_module_i/seralizer_i/select:0"/>
+                    <Sig Name="histogram_module_i/seralizer_i/select:1"/>
+                </Bus>
+                <Bus Name="histogram_module_i/seralizer_i/data_in" Radix="0">
+                    <Sig Name="histogram_module_i/seralizer_i/data_in:0"/>
+                    <Sig Name="histogram_module_i/seralizer_i/data_in:1"/>
+                    <Sig Name="histogram_module_i/seralizer_i/data_in:2"/>
+                    <Sig Name="histogram_module_i/seralizer_i/data_in:3"/>
+                    <Sig Name="histogram_module_i/seralizer_i/data_in:4"/>
+                    <Sig Name="histogram_module_i/seralizer_i/data_in:5"/>
+                    <Sig Name="histogram_module_i/seralizer_i/data_in:6"/>
+                    <Sig Name="histogram_module_i/seralizer_i/data_in:7"/>
+                    <Sig Name="histogram_module_i/seralizer_i/data_in:8"/>
+                    <Sig Name="histogram_module_i/seralizer_i/data_in:9"/>
+                    <Sig Name="histogram_module_i/seralizer_i/data_in:10"/>
+                    <Sig Name="histogram_module_i/seralizer_i/data_in:11"/>
+                    <Sig Name="histogram_module_i/seralizer_i/data_in:12"/>
+                    <Sig Name="histogram_module_i/seralizer_i/data_in:13"/>
+                    <Sig Name="histogram_module_i/seralizer_i/data_in:14"/>
+                    <Sig Name="histogram_module_i/seralizer_i/data_in:15"/>
+                    <Sig Name="histogram_module_i/seralizer_i/data_in:16"/>
+                    <Sig Name="histogram_module_i/seralizer_i/data_in:17"/>
+                    <Sig Name="histogram_module_i/seralizer_i/data_in:18"/>
+                    <Sig Name="histogram_module_i/seralizer_i/data_in:19"/>
+                    <Sig Name="histogram_module_i/seralizer_i/data_in:20"/>
+                    <Sig Name="histogram_module_i/seralizer_i/data_in:21"/>
+                    <Sig Name="histogram_module_i/seralizer_i/data_in:22"/>
+                    <Sig Name="histogram_module_i/seralizer_i/data_in:23"/>
+                    <Sig Name="histogram_module_i/seralizer_i/data_in:24"/>
+                    <Sig Name="histogram_module_i/seralizer_i/data_in:25"/>
+                    <Sig Name="histogram_module_i/seralizer_i/data_in:26"/>
+                    <Sig Name="histogram_module_i/seralizer_i/data_in:27"/>
+                    <Sig Name="histogram_module_i/seralizer_i/data_in:28"/>
+                    <Sig Name="histogram_module_i/seralizer_i/data_in:29"/>
+                    <Sig Name="histogram_module_i/seralizer_i/data_in:30"/>
+                    <Sig Name="histogram_module_i/seralizer_i/data_in:31"/>
+                </Bus>
+                <Bus Name="histogram_module_i/seralizer_i/data_out" Radix="0">
+                    <Sig Name="histogram_module_i/seralizer_i/data_out:0"/>
+                    <Sig Name="histogram_module_i/seralizer_i/data_out:1"/>
+                    <Sig Name="histogram_module_i/seralizer_i/data_out:2"/>
+                    <Sig Name="histogram_module_i/seralizer_i/data_out:3"/>
+                    <Sig Name="histogram_module_i/seralizer_i/data_out:4"/>
+                    <Sig Name="histogram_module_i/seralizer_i/data_out:5"/>
+                    <Sig Name="histogram_module_i/seralizer_i/data_out:6"/>
+                    <Sig Name="histogram_module_i/seralizer_i/data_out:7"/>
+                </Bus>
+                <Sig Name="histogram_module_i/seralizer_i/done"/>
+                <Sig Name="histogram_module_i/serializer_done"/>
+                <Sig Name="histogram_module_i/serializer_total_done"/>
+                <Sig Name="histogram_module_i/prev_serializer_done"/>
+                <Sig Name="histogram_module_i/flag"/>
+                <Sig Name="histogram_module_i/seralizer_i/m_tvalid"/>
+                <Sig Name="histogram_module_i/seralizer_i/m_tready"/>
             </Trace>
             <Trigger>
-                <TU Operator="0" Name="TU1" ID="1" Value="0000000000" Radix="0"/>
+                <TU Operator="0" Name="TU1" ID="1" Value="0000111111" Radix="0"/>
                 <TE Enable="1" Expression="TU1" Name="TE1" ID="1"/>
             </Trigger>
         </Dataset>
