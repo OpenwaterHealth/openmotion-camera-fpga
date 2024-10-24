@@ -8,6 +8,7 @@ module histogram_module (
     input spi_clk_i,
     output spi_mosi_o,
 	output spi_clk_o,
+	output dbg,
 	output [5:0] debug,
 	output [9:0] debug2
 );
@@ -62,8 +63,7 @@ module histogram_module (
 			
 			if(bin == 1) flag <= 1; // set the flag high to show that a serialization has started
 		end
-	end			
-
+	end
     histogram3 histo_i (
         .clk(clk),          // reset - zeros the histogram
         .rst(reset),          // clock
@@ -100,6 +100,8 @@ module histogram_module (
 	assign debug[3] = frame_valid;
 	assign debug[4] = state[0];
 	assign debug[5] = state[1];
+	
+	assign dbg = bin[0];
 	
 	
 endmodule

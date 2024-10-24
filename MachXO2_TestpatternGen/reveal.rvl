@@ -1,10 +1,10 @@
 <Project ModBy="Inserter" SigType="0" Name="C:/Users/ethanhead/Desktop/gen3-cam-fw/MachXO2_TestpatternGen/reveal.rvl" Date="2024-10-23">
     <IP Version="1_6_042617"/>
     <Design DesignEntry="Schematic/Verilog HDL" Synthesis="lse" DeviceFamily="MachXO2" DesignName="MachXO2_TestpatternGen"/>
-    <Core InsertDataset="0" Insert="1" Reveal_sig="581905061" Name="top_LA0" ID="0">
+    <Core InsertDataset="0" Insert="1" Reveal_sig="581917450" Name="top_LA0" ID="0">
         <Setting>
-            <Clock SampleClk="osc_clk" SampleEnable="0" EnableClk="" EnableClk_Pri="0"/>
-            <TraceBuffer Implementation="0" BitTimeStamp="0" hasTimeStamp="0" IncTrigSig="0" BufferDepth="256"/>
+            <Clock SampleClk="clk_hs" SampleEnable="0" EnableClk="" EnableClk_Pri="0"/>
+            <TraceBuffer Implementation="0" BitTimeStamp="0" hasTimeStamp="0" IncTrigSig="0" BufferDepth="1024"/>
             <Capture Mode="0" MinSamplesPerTrig="8"/>
             <Event CntEnable="0" MaxEventCnt="8"/>
             <TrigOut Polarity="0" MinPulseWidth="0" TrigOutNetType="1" EnableTrigOut="0" TrigOutNet="reveal_debug_top_LA0_net"/>
@@ -13,9 +13,180 @@
         <Dataset Name="Base">
             <Trace>
                 <Sig Type="SIG" Name="histo_valid"/>
+                <Bus Name="histogram_module_i/histo_i/data_out_persistent">
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/data_out_persistent:0"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/data_out_persistent:1"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/data_out_persistent:2"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/data_out_persistent:3"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/data_out_persistent:4"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/data_out_persistent:5"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/data_out_persistent:6"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/data_out_persistent:7"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/data_out_persistent:8"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/data_out_persistent:9"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/data_out_persistent:10"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/data_out_persistent:11"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/data_out_persistent:12"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/data_out_persistent:13"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/data_out_persistent:14"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/data_out_persistent:15"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/data_out_persistent:16"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/data_out_persistent:17"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/data_out_persistent:18"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/data_out_persistent:19"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/data_out_persistent:20"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/data_out_persistent:21"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/data_out_persistent:22"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/data_out_persistent:23"/>
+                </Bus>
+                <Sig Type="SIG" Name="histogram_module_i/seralizer_i/serial_out"/>
+                <Sig Type="SIG" Name="histogram_module_i/seralizer_i/slow_clk_out"/>
+                <Bus Name="histogram_module_i/seralizer_i/data_in">
+                    <Sig Type="SIG" Name="histogram_module_i/seralizer_i/data_in:0"/>
+                    <Sig Type="SIG" Name="histogram_module_i/seralizer_i/data_in:1"/>
+                    <Sig Type="SIG" Name="histogram_module_i/seralizer_i/data_in:2"/>
+                    <Sig Type="SIG" Name="histogram_module_i/seralizer_i/data_in:3"/>
+                    <Sig Type="SIG" Name="histogram_module_i/seralizer_i/data_in:4"/>
+                    <Sig Type="SIG" Name="histogram_module_i/seralizer_i/data_in:5"/>
+                    <Sig Type="SIG" Name="histogram_module_i/seralizer_i/data_in:6"/>
+                    <Sig Type="SIG" Name="histogram_module_i/seralizer_i/data_in:7"/>
+                    <Sig Type="SIG" Name="histogram_module_i/seralizer_i/data_in:8"/>
+                    <Sig Type="SIG" Name="histogram_module_i/seralizer_i/data_in:9"/>
+                    <Sig Type="SIG" Name="histogram_module_i/seralizer_i/data_in:10"/>
+                    <Sig Type="SIG" Name="histogram_module_i/seralizer_i/data_in:11"/>
+                    <Sig Type="SIG" Name="histogram_module_i/seralizer_i/data_in:12"/>
+                    <Sig Type="SIG" Name="histogram_module_i/seralizer_i/data_in:13"/>
+                    <Sig Type="SIG" Name="histogram_module_i/seralizer_i/data_in:14"/>
+                    <Sig Type="SIG" Name="histogram_module_i/seralizer_i/data_in:15"/>
+                    <Sig Type="SIG" Name="histogram_module_i/seralizer_i/data_in:16"/>
+                    <Sig Type="SIG" Name="histogram_module_i/seralizer_i/data_in:17"/>
+                    <Sig Type="SIG" Name="histogram_module_i/seralizer_i/data_in:18"/>
+                    <Sig Type="SIG" Name="histogram_module_i/seralizer_i/data_in:19"/>
+                    <Sig Type="SIG" Name="histogram_module_i/seralizer_i/data_in:20"/>
+                    <Sig Type="SIG" Name="histogram_module_i/seralizer_i/data_in:21"/>
+                    <Sig Type="SIG" Name="histogram_module_i/seralizer_i/data_in:22"/>
+                    <Sig Type="SIG" Name="histogram_module_i/seralizer_i/data_in:23"/>
+                    <Sig Type="SIG" Name="histogram_module_i/seralizer_i/data_in:24"/>
+                    <Sig Type="SIG" Name="histogram_module_i/seralizer_i/data_in:25"/>
+                    <Sig Type="SIG" Name="histogram_module_i/seralizer_i/data_in:26"/>
+                    <Sig Type="SIG" Name="histogram_module_i/seralizer_i/data_in:27"/>
+                    <Sig Type="SIG" Name="histogram_module_i/seralizer_i/data_in:28"/>
+                    <Sig Type="SIG" Name="histogram_module_i/seralizer_i/data_in:29"/>
+                    <Sig Type="SIG" Name="histogram_module_i/seralizer_i/data_in:30"/>
+                    <Sig Type="SIG" Name="histogram_module_i/seralizer_i/data_in:31"/>
+                </Bus>
+                <Bus Name="histogram_module_i/seralizer_i/data_out">
+                    <Sig Type="SIG" Name="histogram_module_i/seralizer_i/data_out:0"/>
+                    <Sig Type="SIG" Name="histogram_module_i/seralizer_i/data_out:1"/>
+                    <Sig Type="SIG" Name="histogram_module_i/seralizer_i/data_out:2"/>
+                    <Sig Type="SIG" Name="histogram_module_i/seralizer_i/data_out:3"/>
+                    <Sig Type="SIG" Name="histogram_module_i/seralizer_i/data_out:4"/>
+                    <Sig Type="SIG" Name="histogram_module_i/seralizer_i/data_out:5"/>
+                    <Sig Type="SIG" Name="histogram_module_i/seralizer_i/data_out:6"/>
+                    <Sig Type="SIG" Name="histogram_module_i/seralizer_i/data_out:7"/>
+                </Bus>
+                <Sig Type="SIG" Name="histogram_module_i/seralizer_i/m_tready"/>
+                <Sig Type="SIG" Name="histogram_module_i/seralizer_i/m_tvalid"/>
+                <Bus Name="histogram_module_i/seralizer_i/select">
+                    <Sig Type="SIG" Name="histogram_module_i/seralizer_i/select:0"/>
+                    <Sig Type="SIG" Name="histogram_module_i/seralizer_i/select:1"/>
+                </Bus>
+                <Bus Name="histogram_module_i/seralizer_i/spi_inst/i_TX_Byte">
+                    <Sig Type="SIG" Name="histogram_module_i/seralizer_i/spi_inst/i_TX_Byte:0"/>
+                    <Sig Type="SIG" Name="histogram_module_i/seralizer_i/spi_inst/i_TX_Byte:1"/>
+                    <Sig Type="SIG" Name="histogram_module_i/seralizer_i/spi_inst/i_TX_Byte:2"/>
+                    <Sig Type="SIG" Name="histogram_module_i/seralizer_i/spi_inst/i_TX_Byte:3"/>
+                    <Sig Type="SIG" Name="histogram_module_i/seralizer_i/spi_inst/i_TX_Byte:4"/>
+                    <Sig Type="SIG" Name="histogram_module_i/seralizer_i/spi_inst/i_TX_Byte:5"/>
+                    <Sig Type="SIG" Name="histogram_module_i/seralizer_i/spi_inst/i_TX_Byte:6"/>
+                    <Sig Type="SIG" Name="histogram_module_i/seralizer_i/spi_inst/i_TX_Byte:7"/>
+                </Bus>
+                <Bus Name="histogram_module_i/data">
+                    <Sig Type="SIG" Name="histogram_module_i/data:0"/>
+                    <Sig Type="SIG" Name="histogram_module_i/data:1"/>
+                    <Sig Type="SIG" Name="histogram_module_i/data:2"/>
+                    <Sig Type="SIG" Name="histogram_module_i/data:3"/>
+                    <Sig Type="SIG" Name="histogram_module_i/data:4"/>
+                    <Sig Type="SIG" Name="histogram_module_i/data:5"/>
+                    <Sig Type="SIG" Name="histogram_module_i/data:6"/>
+                    <Sig Type="SIG" Name="histogram_module_i/data:7"/>
+                    <Sig Type="SIG" Name="histogram_module_i/data:8"/>
+                    <Sig Type="SIG" Name="histogram_module_i/data:9"/>
+                    <Sig Type="SIG" Name="histogram_module_i/data:10"/>
+                    <Sig Type="SIG" Name="histogram_module_i/data:11"/>
+                    <Sig Type="SIG" Name="histogram_module_i/data:12"/>
+                    <Sig Type="SIG" Name="histogram_module_i/data:13"/>
+                    <Sig Type="SIG" Name="histogram_module_i/data:14"/>
+                    <Sig Type="SIG" Name="histogram_module_i/data:15"/>
+                    <Sig Type="SIG" Name="histogram_module_i/data:16"/>
+                    <Sig Type="SIG" Name="histogram_module_i/data:17"/>
+                    <Sig Type="SIG" Name="histogram_module_i/data:18"/>
+                    <Sig Type="SIG" Name="histogram_module_i/data:19"/>
+                    <Sig Type="SIG" Name="histogram_module_i/data:20"/>
+                    <Sig Type="SIG" Name="histogram_module_i/data:21"/>
+                    <Sig Type="SIG" Name="histogram_module_i/data:22"/>
+                    <Sig Type="SIG" Name="histogram_module_i/data:23"/>
+                </Bus>
+                <Bus Name="histogram_module_i/state">
+                    <Sig Type="SIG" Name="histogram_module_i/state:0"/>
+                    <Sig Type="SIG" Name="histogram_module_i/state:1"/>
+                </Bus>
+                <Sig Type="SIG" Name="histogram_module_i/histo_i/rw"/>
+                <Bus Name="histogram_module_i/histo_i/data_out">
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/data_out:0"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/data_out:1"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/data_out:2"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/data_out:3"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/data_out:4"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/data_out:5"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/data_out:6"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/data_out:7"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/data_out:8"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/data_out:9"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/data_out:10"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/data_out:11"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/data_out:12"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/data_out:13"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/data_out:14"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/data_out:15"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/data_out:16"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/data_out:17"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/data_out:18"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/data_out:19"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/data_out:20"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/data_out:21"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/data_out:22"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/data_out:23"/>
+                </Bus>
+                <Sig Type="SIG" Name="histogram_module_i/histo_i/prev_bin_incremented"/>
+                <Sig Type="SIG" Name="histogram_module_i/histo_i/bin_incremented"/>
+                <Bus Name="histogram_module_i/histo_i/bin">
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/bin:0"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/bin:1"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/bin:2"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/bin:3"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/bin:4"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/bin:5"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/bin:6"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/bin:7"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/bin:8"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/bin:9"/>
+                </Bus>
+                <Bus Name="histogram_module_i/histo_i/prev_bin">
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/prev_bin:0"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/prev_bin:1"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/prev_bin:2"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/prev_bin:3"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/prev_bin:4"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/prev_bin:5"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/prev_bin:6"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/prev_bin:7"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/prev_bin:8"/>
+                    <Sig Type="SIG" Name="histogram_module_i/histo_i/prev_bin:9"/>
+                </Bus>
             </Trace>
             <Trigger>
-                <TU Serialbits="0" Type="0" ID="1" Sig=""/>
+                <TU Serialbits="0" Type="0" ID="1" Sig="(BUS)histogram_module_i/bin[9:0],"/>
                 <TE MaxSequence="1" MaxEvnCnt="1" ID="1" Resource="1"/>
             </Trigger>
         </Dataset>

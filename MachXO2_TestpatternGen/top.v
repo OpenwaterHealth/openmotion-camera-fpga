@@ -89,7 +89,7 @@ module top (
 	signal_buffer fv_buf(clk_hs, ~reset_n_HFCLKOUT, test_fv, test_fv_x);
 	signal_buffer_10 px_buf(clk_hs, ~reset_n_HFCLKOUT, test_pixel, test_pixel_x);
 
-
+	wire dbg;
 	histogram_module histogram_module_i(
 		.clk 		(clk_hs),
 		.reset		(~reset_n_HFCLKOUT),
@@ -98,8 +98,8 @@ module top (
 		.line_valid (test_lv_x),//test_lv),
 		.spi_clk_i 	(clk_hs),
 		.spi_mosi_o (uart),
-		.spi_clk_o (spi_clk)
-//		.debug		(debug)
+		.spi_clk_o (spi_clk),
+		.dbg		(dbg)
 	); 
 
 
@@ -111,7 +111,7 @@ module top (
 	assign debug[3] = clk_hs;
 	assign debug[4] = uart;
 	assign debug[5] = spi_clk;
-	assign debug[6] = 0;
+	assign debug[6] = dbg;
 	assign debug[7] = 0;
 	
 	

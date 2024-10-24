@@ -13,7 +13,7 @@ module grayscale_color_bar (
     localparam PIXELS_PER_LINE = FRAME_WIDTH;
     localparam CYCLES_PER_LINE = FRAME_WIDTH + LINE_BLANK_CYCLES;
     localparam PIXELS_PER_FRAME = FRAME_WIDTH * FRAME_HEIGHT;
-    localparam FRAME_DELAY_CYCLES = 1200000 - (FRAME_HEIGHT * CYCLES_PER_LINE);
+    localparam FRAME_DELAY_CYCLES = 3250000 - (FRAME_HEIGHT * CYCLES_PER_LINE);
 
     // Registers to track positions
     reg [18:0] pixel_counter;  // Counter for pixels within a frame (19 bits to hold up to 240x180 pixels)
@@ -41,7 +41,7 @@ module grayscale_color_bar (
                     // Line valid signal during active pixels
                     if (pixel_counter < PIXELS_PER_LINE) begin
                         line_valid <= 1;
-                        pixel_out <= 10'b0000111111;//pixel_counter % 1024;  // Wrapping grayscale values
+                        pixel_out <= pixel_counter % 1024;  //10'b0000111111;// Wrapping grayscale values
                         pixel_counter <= pixel_counter + 1;
                     end else begin
                         // Start blanking period

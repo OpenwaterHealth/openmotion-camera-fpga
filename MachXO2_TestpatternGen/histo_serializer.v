@@ -52,11 +52,10 @@ module Serializer(
 	
 	assign done = (select == 2'b11) & m_tready & ~prev_m_tready;	// move to the next bin when the last section goes out and m_tready pops up
 	
-	
     // SPI Master Instantiation
     SPI_Master #(
         .SPI_MODE(0),                    // SPI Mode 0 (CPOL = 0, CPHA = 0)
-        .CLKS_PER_HALF_BIT(4)            // Clock divider: 2 (20.46 MHz / 2 = 10.23 MHz SCLK)
+        .CLKS_PER_HALF_BIT(2)            // Clock divider: 2 (20.46 MHz / 2 = 10.23 MHz SCLK)
     ) spi_inst (
         .i_Rst_L(~reset),             // SPI Master active low reset
         .i_Clk(fast_clk_in),                 // System Clock
