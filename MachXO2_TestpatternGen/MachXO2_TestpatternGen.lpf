@@ -1,3 +1,4 @@
+rvl_alias "osc_clk" "osc_clk";
 BLOCK RESETPATHS ;
 BLOCK ASYNCPATHS ;
 FREQUENCY NET "osc_clk_c" 2.080000 MHz ;
@@ -33,3 +34,4 @@ LOCATE COMP "histo_data[7]" SITE "122" ;
 LOCATE COMP "histo_data[8]" SITE "125" ;
 LOCATE COMP "histo_data[9]" SITE "126" ;
 LOCATE COMP "pixel_clk" SITE "143" ;
+BLOCK JTAGPATHS;

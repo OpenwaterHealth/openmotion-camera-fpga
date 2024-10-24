@@ -1,0 +1,19 @@
+<Project ModBy="Analyzer" Name="C:/Users/ethanhead/Desktop/gen3-cam-fw/MachXO2_TestpatternGen/reveal.rvs" Date="2024-10-23">
+ <Core Name="top_LA0">
+  <Setting>
+   <Capture SamplesPerTrig="256" NumTrigsCap="1"/>
+   <Event EventCnt="0" CntEnableRun="0"/>
+   <TrigSetting PreTrgSamples="" AND_ALL="0" PostTrgSamples="" TURadix="0"/>
+  </Setting>
+  <Dataset Name="Base">
+   <Trace>
+    <Sig Name="frame_valid"/>
+    <Sig Name="histo_valid"/>
+   </Trace>
+   <Trigger>
+    <TU Operator="6" Name="TU1" ID="1" Value="1" Radix="0"/>
+    <TE Enable="1" Expression="TU1" Name="TE1" ID="1"/>
+   </Trigger>
+  </Dataset>
+ </Core>
+</Project>
