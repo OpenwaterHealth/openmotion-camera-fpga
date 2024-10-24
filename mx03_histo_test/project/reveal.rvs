@@ -1,5 +1,5 @@
-<Project ModBy="Analyzer" Name="C:/Users/ethanhead/Projects/MachXO3LF_MasterLink_Default/MachXO3LF_MasterLink_Default/project/reveal.rvs" Date="2024-10-23">
- <Core Name="gpio_test_LA0">
+<Project ModBy="Analyzer" Name="C:/Users/ethanhead/Desktop/gen3-cam-fw/mx03_histo_test/project/reveal.rvs" Date="2024-10-23">
+ <Core Name="top_LA0">
   <Setting>
    <Capture SamplesPerTrig="512" NumTrigsCap="1"/>
    <Event EventCnt="0" CntEnableRun="0"/>
@@ -19,8 +19,6 @@
      <Sig Name="histogram_module_i/histo_i/ram_dp_i/RdAddress:8"/>
      <Sig Name="histogram_module_i/histo_i/ram_dp_i/RdAddress:9"/>
     </Bus>
-    <Sig Name="histogram_module_i/histo_i/ram_dp_i/WE"/>
-    <Sig Name="histogram_module_i/histo_i/ram_dp_i/Reset"/>
     <Bus Name="histogram_module_i/histo_i/data_out_persistent" Radix="0">
      <Sig Name="histogram_module_i/histo_i/data_out_persistent:0"/>
      <Sig Name="histogram_module_i/histo_i/data_out_persistent:1"/>
@@ -49,9 +47,8 @@
     </Bus>
    </Trace>
    <Trigger>
-    <TU Operator="6" Name="TU1" ID="1" Value="1" Radix="0"/>
-    <TU Operator="0" Name="TU2" ID="2" Value="0000111111" Radix="0"/>
-    <TE Enable="1" Expression="TU2" Name="TE1" ID="1"/>
+    <TU Operator="0" Name="TU1" ID="1" Value="0000111111" Radix="0"/>
+    <TE Enable="1" Expression="TU1" Name="TE1" ID="1"/>
    </Trigger>
   </Dataset>
  </Core>

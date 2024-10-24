@@ -5,7 +5,7 @@ module Serializer(
     output wire serial_out, // Serial output
     output wire slow_clk_out,
     output wire done,
-	output wire [9:0] debug
+	output wire [1:0] debug
 );
 
 	// Break down data into its four segments	
@@ -21,8 +21,8 @@ module Serializer(
 			default: data_out = 8'b0;          // Default case (optional, for completeness)
 		endcase
 	end
-	assign debug[7:0] = data_out;
-    assign debug[9:8] = select;
+	//assign debug[7:0] = data_out;
+    //assign debug[9:8] = select;
 	
 	// signal when done with the 4 byte packet, 
 	wire m_tready;
@@ -70,5 +70,6 @@ module Serializer(
         .o_SPI_MOSI(serial_out)     // SPI MOSI Output
     );
 	
-
+	assign debug = select;
+	
 endmodule

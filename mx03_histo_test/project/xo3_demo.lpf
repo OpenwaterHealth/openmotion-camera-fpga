@@ -1,4 +1,4 @@
-rvl_alias "clk_osc" "clk_osc";
+rvl_alias "clk_hs" "clk_hs";
 RVL_ALIAS "clk_osc" "clk_osc"; 
 BLOCK RESETPATHS ;
 BLOCK ASYNCPATHS ;

@@ -90,15 +90,11 @@ histogram_module histogram_module_i(
 	.line_valid (test_lv_x),//test_lv),
 	.spi_clk_i 	(clk_hs),
 	.spi_mosi_o (uart),
-	.spi_clk_o (spi_clk)
-//	.debug		(debug),
+	.spi_clk_o (spi_clk),
+	.debug		(debug)
 //	.debug2		(sldata_o)
-);
+); 
 
-assign debug[0] = uart;
-assign debug[1] = spi_clk;
-assign debug[2] = clk_uart;
-assign debug[4] = test_lv_x;
 
 
 endmodule

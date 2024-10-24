@@ -2,10 +2,7 @@
 <BaliProject version="3.2" title="xo3_demo" device="LCMXO3LF-1300E-5MG121C" default_implementation="impl1">
     <Options/>
     <Implementation title="impl1" dir="impl1" description="impl1" synthesis="lse" default_strategy="Strategy1">
-        <Options def_top="gpio_test" top="gpio_test"/>
-        <Source name="../source/gpio_toggle.v" type="Verilog" type_short="Verilog">
-            <Options top_module="gpio_test"/>
-        </Source>
+        <Options def_top="top" top="top"/>
         <Source name="xclk.ipx" type="IPX_Module" type_short="IPX">
             <Options/>
         </Source>
@@ -27,9 +24,6 @@
         <Source name="crosslink_data_gen.v" type="Verilog" type_short="Verilog">
             <Options/>
         </Source>
-        <Source name="spi_clk_gen.v" type="Verilog" type_short="Verilog">
-            <Options/>
-        </Source>
         <Source name="reset_bridge.v" type="Verilog" type_short="Verilog">
             <Options/>
         </Source>
@@ -39,19 +33,13 @@
         <Source name="signal_buffer10.v" type="Verilog" type_short="Verilog">
             <Options/>
         </Source>
-        <Source name="analyzer.rva" type="Reveal Analyzer Project File" type_short="RVA">
-            <Options/>
+        <Source name="top.v" type="Verilog" type_short="Verilog">
+            <Options top_module="top"/>
         </Source>
         <Source name="impl1/impl1.xcf" type="Programming Project File" type_short="Programming">
             <Options/>
         </Source>
-        <Source name="reveal.rvl" type="Reveal" type_short="Reveal">
-            <Options/>
-        </Source>
         <Source name="xo3_demo.lpf" type="Logic Preference" type_short="LPF">
-            <Options/>
-        </Source>
-        <Source name="../simulation/simulation.spf" type="Simulation Project File" type_short="SPF">
             <Options/>
         </Source>
     </Implementation>

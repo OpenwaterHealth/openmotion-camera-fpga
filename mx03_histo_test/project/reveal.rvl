@@ -1,13 +1,13 @@
-<Project ModBy="Inserter" SigType="0" Name="C:/Users/ethanhead/Projects/MachXO3LF_MasterLink_Default/MachXO3LF_MasterLink_Default/project/reveal.rvl" Date="2024-10-21">
+<Project ModBy="Inserter" SigType="0" Name="C:/Users/ethanhead/Desktop/gen3-cam-fw/mx03_histo_test/project/reveal.rvl" Date="2024-10-23">
     <IP Version="1_6_042617"/>
     <Design DesignEntry="Schematic/Verilog HDL" Synthesis="lse" DeviceFamily="MachXO3LF" DesignName="xo3_demo"/>
-    <Core InsertDataset="0" Insert="1" Reveal_sig="581648597" Name="gpio_test_LA0" ID="0">
+    <Core InsertDataset="0" Insert="1" Reveal_sig="581898841" Name="top_LA0" ID="0">
         <Setting>
-            <Clock SampleClk="clk_osc" SampleEnable="0" EnableClk="" EnableClk_Pri="0"/>
+            <Clock SampleClk="clk_hs" SampleEnable="0" EnableClk="" EnableClk_Pri="0"/>
             <TraceBuffer Implementation="0" BitTimeStamp="0" hasTimeStamp="0" IncTrigSig="0" BufferDepth="512"/>
             <Capture Mode="0" MinSamplesPerTrig="8"/>
             <Event CntEnable="0" MaxEventCnt="8"/>
-            <TrigOut Polarity="0" MinPulseWidth="0" TrigOutNetType="1" EnableTrigOut="0" TrigOutNet="reveal_debug_gpio_test_LA0_net"/>
+            <TrigOut Polarity="0" MinPulseWidth="0" TrigOutNetType="1" EnableTrigOut="0" TrigOutNet="reveal_debug_top_LA0_net"/>
             <DistRAM Disable="0"/>
         </Setting>
         <Dataset Name="Base">
@@ -24,8 +24,6 @@
                     <Sig Type="SIG" Name="histogram_module_i/histo_i/ram_dp_i/RdAddress:8"/>
                     <Sig Type="SIG" Name="histogram_module_i/histo_i/ram_dp_i/RdAddress:9"/>
                 </Bus>
-                <Sig Type="SIG" Name="histogram_module_i/histo_i/ram_dp_i/WE"/>
-                <Sig Type="SIG" Name="histogram_module_i/histo_i/ram_dp_i/Reset"/>
                 <Bus Name="histogram_module_i/histo_i/data_out_persistent">
                     <Sig Type="SIG" Name="histogram_module_i/histo_i/data_out_persistent:0"/>
                     <Sig Type="SIG" Name="histogram_module_i/histo_i/data_out_persistent:1"/>
@@ -54,8 +52,7 @@
                 </Bus>
             </Trace>
             <Trigger>
-                <TU Serialbits="0" Type="0" ID="1" Sig="gs_i/frame_valid,"/>
-                <TU Serialbits="0" Type="0" ID="2" Sig="(BUS)histogram_module_i/histo_i/bin[9:0],"/>
+                <TU Serialbits="0" Type="0" ID="1" Sig="(BUS)histogram_module_i/bin[9:0],"/>
                 <TE MaxSequence="1" MaxEvnCnt="1" ID="1" Resource="1"/>
             </Trigger>
         </Dataset>
