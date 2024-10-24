@@ -82,7 +82,7 @@ module histogram3 (
 	);
     
 	assign debug_line = (ram_wr_data == 0);
-	assign rpt = (prev_pixel == pixel) & pixel_valid; // repeat detector
+	assign rpt = (prev_pixel == pixel) & pixel_valid & prev_pixel_valid; // repeat detector
     assign incremented_count = data_out + 23'b1;
 	assign data_to_write = prev_rpt ? rpt_inc  + 24'b1: incremented_count;		
     assign ram_wr_data = prev_rw ? data_to_write : 24'b0;
