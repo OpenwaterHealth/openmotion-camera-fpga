@@ -3,14 +3,18 @@ module top (
     output stdby1,        // Standby output
     output osc_clk,       // Oscillator clock output
     output led0, led1, led2, led3, led4, led5, led6, led7, // LED outputs
-    output frame_valid,   // Frame valid signal for scope
+    output [15:0] debug
+);
+
+
+/*output frame_valid,   // Frame valid signal for scope
     output line_valid,        // Line valid signal for scope
     output [9:0] histo_data,  // 10-bit histogram data output
 	output pixel_clk,
     output histo_valid,       // Histogram data valid signal
     output histo_clock        // Histogram clock signal
-);
-
+	*/
+	
     wire stby_flag;
     reg [23:0] cnt;
     reg [9:0] rd_addr;         // Read address for histogram
@@ -20,6 +24,9 @@ module top (
     reg histo_valid_reg;       // Register for histogram valid signal
     reg histo_clock_reg;       // Register for histogram clock
     reg histo_reading;         // Indicates if histogram is being read
+	
+	
+	/*------------------------------------- Clock Stuff ----------------------------*/
 
     // Internal Oscillator
     defparam OSCH_inst.NOM_FREQ = "19.00";	// 133 MHz clock
@@ -29,6 +36,10 @@ module top (
         .OSC(osc_clk),      // Oscillator clock output
         .SEDSTDBY()         // Not required if not using SED
     );
+	
+
+	wire clk_hs;
+	pll __ (.CLKI (osc_clk), .CLKOP (clk_hs));
 
     pwr_cntrllr pcm1 (
         .USERSTDBY(stdby_in), 
@@ -37,85 +48,73 @@ module top (
         .STDBY(stdby1), 
         .SFLAG(stby_flag)
     );
+	
+	/*-------------------------------------LED Blinking----------------------------*/
 
-    // LED Blinking test (Toggle LEDs every 1/2 second)
+    // (Toggle LEDs every 1/2 second)
     always @(posedge osc_clk or posedge stdby_in)
         if (stdby_in)
             cnt <= 0;
         else	
             cnt <= cnt + 1;
 
-    // Grayscale Color Bar Generator
-    wire [9:0] pixel_out;  // 10-bit pixel output
-	
-	camera_emulator cam_inst (
-		.clk_19mhz(osc_clk),
-		.reset_n(~stdby_in), 
-		.pixel_data(histo_data),
-		.hsync(line_valid),       // Horizontal sync
-		.vsync(frame_valid),       // Vertical sync
-		.pclk(pixel_clk)         // Pixel clock
+	/*------------------------------------- Histogram Calculator----------------------------*/
+	wire reset = 1;
+	wire reset_n_HFCLKOUT;
+
+	wire uart;
+	//	Reset Bridge for clk_osc
+	reset_bridge rst_brg_osc(
+	  .clk_i			(clk_hs),// Destination clock
+	  .ext_resetn_i		( reset ),// Asynchronous reset signal
+	  .sync_resetn_out	(reset_n_HFCLKOUT)// Synchronized reset signal
 	);
-/*
-    grayscale_color_bar grayscale_gen (
-        .clk(osc_clk),         // 133 MHz clock input
-        .reset_n(~stdby_in),   // Active low reset input
-        .pixel_out(histo_data), // Grayscale pixel output
-        .line_valid(line_valid),  // Line valid output signal
-        .frame_valid(frame_valid) // Frame valid output signal
-    );
-*/
 
-    // Grayscale Histogram Generator
-    wire [15:0] rd_data;   // Data from histogram (number of occurrences)
+	wire [9:0] test_pixel;
+	wire test_lv, test_fv;
+	grayscale_color_bar gs_i(
+		.clk        (clk_hs),            // 133.00 MHz clock
+		.reset_n    (reset_n_HFCLKOUT),        // Active low reset
+		.pixel_out  (test_pixel),// 10-bit grayscale pixel
+		.line_valid (test_lv),     // Line valid signal
+		.frame_valid(test_fv)     // Frame valid signal
+	);
 
-    grayscale_histogram histogram_gen (
-        .clk(osc_clk),               // Clock input
-        .reset_n(~stdby_in),         // Active low reset
-        .frame_valid(frame_valid),   // Frame valid signal
-        .line_valid(line_valid),     // Line valid signal
-        .pixel_out(pixel_out),       // 10-bit pixel output from grayscale generator
-        .rd_en(rd_en),               // Read enable during blanking period
-        .rd_addr(rd_addr),           // Read address for histogram bins
-        .rd_data(rd_data),           // Read data from histogram bins
-        .clear(histo_clear)          // Clear histogram after readout
-    );
+	wire spi_clk;
+
+	wire [9:0] test_pixel_x;
+	wire test_lv_x, test_fv_x;
+
+	signal_buffer lv_buf(clk_hs, ~reset_n_HFCLKOUT, test_lv, test_lv_x);
+	signal_buffer fv_buf(clk_hs, ~reset_n_HFCLKOUT, test_fv, test_fv_x);
+	signal_buffer_10 px_buf(clk_hs, ~reset_n_HFCLKOUT, test_pixel, test_pixel_x);
 
 
-    // Histogram readout logic
-    always @(posedge osc_clk or posedge stdby_in) begin
-        if (stdby_in) begin
-            rd_addr <= 10'b0;
-            histo_count <= 11'b0;
-            histo_valid_reg <= 1'b0;
-            histo_clock_reg <= 1'b0;
-            histo_reading <= 1'b0;
-            rd_en <= 1'b0;
-            histo_clear <= 1'b0;
-        end else begin
-            if (!frame_valid && !histo_reading) begin
-                // Start reading when frame is invalid (blanking period)
-                histo_reading <= 1'b1;
-                histo_valid_reg <= 1'b1;
-                histo_count <= 11'b0;
-                rd_addr <= 10'b0;
-                rd_en <= 1'b1;
-                histo_clear <= 1'b0;  // Ensure clear is low during readout
-            end else if (histo_reading && histo_count < 11'd1024) begin
-                // Continue reading the histogram
-                histo_count <= histo_count + 1;
-                rd_addr <= rd_addr + 1;
-                histo_clock_reg <= ~histo_clock_reg;  // Toggle histo_clock
-            end else if (histo_count >= 11'd1024) begin
-                // End reading after 1024 bins
-                histo_reading <= 1'b0;
-                histo_valid_reg <= 1'b0;
-                rd_en <= 1'b0;
-                histo_clear <= 1'b1;  // Set clear after reading all bins
-            end
-        end
-    end
+	histogram_module histogram_module_i(
+		.clk 		(clk_hs),
+		.reset		(~reset_n_HFCLKOUT),
+		.pixel_data (test_pixel_x),//test_pixel),
+		.frame_valid (test_fv_x),//test_fv),
+		.line_valid (test_lv_x),//test_lv),
+		.spi_clk_i 	(clk_hs),
+		.spi_mosi_o (uart),
+		.spi_clk_o (spi_clk)
+//		.debug		(debug)
+	); 
 
+
+
+	/*----------------------------------------------------------------*/
+	assign debug[0] = stdby_in;
+	assign debug[1] = test_lv;
+	assign debug[2] = test_fv;
+	assign debug[3] = clk_hs;
+	assign debug[4] = uart;
+	assign debug[5] = spi_clk;
+	assign debug[6] = 0;
+	assign debug[7] = 0;
+	
+	
     // Assign outputs
     assign led0 = stdby_in ? 1'b1 :  cnt[22];
     assign led1 = stdby_in ? 1'b1 : ~cnt[22];

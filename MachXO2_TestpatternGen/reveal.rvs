@@ -7,7 +7,6 @@
   </Setting>
   <Dataset Name="Base">
    <Trace>
-    <Sig Name="frame_valid"/>
     <Sig Name="histo_valid"/>
    </Trace>
    <Trigger>

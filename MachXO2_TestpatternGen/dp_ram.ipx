@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DiamondModule name="dp_ram" module="RAM_DP" VendorName="Lattice Semiconductor Corporation" generator="IPexpress" date="2024 10 23 18:45:50.808" version="6.5" type="Module" synthesis="lse" source_format="Verilog">
+  <Package>
+		<File name="" type="" modified="2024 10 23 18:45:50.808"/>
+		<File name="dp_ram.lpc" type="lpc" modified="2024 10 23 18:45:49.740"/>
+		<File name="dp_ram.v" type="top_level_verilog" modified="2024 10 23 18:45:49.800"/>
+		<File name="dp_ram_tmpl.v" type="template_verilog" modified="2024 10 23 18:45:49.801"/>
+		<File name="tb_dp_ram_tmpl.v" type="testbench_verilog" modified="2024 10 23 18:45:49.802"/>
+  </Package>
+</DiamondModule>

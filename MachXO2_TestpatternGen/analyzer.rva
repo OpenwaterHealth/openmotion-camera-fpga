@@ -1,6 +1,6 @@
 <!DOCTYPE ispTLA>
 <ispTLA>
- <CreationDate>Wed Oct 23 18:25:12 2024</CreationDate>
+ <CreationDate>Wed Oct 23 18:48:05 2024</CreationDate>
  <XCFFileName/>
  <CableSetting>
   <IsTRSTConnected val="false"/>
@@ -26,8 +26,7 @@
   <LACoreCount>1</LACoreCount>
   <WinUI CoreIndex="0">
    <TraceSigTreeData>
-    <TraceSignal IsHidden="false" Name="frame_valid" NodeType="0" PortIndex="0"/>
-    <TraceSignal IsHidden="false" Name="histo_valid" NodeType="0" PortIndex="1"/>
+    <TraceSignal IsHidden="false" Name="histo_valid" NodeType="0" PortIndex="0"/>
    </TraceSigTreeData>
    <TriggerUI UserSelect="0" PreSelectType="0" PreSelect="1" UserSelectPos="0"/>
    <CoreRun Run="true"/>
