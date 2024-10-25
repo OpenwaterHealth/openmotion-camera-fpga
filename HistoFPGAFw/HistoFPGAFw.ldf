@@ -2,7 +2,16 @@
 <BaliProject version="3.2" title="HistoFPGAFw" device="LIF-MD6000-6UWG36I" default_implementation="impl1">
     <Options/>
     <Implementation title="impl1" dir="impl1" description="impl1" synthesis="lse" default_strategy="Strategy1">
-        <Options/>
+        <Options def_top="topmod"/>
+        <Source name="top.v" type="Verilog" type_short="Verilog">
+            <Options top_module="topmod"/>
+        </Source>
+        <Source name="mipidphy2cmos.v" type="Verilog" type_short="Verilog" excluded="TRUE">
+            <Options/>
+        </Source>
+        <Source name="reset_bridge.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
         <Source name="HistoFPGAFw.lpf" type="Logic Preference" type_short="LPF">
             <Options/>
         </Source>
