@@ -2,14 +2,20 @@
 <BaliProject version="3.2" title="sx3_live_aud_vid_explorer_fpga_des" device="LIF-MD6000-6KMG80I" default_implementation="impl1">
     <Options/>
     <Implementation title="impl1" dir="impl1" description="impl1" synthesis="lse" default_strategy="Strategy1">
-        <Options def_top="pll" top="topmod"/>
+        <Options def_top="camera_data_gen" top="topmod"/>
+        <Source name="source/rtl/bit_synchronizer.v" type="Verilog" type_short="Verilog" excluded="TRUE">
+            <Options/>
+        </Source>
+        <Source name="source/rtl/bus_synchronizer.v" type="Verilog" type_short="Verilog" excluded="TRUE">
+            <Options/>
+        </Source>
         <Source name="source/rtl/gpif_interface_mod.v" type="Verilog" type_short="Verilog">
             <Options/>
         </Source>
         <Source name="source/rtl/gpif_interface_top.v" type="Verilog" type_short="Verilog">
             <Options/>
         </Source>
-        <Source name="source/rtl/i2c_slave.v" type="Verilog" type_short="Verilog" excluded="TRUE">
+        <Source name="source/rtl/i2c_slave.v" type="Verilog" type_short="Verilog">
             <Options/>
         </Source>
         <Source name="source/rtl/mipidphy2cmos.v" type="Verilog" type_short="Verilog">
@@ -33,6 +39,9 @@
         <Source name="source/ip/vid_buf_fifo/vid_buf_fifo.sbx" type="sbx" type_short="SBX">
             <Options/>
         </Source>
+        <Source name="source/ip/pll/pll.sbx" type="sbx" type_short="SBX">
+            <Options/>
+        </Source>
         <Source name="source/rtl/aud_buffer_manager.v" type="Verilog" type_short="Verilog" excluded="TRUE">
             <Options/>
         </Source>
@@ -54,19 +63,31 @@
         <Source name="source/rtl/mipi_ip_reset_manager.v" type="Verilog" type_short="Verilog">
             <Options/>
         </Source>
-        <Source name="histo_calc.v" type="Verilog" type_short="Verilog">
-            <Options/>
-        </Source>
         <Source name="histo_serializer.v" type="Verilog" type_short="Verilog">
             <Options/>
         </Source>
         <Source name="histo_module.v" type="Verilog" type_short="Verilog">
             <Options/>
         </Source>
-        <Source name="pll/pll.sbx" type="sbx" type_short="SBX">
+        <Source name="histo_calc.v" type="Verilog" type_short="Verilog">
             <Options/>
         </Source>
-        <Source name="ram_dq_s/ram_dq_s.sbx" type="sbx" type_short="SBX">
+        <Source name="ram_dp/ram_dp.sbx" type="sbx" type_short="SBX">
+            <Options/>
+        </Source>
+        <Source name="spi_clk_div.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="spi_master.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="camera_data_gen.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="crosslink_data_gen.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="constraints.ldc" type="LSE Design Constraints File" type_short="LDC">
             <Options/>
         </Source>
         <Source name="impl1/impl1.xcf" type="Programming Project File" type_short="Programming">

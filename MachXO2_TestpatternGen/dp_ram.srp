@@ -1,0 +1,29 @@
+SCUBA, Version Diamond (64-bit) 3.13.0.56.2
+Wed Oct 23 18:45:49 2024
+
+Copyright (c) 1991-1994 by NeoCAD Inc. All rights reserved.
+Copyright (c) 1995 AT&T Corp.   All rights reserved.
+Copyright (c) 1995-2001 Lucent Technologies Inc.  All rights reserved.
+Copyright (c) 2001 Agere Systems   All rights reserved.
+Copyright (c) 2002-2023 Lattice Semiconductor Corporation,  All rights reserved.
+
+    Issued command   : C:\lscc\diamond\3.13\ispfpga\bin\nt64\scuba.exe -w -n dp_ram -lang verilog -synth lse -bus_exp 7 -bb -arch xo2c00 -type ramdps -device LCMXO2-7000HE -raddr_width 10 -rwidth 24 -waddr_width 10 -wwidth 24 -rnum_words 1024 -wnum_words 1024 -cascade -1 -mem_init0 
+    Circuit name     : dp_ram
+    Module type      : RAM_DP
+    Module Version   : 6.5
+    Ports            : 
+	Inputs       : WrAddress[9:0], RdAddress[9:0], Data[23:0], WE, RdClock, RdClockEn, Reset, WrClock, WrClockEn
+	Outputs      : Q[23:0]
+    I/O buffer       : not inserted
+    Memory file      : INIT_ALL_0s
+    EDIF output      : dp_ram.edn
+    Verilog output   : dp_ram.v
+    Verilog template : dp_ram_tmpl.v
+    Verilog testbench: tb_dp_ram_tmpl.v
+    Verilog purpose  : for synthesis and simulation
+    Bus notation     : big endian
+    Report output    : dp_ram.srp
+    Element Usage    :
+          DP8KC : 3
+    Estimated Resource Usage:
+            EBR : 3

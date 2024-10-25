@@ -1,0 +1,38 @@
+[Device]
+Family=machxo2
+PartType=LCMXO2-1200HC
+PartName=LCMXO2-1200HC-5TG144C
+SpeedGrade=5
+Package=TQFP144
+OperatingCondition=COM
+Status=S
+
+[IP]
+VendorName=Lattice Semiconductor Corporation
+CoreType=LPM
+CoreStatus=Demo
+CoreName=Power Controller
+CoreRevision=1.2
+ModuleName=pwr_ctrllr
+SourceFormat=Verilog HDL
+ParameterFileVersion=1.0
+Date=10/15/2024
+Time=17:53:29
+
+[Parameters]
+Verilog=1
+VHDL=0
+EDIF=1
+Destination=Synplicity
+Expression=BusA(0 to 7)
+Order=[MSB:LSB]
+IO=0
+entry=User & Configuration
+s2s=Bypass
+wake=User
+standby=1
+bandgap_off=0
+por_off=0
+
+[Command]
+cmd_line= -w -n pwr_ctrllr -lang verilog -synth lse -bus_exp 7 -bb -arch xo2c00 -type power_cntl -entry USER_CFG -s2s BYPASS -wake USER -standby
