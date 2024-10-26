@@ -23,7 +23,7 @@ module topmod
 );
 
 /*------------------Clocks and Resets--------------------*/
-reg reset_n_i = 1; // replace this!
+wire reset_n_i; // pull gpio0 low when you want to do a reset
 wire clk_osc, clk_pixel, clk_pixel_hs, pll_lock, clk_mipi;
 
 defparam int_osc.HFCLKDIV = 4'd1;
@@ -47,7 +47,6 @@ clk_divider_40Hz __ (
 	.reset		(~reset_n_i),
 	.clk_40Hz	(clk_fsin)
 	);
-assign FSIN = clk_fsin;
 
 //	Reset Bridge for clk_osc
 reset_bridge rst_brg_osc(
@@ -61,8 +60,7 @@ reset_bridge rst_brg_mipi(
   .sync_resetn_out	(mipi_reset_n_o)// Synchronized reset signal
 );
 
-/*------------------Cammera Communication--------------------*/
-
+/*------------------Camera Communication--------------------*/
 //	MIPI DPHY to CMOS module : It converts the MIPI camera input to Parallel video data at clock "clk_pixel"
 wire [9:0] cmos_data;
 wire cmos_fv;
@@ -85,10 +83,13 @@ mipidphy2cmos mipidphy2cmos
 	.rx_payload_en 		(dbg)
  );
 
-
+/*------------------Output Pin Assignments--------------------*/
+//assign SDA;
+//assign SCL;
+assign FSIN = clk_fsin;
 assign DIFF_P = dbg;//clk_pixel_hs;
-assign DIFF_N = cmos_fv;
-assign GPIO0 = 0;//cmos_data[0];
-
+assign DIFF_N = clk_osc;
+assign GPIO0 = reset_n_i;
+assign GPIO1 = 0;//cmos_data[0];
 
 endmodule
