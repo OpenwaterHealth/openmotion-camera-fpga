@@ -4,7 +4,7 @@ module topmod
 	inout			SDA,
 	output			SCL,
 
-	input          FSIN,
+	output          FSIN,
 	output			GPIO0,
 	output			GPIO1,
 	
@@ -24,7 +24,7 @@ module topmod
 
 /*------------------Clocks and Resets--------------------*/
 reg reset_n_i = 1; // replace this!
-wire clk_osc, clk_pixel, pll_lock, clk_mipi;
+wire clk_osc, clk_pixel, clk_pixel_hs, pll_lock, clk_mipi;
 
 defparam int_osc.HFCLKDIV = 4'd1;
 OSCI int_osc
@@ -33,12 +33,21 @@ OSCI int_osc
 	.HFCLKOUT	(clk_osc),
 	.LFCLKOUT	()
 );
-/*
-pll pll_inst (
-	.CLKI	( clk_mipi  ),
-	.CLKOP	(clk_pixel),    // 84 MHz
+
+pll_i pll_inst (
+	.CLKI	( clk_mipi  ),  // 83 MHz, from the mipi clk
+	.CLKOP	(clk_pixel),    // 84 MHz, buffered
+	.CLKOS  (clk_pixel_hs), // 132.8MHz
 	.LOCK	(pll_lock)
-);*/
+);
+
+wire clk_fsin;
+clk_divider_40Hz __ (
+	.clk_48MHz 	(clk_osc),
+	.reset		(~reset_n_i),
+	.clk_40Hz	(clk_fsin)
+	);
+assign FSIN = clk_fsin;
 
 //	Reset Bridge for clk_osc
 reset_bridge rst_brg_osc(
@@ -53,10 +62,11 @@ reset_bridge rst_brg_mipi(
 );
 
 /*------------------Cammera Communication--------------------*/
+
 //	MIPI DPHY to CMOS module : It converts the MIPI camera input to Parallel video data at clock "clk_pixel"
-
-
-
+wire [9:0] cmos_data;
+wire cmos_fv;
+wire cmos_lv;
 mipidphy2cmos mipidphy2cmos
  (
  	.reset_n_i			(mipi_reset_n_o), // Changed to test 1080p resolution
@@ -69,12 +79,16 @@ mipidphy2cmos mipidphy2cmos
  	.pd0_o				( cmos_data ),
  	.fv_o				(  cmos_fv ),
  	.lv_o				(  cmos_lv ),
- 	.rx_clk_byte_fr_o	(rx_clk_byte_fr),
+ 	.rx_clk_byte_fr_o	(clk_mipi),
  	.clk_pixel_i		(clk_pixel_hs),
- 	.pll_lock_i			(pll_lock)
+ 	.pll_lock_i			(pll_lock),
+	.rx_payload_en 		(dbg)
  );
 
 
-assign DIFF_P = rx_clk_byte_fr;
+assign DIFF_P = dbg;//clk_pixel_hs;
+assign DIFF_N = cmos_fv;
+assign GPIO0 = 0;//cmos_data[0];
+
 
 endmodule

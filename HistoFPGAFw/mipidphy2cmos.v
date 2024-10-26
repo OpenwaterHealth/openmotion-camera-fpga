@@ -15,11 +15,7 @@ module mipidphy2cmos
 	output 			rx_clk_byte_fr_o,
 	input 			clk_pixel_i,
 	input 			pll_lock_i,
-	
-	output rx_payload_en,
-	output [15:0] tp_data,
-	output test_out,
-	output [5:0] debug
+	output 			rx_payload_en
 );
 
 assign tp_data = 32'h00800080;
@@ -36,7 +32,7 @@ parameter RX_GEAR = 16;	// DPHY Rx Clock Gear
 wire int_rst_n;
 
 //Byte Clock Domain
-wire [5:0] ref_dt = 6'h2b;
+wire [5:0] ref_dt = 6'h2b; 
 wire rx_clk_byte_fr , rx_clk_byte_hs, rx_clk_lp_ctrl, rx_reset_lp_n;
 
 wire rx_payload_en, rx_sp_en, rx_lp_en, rx_lp_av_en;
@@ -47,7 +43,7 @@ wire [15:0]	rx_wc;
 assign rx_clk_byte_fr = rx_clk_byte_hs;
 assign rx_clk_lp_ctrl = 1'b1;
 assign rx_reset_lp_n = 1'b1;
-
+ 
 //Pixel Clock Domain
 wire clk_pixel_pll ;
 //reg rx_reset_byte_fr_n_meta, rx_reset_byte_fr_n_sync;
@@ -161,13 +157,12 @@ byte_pixel byte_pixel (
 	.byte2pix_p_odd_o			(p_odd)
 );
 
-
-reg [5:0] debug;
+/*reg [5:0] debug;
 always @(posedge rx_sp_en, posedge rx_lp_en) begin
 	debug <=rx_dt;
 end
 assign test_out = rx_sp_en || rx_lp_en;//rx_byte_counter[0];
-
+*/
 /*debug[0] <= 0;
 debug[1] <= 0;
 debug[2] <= 0;
