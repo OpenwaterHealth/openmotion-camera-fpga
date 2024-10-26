@@ -57,7 +57,7 @@ reset_bridge rst_brg_mipi(
 
 
 
-/*mipidphy2cmos mipidphy2cmos
+mipidphy2cmos mipidphy2cmos
  (
  	.reset_n_i			(mipi_reset_n_o), // Changed to test 1080p resolution
  	.rx_clk_p_i			(CK_P),
@@ -73,7 +73,6 @@ reset_bridge rst_brg_mipi(
  	.clk_pixel_i		(clk_pixel_hs),
  	.pll_lock_i			(pll_lock)
  );
-*/
 
 
 assign DIFF_P = clk_osc;

@@ -82,7 +82,7 @@ reset_bridge rst_brg_mipi_clk(
 ///// RX D-PHY module instantiation                                     /////
 ///// Customer has to recreate a Soft-IP for own configuration settings /////
 /////////////////////////////////////////////////////////////////////////////
-csi_dphy_rx rx_dphy
+rx_dphy_ip rx_dphy
 (
 // Inouts
 	.csi_dphy_rx_clk_p_i			(rx_clk_p_i),
