@@ -2,7 +2,7 @@
 <BaliProject version="3.2" title="HistoFPGAFw" device="LIF-MD6000-6UWG36I" default_implementation="impl1">
     <Options/>
     <Implementation title="impl1" dir="impl1" description="impl1" synthesis="lse" default_strategy="Strategy1">
-        <Options def_top="rx_dphy_ip" top="topmod"/>
+        <Options def_top="pll" top="topmod"/>
         <Source name="top.v" type="Verilog" type_short="Verilog">
             <Options top_module="topmod"/>
         </Source>
@@ -16,6 +16,15 @@
             <Options/>
         </Source>
         <Source name="rx_dphy_ip/rx_dphy_ip.sbx" type="sbx" type_short="SBX">
+            <Options/>
+        </Source>
+        <Source name="pll/pll.sbx" type="sbx" type_short="SBX">
+            <Options/>
+        </Source>
+        <Source name="clk_divider_40Hz.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="constraints.ldc" type="LSE Design Constraints File" type_short="LDC">
             <Options/>
         </Source>
         <Source name="HistoFPGAFw.lpf" type="Logic Preference" type_short="LPF">
