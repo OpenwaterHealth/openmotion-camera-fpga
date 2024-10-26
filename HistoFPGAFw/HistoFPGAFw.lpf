@@ -15,3 +15,6 @@ LOCATE COMP "GPIO1" SITE "F2" ;
 //LOCATE COMP "D1_N" SITE "C2" ;
 LOCATE COMP "DIFF_N" SITE "D5" ;
 LOCATE COMP "DIFF_P" SITE "E5" ;
+
+
+LOCATE COMP "mipidphy2cmos/rx_dphy/csi_dphy_rx_inst/dphy_rx_inst/u_dphy_wrapper/MIXEL.mixel_dphy" SITE "MIPIDPHY1" ;

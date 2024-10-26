@@ -75,6 +75,6 @@ mipidphy2cmos mipidphy2cmos
  );
 
 
-assign DIFF_P = clk_osc;
+assign DIFF_P = rx_clk_byte_fr;
 
 endmodule
