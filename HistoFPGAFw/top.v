@@ -89,7 +89,8 @@ mipidphy2cmos mipidphy2cmos
 assign FSIN = clk_fsin;
 assign DIFF_P = dbg;//clk_pixel_hs;
 assign DIFF_N = clk_osc;
-assign GPIO0 = reset_n_i;
+//assign GPIO0 = reset_n_i;
+assign reset_n_i = 1;
 assign GPIO1 = 0;//cmos_data[0];
 
 endmodule
