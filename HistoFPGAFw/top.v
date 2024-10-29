@@ -2,10 +2,10 @@ module topmod
 (
 	//I2C Interface
 	inout			SDA,
-	output			SCL,
+	input			SCL,
 
 	output          FSIN,
-	output			GPIO0,
+	input			GPIO0,
 	output			GPIO1,
 	
 
@@ -25,13 +25,14 @@ module topmod
 /*------------------Clocks and Resets--------------------*/
 wire reset_n_i; // pull gpio0 low when you want to do a reset
 wire clk_osc, clk_pixel, clk_pixel_hs, pll_lock, clk_mipi;
+wire clk_lf;
 
 defparam int_osc.HFCLKDIV = 4'd1;
 OSCI int_osc
 (
 	.HFOUTEN	(1'b1),
 	.HFCLKOUT	(clk_osc),
-	.LFCLKOUT	()
+	.LFCLKOUT	(clk_lf)
 );
 
 pll_i pll_inst (
@@ -43,7 +44,7 @@ pll_i pll_inst (
 
 wire clk_fsin;
 clk_divider_40Hz __ (
-	.clk_48MHz 	(clk_osc),
+	.clk_48MHz 	(clk_lf),
 	.reset		(~reset_n_i),
 	.clk_40Hz	(clk_fsin)
 	);
@@ -87,10 +88,9 @@ mipidphy2cmos mipidphy2cmos
 //assign SDA;
 //assign SCL;
 assign FSIN = clk_fsin;
-assign DIFF_P = dbg;//clk_pixel_hs;
-assign DIFF_N = clk_osc;
-//assign GPIO0 = reset_n_i;
-assign reset_n_i = 1;
-assign GPIO1 = 0;//cmos_data[0];
+assign DIFF_P = cmos_data[0];//clk_pixel_hs;
+assign DIFF_N = clk_lf;
+assign reset_n_i = GPIO0; // cannot be gpio1 since that is cdone :)
+assign GPIO1 = cmos_fv;//cmos_data[0];
 
 endmodule

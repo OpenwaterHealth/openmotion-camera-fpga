@@ -6,7 +6,7 @@ module clk_divider_40Hz (
 
     // Calculate the counter limit
     // 48 MHz / 40 Hz = 1,200,000 counts
-    localparam integer COUNT_MAX = 1200000 / 2;  // Divide by 2 because we toggle the output every half cycle
+    localparam integer COUNT_MAX = 251 / 2;  // Divide by 2 because we toggle the output every half cycle
 
     reg [20:0] counter = 0;  // 21-bit counter to handle up to 1200000 counts
 
