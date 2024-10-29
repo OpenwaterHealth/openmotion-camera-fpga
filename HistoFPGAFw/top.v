@@ -87,7 +87,7 @@ mipidphy2cmos mipidphy2cmos
 /*------------------Output Pin Assignments--------------------*/
 //assign SDA;
 //assign SCL;
-assign FSIN = clk_fsin;
+assign FSIN = 1'bz;
 assign DIFF_P = cmos_data[0];//clk_pixel_hs;
 assign DIFF_N = clk_lf;
 assign reset_n_i = GPIO0; // cannot be gpio1 since that is cdone :)
