@@ -1,0 +1,10 @@
+----------------------------------------------------------------------
+Report for cell ram_dp_s.TECH
+Register bits:  0 of 5987 (0.000%)
+I/O cells:      0
+                                  Cell usage:
+                               cell     count   Res Usage(%)
+                              DP8KE         3          100.0
+                                GSR         1          100.0
+                        VERIFIC_PWR         1          100.0
+                              TOTAL         5

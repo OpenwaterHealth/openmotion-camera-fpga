@@ -83,13 +83,25 @@ mipidphy2cmos mipidphy2cmos
  	.pll_lock_i			(pll_lock),
 	.rx_payload_en 		(dbg)
  );
+ 
+ wire spi_mosi, spi_clk;
+ histogram_module histogram_module_i(
+	.clk 		(clk_pixel_hs),
+	.reset		(~reset_n_HFCLKOUT),
+	.pixel_data (cmos_data),
+	.frame_valid (cmos_fv),
+	.line_valid (cmos_lv),
+	.spi_clk_i 	(clk_pixel_hs),
+	.spi_mosi_o (spi_mosi),
+	.spi_clk_o (spi_clk)
+);
 
 /*------------------Output Pin Assignments--------------------*/
 //assign SDA;
 //assign SCL;
 assign FSIN = 1'bz;
-assign DIFF_P = cmos_data[0];//clk_pixel_hs;
-assign DIFF_N = clk_lf;
+assign DIFF_P = spi_mosi;
+assign DIFF_N = spi_clk;
 assign reset_n_i = GPIO0; // cannot be gpio1 since that is cdone :)
 assign GPIO1 = cmos_fv;//cmos_data[0];
 
