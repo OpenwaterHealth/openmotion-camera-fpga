@@ -63,7 +63,7 @@ reset_bridge rst_brg_mipi(
 
 /*------------------Camera Communication--------------------*/
 //	MIPI DPHY to CMOS module : It converts the MIPI camera input to Parallel video data at clock "clk_pixel"
-wire [9:0] cmos_data;
+wire [19:0] cmos_data;
 wire cmos_fv;
 wire cmos_lv;
 mipidphy2cmos mipidphy2cmos

@@ -6,11 +6,8 @@ module histogram3 (
     input wire rw,              // read/write, when reading outputs histo data/bin num until done
     input wire [9:0] pixel,    // 10 bit data for each pixel
     input wire pixel_valid,     // only on when the pixel is valid
-    input wire image_done,      // flip this input high when image is finished
-    output reg histo_done,      // flips high when histogram calculation is done
     input wire [9:0] bin,       // bin number to read out
-    output wire [23:0] data,      // data output of the bin being read
-    output wire debug_line
+    output wire [23:0] data      // data output of the bin being read
 	);
     
 	reg prev_pixel_valid;
@@ -42,7 +39,6 @@ module histogram3 (
 			prev_pixel_valid <= 0;
 			prev_rpt <= 0;
 			rpt_inc <= 0;
-			histo_done <= 0;
 			prev_bin <= 0;
 			prev_bin_incremented <= 0;
 		end else begin
@@ -56,13 +52,6 @@ module histogram3 (
 				rpt_inc <= rpt_inc + 23'b1;
 			else if(rpt) 							// just the first repeat
 				rpt_inc <= incremented_count;
-
-			// Histo done signal
-		   if(image_done) begin
-				histo_done <= 1;
-			end else begin
-				histo_done <= 0;
-			end
 			
 			if(prev_bin_incremented)
 				data_out_persistent <= data_out;
@@ -73,7 +62,7 @@ module histogram3 (
 		prev_prev_prev_prev_rw <= prev_prev_prev_rw;
 	end
 	
-	ram_dp_s ram_dp_q (
+	ram_dp_s ram_dp_i (
         .Reset(rst), 
         
 		.RdClock(clk), 
@@ -88,7 +77,7 @@ module histogram3 (
         .WE(~prev_prev_prev_prev_rw | (~rpt & prev_pixel_valid)) // write when in "READ" mode, aka wipe everything out as you read it, and only write when the pixel before was valid and is not being repeated
 	);
     
-	assign debug_line = (~prev_prev_prev_prev_rw | (~rpt & prev_pixel_valid));
+	assign debug_line = (ram_wr_data == 0);
 	assign rpt = (prev_pixel == pixel) & pixel_valid & prev_pixel_valid; // repeat detector
     assign incremented_count = data_out + 23'b1;
 	assign data_to_write = prev_rpt ? rpt_inc  + 24'b1: incremented_count;		

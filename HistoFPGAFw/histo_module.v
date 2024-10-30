@@ -2,12 +2,13 @@
 module histogram_module (
     input clk,
     input reset,
-    input [9:0] pixel_data,
+    input [19:0] pixel_data,
     input frame_valid,
     input line_valid,
     input spi_clk_i,
     output spi_mosi_o,
 	output spi_clk_o,
+	output dbg,
 	output [5:0] debug,
 	output [9:0] debug2
 );
@@ -17,14 +18,18 @@ module histogram_module (
     reg [9:0] bin;
 
     // Control
-    wire image_done; 
-    wire histo_done;
     wire serializer_done;
 	reg prev_serializer_done;
 	reg serializer_total_done =0;
 	reg flag = 0;
     wire pixel_valid = frame_valid && line_valid;
 
+	wire [9:0] pixel_a = pixel_data[9:0];
+	wire [9:0] pixel_b = pixel_data[19:10];
+	
+	wire [23:0] data_a;
+	wire [23:0] data_b;
+	
 	parameter IDLE = 2'b00, HISTO = 2'b01, SERIALIZE = 2'b11;
 	reg [1:0] state = IDLE;
 
@@ -62,24 +67,31 @@ module histogram_module (
 			
 			if(bin == 1) flag <= 1; // set the flag high to show that a serialization has started
 		end
-	end			
-
+	end
     histogram3 histo_i (
         .clk(clk),          // reset - zeros the histogram
         .rst(reset),          // clock
         .rw(frame_valid),           // read/write, when reading outputs histo data/bin num until done
         
-        .pixel (pixel_data),  // 10 bit data for each pixel
+        .pixel (pixel_a),  // 10 bit data for each pixel
         .pixel_valid (pixel_valid),
         
-		.data(data),       //    when writing, on every rising edge of CLK adds one to the histogram
-        .bin(bin),
-        
-        .image_done(~frame_valid),
-        .histo_done(histo_done),
-		.debug_line (debug_line)
+		.data(data_a),       //    when writing, on every rising edge of CLK adds one to the histogram
+        .bin(bin)
     );
-
+	
+	histogram3 histo_ib (
+        .clk(clk),          // reset - zeros the histogram
+        .rst(reset),          // clock
+        .rw(frame_valid),           // read/write, when reading outputs histo data/bin num until done
+        
+        .pixel (pixel_b),  // 10 bit data for each pixel
+        .pixel_valid (pixel_valid),
+        
+		.data(data_b),       //    when writing, on every rising edge of CLK adds one to the histogram
+        .bin(bin)
+    );
+	assign data = data_a + data_b;
 	
 	Serializer seralizer_i (
         .fast_clk_in(spi_clk_i),
@@ -98,8 +110,10 @@ module histogram_module (
 	assign debug[1] = spi_mosi_o;
 	assign debug[2] = line_valid;
 	assign debug[3] = frame_valid;
-	assign debug[4] = pixel_data[0];
-	assign debug[5] = debug_line;
+	assign debug[4] = state[0];
+	assign debug[5] = state[1];
+	
+	assign dbg = bin[0];
 	
 	
 endmodule
