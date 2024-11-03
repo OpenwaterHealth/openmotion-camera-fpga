@@ -121,12 +121,6 @@ rx_dphy_ip rx_dphy
 	.csi_dphy_rx_lp_hs_state_d_o		(rx_lp_hs_state_d)
 );
 
-/*reg reset_pixel_n_sync_x;
-always @(posedge clk_pixel_pll) begin 
-	reset_pixel_n_sync_x <= reset_pixel_n_sync;
-end
-*/
-
 //	Reset Bridge for pixel clock rst
 reset_bridge rst_pixel_clk(
   .clk_i			(clk_pixel_pll),// Destination clock
@@ -155,22 +149,4 @@ byte_pixel byte_pixel (
 	.byte2pix_p_odd_o			(p_odd)
 );
 
-/*reg [5:0] debug;
-always @(posedge rx_sp_en, posedge rx_lp_en) begin
-	debug <=rx_dt;
-end
-assign test_out = rx_sp_en || rx_lp_en;//rx_byte_counter[0];
-*/
-/*debug[0] <= 0;
-debug[1] <= 0;
-debug[2] <= 0;
-debug[3] <= 0;
-debug[4] <= 0;
-debug[5] <= 0;
-*/
-reg [32:0] rx_byte_counter;
-always @(posedge rx_clk_byte_hs) begin
-	rx_byte_counter <= rx_byte_counter +1;
-end
-//assign test_out = rx_byte_counter[0];
 endmodule 
