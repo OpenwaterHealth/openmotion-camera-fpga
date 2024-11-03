@@ -6,62 +6,7 @@
 -->
 </STYLE>
 </HEAD>
-<PRE><A name="pn241025220329"></A><B><U><big>pn241025220329</big></U></B>
-#Start recording tcl command: 10/25/2024 19:48:59
-#Project Location: C:/Users/ethanhead/Desktop/gen3-cam-fw/HistoFPGAFw; Project name: HistoFPGAFw
-prj_project open "C:/Users/ethanhead/Desktop/gen3-cam-fw/HistoFPGAFw/HistoFPGAFw.ldf"
-sbp_design open -dsgn "C:/Users/ethanhead/Desktop/gen3-cam-fw/HistoFPGAFw/byte_pixel/byte_pixel.sbx"
-sbp_design open -dsgn "C:/Users/ethanhead/Desktop/gen3-cam-fw/HistoFPGAFw/rx_dphy_ip/rx_dphy_ip.sbx"
-prj_run Export -impl impl1 -task Bitgen
-prj_run Export -impl impl1 -task Bitgen
-prj_run Export -impl impl1 -task Bitgen
-prj_run Export -impl impl1 -task Bitgen
-sbp_design new -dsgn "pll" -path "C:/Users/ethanhead/Desktop/gen3-cam-fw/HistoFPGAFw/pll" -device "LIF-MD6000-6UWG36I"
-set currentPath [pwd];set tmp_autopath $auto_path
-cd "C:/Users/ethanhead/Desktop/gen3-cam-fw/HistoFPGAFw/pll/pll_i"
-source "C:/Users/ethanhead/Desktop/gen3-cam-fw/HistoFPGAFw/pll/pll_i/generate_core.tcl"
-set auto_path $tmp_autopath;cd $currentPath
-set currentPath [pwd];set tmp_autopath $auto_path
-cd "C:/Users/ethanhead/Desktop/gen3-cam-fw/HistoFPGAFw/pll/pll_i"
-source "C:/Users/ethanhead/Desktop/gen3-cam-fw/HistoFPGAFw/pll/pll_i/generate_ngd.tcl"
-set auto_path $tmp_autopath;cd $currentPath
-sbp_builder export_add -comp {pll/pll_i}
-sbp_design gen
-prj_src add "C:/Users/ethanhead/Desktop/gen3-cam-fw/HistoFPGAFw/pll/pll.sbx"
-prj_run Export -impl impl1 -task Bitgen
-prj_run Export -impl impl1 -task Bitgen
-prj_run Export -impl impl1 -task Bitgen
-prj_src add "C:/Users/ethanhead/Desktop/gen3-cam-fw/HistoFPGAFw/clk_divider_40Hz.v"
-prj_run Export -impl impl1 -task Bitgen
-prj_run Export -impl impl1 -task Bitgen
-prj_run Export -impl impl1 -task Bitgen
-prj_run Export -impl impl1 -task Bitgen
-prj_run Export -impl impl1 -task Bitgen
-prj_run Export -impl impl1 -task Bitgen
-prj_run Export -impl impl1 -task Bitgen
-prj_src add -exclude "C:/Users/ethanhead/Desktop/gen3-cam-fw/HistoFPGAFw/constraints.ldc"
-prj_src enable "C:/Users/ethanhead/Desktop/gen3-cam-fw/HistoFPGAFw/constraints.ldc"
-prj_run Export -impl impl1 -task Bitgen
-sbp_design open -dsgn "C:/Users/ethanhead/Desktop/gen3-cam-fw/HistoFPGAFw/rx_dphy_ip/rx_dphy_ip.sbx"
-prj_run Export -impl impl1 -task Bitgen
-prj_run Export -impl impl1 -task Bitgen
-prj_run Export -impl impl1 -task Bitgen
-prj_run Export -impl impl1 -task Bitgen -forceAll
-sbp_design open -dsgn "C:/Users/ethanhead/Desktop/gen3-cam-fw/HistoFPGAFw/byte_pixel/byte_pixel.sbx"
-set currentPath [pwd];set tmp_autopath $auto_path
-cd "C:/Users/ethanhead/Desktop/gen3-cam-fw/HistoFPGAFw/byte_pixel/byte2pix"
-source "C:/Users/ethanhead/Desktop/gen3-cam-fw/HistoFPGAFw/byte_pixel/byte2pix/generate_core.tcl"
-set auto_path $tmp_autopath;cd $currentPath
-prj_run Export -impl impl1 -task Bitgen
-sbp_design gen
-prj_run Export -impl impl1 -task Bitgen
-prj_run Export -impl impl1 -task Bitgen
-prj_run Export -impl impl1 -task Bitgen
-#Stop recording: 10/25/2024 22:03:29
-
-
-
-<A name="pn241025234259"></A><B><U><big>pn241025234259</big></U></B>
+<PRE><A name="pn241025234259"></A><B><U><big>pn241025234259</big></U></B>
 #Start recording tcl command: 10/25/2024 22:03:39
 #Project Location: C:/Users/ethanhead/Desktop/gen3-cam-fw/HistoFPGAFw; Project name: HistoFPGAFw
 prj_project open "C:/Users/ethanhead/Desktop/gen3-cam-fw/HistoFPGAFw/HistoFPGAFw.ldf"
@@ -201,6 +146,15 @@ prj_project open "C:/Users/ethanhead/Desktop/gen3-cam-fw/HistoFPGAFw/HistoFPGAFw
 prj_run Export -impl impl1 -task Bitgen
 prj_run Export -impl impl1 -task Bitgen
 #Stop recording: 10/31/2024 16:37:55
+
+
+
+<A name="pn241101143837"></A><B><U><big>pn241101143837</big></U></B>
+#Start recording tcl command: 11/1/2024 10:21:08
+#Project Location: C:/Users/ethanhead/Desktop/gen3-cam-fw/HistoFPGAFw; Project name: HistoFPGAFw
+prj_project open "C:/Users/ethanhead/Desktop/gen3-cam-fw/HistoFPGAFw/HistoFPGAFw.ldf"
+prj_project archive -includeAll "C:/Users/ethanhead/Desktop/HistoFPGAFw.zip"
+#Stop recording: 11/1/2024 14:38:37
 
 
 

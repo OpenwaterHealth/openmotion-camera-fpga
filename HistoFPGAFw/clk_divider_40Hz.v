@@ -20,7 +20,7 @@ module clk_divider_40Hz (
             clk_40Hz <= ~clk_40Hz;  // Toggle the 40 Hz clock
         end
         else begin
-            counter <= counter + 1;
+            counter <= counter + 21'b1;
         end
     end
 

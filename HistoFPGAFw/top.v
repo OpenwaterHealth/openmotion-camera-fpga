@@ -6,7 +6,7 @@ module topmod
 
 	output          FSIN,
 	input			GPIO0,
-	output			GPIO1,
+	input			GPIO1,
 	
 
 	// Camera MIPI input
@@ -80,12 +80,11 @@ mipidphy2cmos mipidphy2cmos
  	.lv_o				(  cmos_lv ),
  	.rx_clk_byte_fr_o	(clk_mipi),
  	.clk_pixel_i		(clk_pixel_hs),
- 	.pll_lock_i			(pll_lock),
-	.rx_payload_en 		(dbg)
- );
+ 	.pll_lock_i			(pll_lock)
+);
  
- wire spi_mosi, spi_clk;
- histogram_module histogram_module_i(
+/*------------------Histogram Module--------------------*/
+wire spi_mosi, spi_clk, spi_en;histogram_module histogram_module_i(
 	.clk 		(clk_pixel_hs),
 	.reset		(~reset_n_HFCLKOUT),
 	.pixel_data (cmos_data),
@@ -93,16 +92,19 @@ mipidphy2cmos mipidphy2cmos
 	.line_valid (cmos_lv),
 	.spi_clk_i 	(clk_pixel_hs),
 	.spi_mosi_o (spi_mosi),
-	.spi_clk_o (spi_clk)
+	.spi_clk_o (spi_clk),
+	.spi_en    (spi_en),
+	.debug		(),
+	.debug2	    ()
 );
 
 /*------------------Output Pin Assignments--------------------*/
-//assign SDA;
-//assign SCL;
+assign SDA = 1'bz;
+//assign SCL = 1'bz;
 assign FSIN = 1'bz;
 assign DIFF_P = spi_mosi;
 assign DIFF_N = spi_clk;
 assign reset_n_i = GPIO0; // cannot be gpio1 since that is cdone :)
-assign GPIO1 = cmos_fv;//cmos_data[0];
+assign spi_en = GPIO1;//cmos_data[0];
 
 endmodule

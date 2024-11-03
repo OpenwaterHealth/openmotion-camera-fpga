@@ -8,7 +8,7 @@ module histogram_module (
     input spi_clk_i,
     output spi_mosi_o,
 	output spi_clk_o,
-	output dbg,
+	input spi_en,
 	output [5:0] debug,
 	output [9:0] debug2
 );

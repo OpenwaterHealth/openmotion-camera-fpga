@@ -14,8 +14,7 @@ module mipidphy2cmos
 	output 			lv_o,
 	output 			rx_clk_byte_fr_o,
 	input 			clk_pixel_i,
-	input 			pll_lock_i,
-	output 			rx_payload_en
+	input 			pll_lock_i
 );
 
 //-----------------------------------------------------------------------------

@@ -227,7 +227,7 @@ wire                           hs_settle_en_w;
 //-----------------------------------------------------------------------------
 // YEL 05.05.2017 - check if this can be
 // clk_byte_fr_o = clk_byte_hs regardless of mode.
-wire lp_hs_state_clk_w;
+wire [1:0] lp_hs_state_clk_w;
 assign clk_byte_hs_o      = clk_byte_hs;
 assign lp_hs_state_clk_o  = (RX_CLK_MODE == "HS_ONLY")? 2'd3 : lp_hs_state_clk_w;
 
