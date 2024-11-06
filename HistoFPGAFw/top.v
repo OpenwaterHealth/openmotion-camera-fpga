@@ -55,11 +55,6 @@ module topmod
                  .ext_resetn_i		( reset_n_i ),// Asynchronous reset signal
                  .sync_resetn_out	(reset_n_HFCLKOUT)// Synchronized reset signal
                );
-  reset_bridge rst_brg_mipi(
-                 .clk_i			(clk_osc),// Destination clock
-                 .ext_resetn_i		( reset_n_HFCLKOUT ),// Asynchronous reset signal
-                 .sync_resetn_out	(mipi_reset_n_o)// Synchronized reset signal
-               );
 
   /*------------------Camera Communication--------------------*/
   //	MIPI DPHY to CMOS module : It converts the MIPI camera input to Parallel video data at clock "clk_pixel"
@@ -68,7 +63,7 @@ module topmod
   wire cmos_lv;
   mipidphy2cmos mipidphy2cmos
                 (
-                  .reset_n_i			(mipi_reset_n_o), // Changed to test 1080p resolution
+                  .reset_n_i			(reset_n_HFCLKOUT), // Changed to test 1080p resolution
                   .rx_clk_p_i			(CK_P),
                   .rx_clk_n_i			(CK_N),
                   .rx_d0_p_i			(D0_P),
