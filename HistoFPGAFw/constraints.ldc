@@ -7,7 +7,8 @@
 # for assigning design logic to physical resources) for back-end flow.
 ################################################
 
-create_clock -period 12.000000 -waveform { 0.000000 6.000000 } -name CLK_PIXEL [ get_nets { pll_inst/CLKOP } ]
+#disable create_clock -period 12.000000 -waveform { 0.000000 6.000000 } -name CLK_PIXEL [ get_nets { pll_inst/CLKOP } ]
+#disable create_clock -period 7.500000 -waveform { 0.000000 3.250000 } -name CLK_PIXEL_HS [ get_nets { clk_pixel_hs } ]
 
 ################################################
 # This section describes the HDL Attributes that are supported

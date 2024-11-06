@@ -22,6 +22,8 @@ module histogram_module (
   reg prev_serializer_done;
   reg serializer_total_done =0;
   reg flag = 0;
+  reg [7:0] frame_counter;
+  
   wire pixel_valid = frame_valid && line_valid;
 
   wire [9:0] pixel_a = pixel_data[9:0];
@@ -81,7 +83,7 @@ module histogram_module (
         flag <= 1; // set the flag high to show that a serialization has started
     end
   end
-  histogram3 histo_i (
+  histogram3 histo_a (
                .clk(clk),          // reset - zeros the histogram
                .rst(reset),          // clock
                .rw(frame_valid),           // read/write, when reading outputs histo data/bin num until done
@@ -93,7 +95,7 @@ module histogram_module (
                .bin(bin)
              );
 
-  histogram3 histo_ib (
+  histogram3 histo_b (
                .clk(clk),          // reset - zeros the histogram
                .rst(reset),          // clock
                .rw(frame_valid),           // read/write, when reading outputs histo data/bin num until done
@@ -104,17 +106,26 @@ module histogram_module (
                .data(data_b),       //    when writing, on every rising edge of CLK adds one to the histogram
                .bin(bin)
              );
-  assign data = data_a + data_b;
 
+  assign data = data_a + data_b;
+  
+  wire [7:0] spacer = (bin == 10'h3ff) ? frame_counter : 8'b0;
+  always @(negedge frame_valid) begin
+    if(reset)
+      frame_counter <= 8'b0;
+    else
+      frame_counter <= frame_counter + 8'b1;
+  end
+   
   Serializer seralizer_i (
                .fast_clk_in(spi_clk_i),
                .reset(reset | (state != SERIALIZE)),
-               .data_in({8'b0,data}),
+               .data_in({spacer,data}),
                .serial_out(spi_mosi_o),
                .slow_clk_out(spi_clk_o),
                .done(serializer_done),
                .debug ()
-             );
+             ); 
   assign debug2 = frame_valid ? pixel_data : bin;
   //assign debug2 = data[9:0];
 
