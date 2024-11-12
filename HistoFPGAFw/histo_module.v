@@ -110,7 +110,7 @@ module histogram_module (
   assign data = data_a + data_b;
   
   wire [7:0] spacer = (bin == 10'h3ff) ? frame_counter : 8'b0;
-  always @(negedge frame_valid) begin
+  always @(negedge frame_valid, posedge reset) begin
     if(reset)
       frame_counter <= 8'b0;
     else
