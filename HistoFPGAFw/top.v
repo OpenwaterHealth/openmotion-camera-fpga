@@ -6,7 +6,7 @@ module topmod
 
     output          FSIN,
     input			GPIO0,
-    input			GPIO1,
+    output			GPIO1,
 
 
     // Camera MIPI input
@@ -102,5 +102,5 @@ module topmod
   assign DIFF_N = spi_en & spi_clk;
   assign reset_n_i = GPIO0; 		
   assign spi_en = 1'b1;//~GPIO1;			//needs to be active low because i need to keep this one high through boot because its also cdone
-
+  //assign GPIO1 = cmos_fv;
 endmodule
