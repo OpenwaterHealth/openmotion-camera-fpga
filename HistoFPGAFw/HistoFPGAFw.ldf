@@ -1,16 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <BaliProject version="3.2" title="HistoFPGAFw" device="LIF-MD6000-6UWG36I" default_implementation="impl1">
-    <Options/>
+    <Options>
+        <Option name="HDL type" value="Verilog"/>
+        <Option name="VerilogStandard" value="Verilog 2001"/>
+    </Options>
     <Implementation title="impl1" dir="impl1" description="impl1" synthesis="lse" default_strategy="Strategy1">
-        <Options def_top="ram_dp" top="topmod"/>
+        <Options>
+            <Option name="HDL type" value="Verilog"/>
+            <Option name="VerilogStandard" value="Verilog 2001"/>
+            <Option name="def_top" value="ram_dp"/>
+            <Option name="lib" value="work"/>
+            <Option name="top" value="topmod"/>
+        </Options>
         <Source name="top.v" type="Verilog" type_short="Verilog">
-            <Options top_module="topmod"/>
+            <Options VerilogStandard="Verilog 2001" top_module="topmod"/>
         </Source>
         <Source name="mipidphy2cmos.v" type="Verilog" type_short="Verilog">
-            <Options/>
+            <Options VerilogStandard="Verilog 2001"/>
         </Source>
         <Source name="reset_bridge.v" type="Verilog" type_short="Verilog">
-            <Options/>
+            <Options VerilogStandard="Verilog 2001"/>
         </Source>
         <Source name="byte_pixel/byte_pixel.sbx" type="sbx" type_short="SBX">
             <Options/>
@@ -22,19 +31,19 @@
             <Options/>
         </Source>
         <Source name="clk_divider_40Hz.v" type="Verilog" type_short="Verilog">
-            <Options/>
+            <Options VerilogStandard="Verilog 2001"/>
         </Source>
         <Source name="histo_calc.v" type="Verilog" type_short="Verilog">
-            <Options/>
+            <Options VerilogStandard="Verilog 2001"/>
         </Source>
         <Source name="histo_module.v" type="Verilog" type_short="Verilog">
-            <Options/>
+            <Options VerilogStandard="Verilog 2001"/>
         </Source>
         <Source name="histo_serializer.v" type="Verilog" type_short="Verilog">
-            <Options/>
+            <Options VerilogStandard="Verilog 2001"/>
         </Source>
         <Source name="spi_master.v" type="Verilog" type_short="Verilog">
-            <Options/>
+            <Options VerilogStandard="Verilog 2001"/>
         </Source>
         <Source name="ram_dp/ram_dp.sbx" type="sbx" type_short="SBX">
             <Options/>

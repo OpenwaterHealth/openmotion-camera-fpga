@@ -15,4 +15,7 @@ LOCATE COMP "GPIO1" SITE "F2" ;
 LOCATE COMP "DIFF_N" SITE "D5" ;
 LOCATE COMP "DIFF_P" SITE "E5" ;
 LOCATE COMP "mipidphy2cmos/rx_dphy/csi_dphy_rx_inst/dphy_rx_inst/u_dphy_wrapper/MIXEL.mixel_dphy" SITE "MIPIDPHY1" ;
-//FREQUENCY NET "clk_pixel_hs" 132.800000 MHz HOLD_MARGIN 2.000000 ns ;
+FREQUENCY NET "clk_mipi" 83.000000 MHz HOLD_MARGIN -1.000000 ns ;
+FREQUENCY NET "mipidphy2cmos/rx_dphy/csi_dphy_rx_inst/dphy_rx_inst/csi_dphy_rx_clk_byte_o" 83.000000 MHz HOLD_MARGIN -1.000000 ns ;
+FREQUENCY NET "clk_pixel_hs" 100.000000 MHz PAR_ADJ 32.799999 HOLD_MARGIN -2.000000 ns ;
+FREQUENCY NET "clk_osc" 48.000000 MHz HOLD_MARGIN -1.000000 ns ;
