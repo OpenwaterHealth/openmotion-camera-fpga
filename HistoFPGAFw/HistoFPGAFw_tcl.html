@@ -1,0 +1,213 @@
+<HTML>
+<HEAD><TITLE>Lattice TCL Log</TITLE>
+<STYLE TYPE="text/css">
+<!--
+ body,pre{    font-family:'Courier New', monospace;    color: #000000;    font-size:88%;    background-color: #ffffff;}h1 {    font-weight: bold;    margin-top: 24px;    margin-bottom: 10px;    border-bottom: 3px solid #000;    font-size: 1em;}h2 {    font-weight: bold;    margin-top: 18px;    margin-bottom: 5px;    font-size: 0.90em;}h3 {    font-weight: bold;    margin-top: 12px;    margin-bottom: 5px;    font-size: 0.80em;}p {    font-size:78%;}P.Table {    margin-top: 4px;    margin-bottom: 4px;    margin-right: 4px;    margin-left: 4px;}table{    border-width: 1px 1px 1px 1px;    border-style: solid solid solid solid;    border-color: black black black black;    border-collapse: collapse;}th {    font-weight:bold;    padding: 4px;    border-width: 1px 1px 1px 1px;    border-style: solid solid solid solid;    border-color: black black black black;    vertical-align:top;    text-align:left;    font-size:78%;}td {    padding: 4px;    border-width: 1px 1px 1px 1px;    border-style: solid solid solid solid;    border-color: black black black black;    vertical-align:top;    font-size:78%;}a {    color:#013C9A;    text-decoration:none;}a:visited {    color:#013C9A;}a:hover, a:active {    text-decoration:underline;    color:#5BAFD4;}.pass{background-color: #00ff00;}.fail{background-color: #ff0000;}.comment{    font-size: 90%;    font-style: italic;}
+-->
+</STYLE>
+</HEAD>
+<PRE><A name="pn241025234259"></A><B><U><big>pn241025234259</big></U></B>
+#Start recording tcl command: 10/25/2024 22:03:39
+#Project Location: C:/Users/ethanhead/Desktop/gen3-cam-fw/HistoFPGAFw; Project name: HistoFPGAFw
+prj_project open "C:/Users/ethanhead/Desktop/gen3-cam-fw/HistoFPGAFw/HistoFPGAFw.ldf"
+prj_run Export -impl impl1 -task Bitgen
+#Stop recording: 10/25/2024 23:42:59
+
+
+
+<A name="pn241028145203"></A><B><U><big>pn241028145203</big></U></B>
+#Start recording tcl command: 10/28/2024 12:42:16
+#Project Location: C:/Users/ethanhead/Desktop/gen3-cam-fw/HistoFPGAFw; Project name: HistoFPGAFw
+prj_project open "C:/Users/ethanhead/Desktop/gen3-cam-fw/HistoFPGAFw/HistoFPGAFw.ldf"
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Bitgen
+#Stop recording: 10/28/2024 14:52:03
+
+
+
+<A name="pn241028145330"></A><B><U><big>pn241028145330</big></U></B>
+#Start recording tcl command: 10/28/2024 14:52:19
+#Project Location: C:/Users/ethanhead/Desktop/gen3-cam-fw/HistoFPGAFw; Project name: HistoFPGAFw
+prj_project open "C:/Users/ethanhead/Desktop/gen3-cam-fw/HistoFPGAFw/HistoFPGAFw.ldf"
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1
+prj_src add "C:/Users/ethanhead/Desktop/gen3-cam-fw/HistoFPGAFw/clk_divider_40Hz.v"
+prj_run Export -impl impl1
+#Stop recording: 10/28/2024 14:53:30
+
+
+
+<A name="pn241028174427"></A><B><U><big>pn241028174427</big></U></B>
+#Start recording tcl command: 10/28/2024 14:54:07
+#Project Location: C:/Users/ethanhead/Desktop/gen3-cam-fw/HistoFPGAFw; Project name: HistoFPGAFw
+prj_project open "C:/Users/ethanhead/Desktop/gen3-cam-fw/HistoFPGAFw/HistoFPGAFw.ldf"
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Bitgen
+#Stop recording: 10/28/2024 17:44:27
+
+
+
+<A name="pn241029171545"></A><B><U><big>pn241029171545</big></U></B>
+#Start recording tcl command: 10/28/2024 17:44:32
+#Project Location: C:/Users/ethanhead/Desktop/gen3-cam-fw/HistoFPGAFw; Project name: HistoFPGAFw
+prj_project open "C:/Users/ethanhead/Desktop/gen3-cam-fw/HistoFPGAFw/HistoFPGAFw.ldf"
+prj_run Export -impl impl1 -task Bitgen
+sbp_design open -dsgn "C:/Users/ethanhead/Desktop/gen3-cam-fw/HistoFPGAFw/byte_pixel/byte_pixel.sbx"
+set currentPath [pwd];set tmp_autopath $auto_path
+cd "C:/Users/ethanhead/Desktop/gen3-cam-fw/HistoFPGAFw/byte_pixel/byte2pix"
+source "C:/Users/ethanhead/Desktop/gen3-cam-fw/HistoFPGAFw/byte_pixel/byte2pix/generate_core.tcl"
+set auto_path $tmp_autopath;cd $currentPath
+prj_run Export -impl impl1 -task Bitgen
+sbp_design gen
+prj_run Export -impl impl1 -task TimingSimFileVHD
+prj_run Export -impl impl1 -task Jedecgen
+prj_run Export -impl impl1 -task Bitgen
+sbp_design open -dsgn "C:/Users/ethanhead/Desktop/gen3-cam-fw/HistoFPGAFw/pll/pll.sbx"
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Bitgen -forceAll
+prj_run Export -impl impl1 -task Bitgen
+prj_src add "C:/Users/ethanhead/Desktop/gen3-cam-fw/HistoFPGAFw/histo_calc.v" "C:/Users/ethanhead/Desktop/gen3-cam-fw/HistoFPGAFw/histo_module.v" "C:/Users/ethanhead/Desktop/gen3-cam-fw/HistoFPGAFw/histo_serializer.v" "C:/Users/ethanhead/Desktop/gen3-cam-fw/HistoFPGAFw/spi_master.v"
+sbp_design new -dsgn "ram_dp" -path "C:/Users/ethanhead/Desktop/gen3-cam-fw/HistoFPGAFw/ram_dp" -device "LIF-MD6000-6UWG36I"
+set currentPath [pwd];set tmp_autopath $auto_path
+cd "C:/Users/ethanhead/Desktop/gen3-cam-fw/HistoFPGAFw/ram_dp/ram_dp_s"
+source "C:/Users/ethanhead/Desktop/gen3-cam-fw/HistoFPGAFw/ram_dp/ram_dp_s/generate_core.tcl"
+set auto_path $tmp_autopath;cd $currentPath
+set currentPath [pwd];set tmp_autopath $auto_path
+cd "C:/Users/ethanhead/Desktop/gen3-cam-fw/HistoFPGAFw/ram_dp/ram_dp_s"
+source "C:/Users/ethanhead/Desktop/gen3-cam-fw/HistoFPGAFw/ram_dp/ram_dp_s/generate_ngd.tcl"
+set auto_path $tmp_autopath;cd $currentPath
+sbp_builder export_add -comp {ram_dp/ram_dp_s}
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task TimingSimFileVHD
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Bitgen
+sbp_design gen
+prj_src add "C:/Users/ethanhead/Desktop/gen3-cam-fw/HistoFPGAFw/ram_dp/ram_dp.sbx"
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Bitgen
+#Stop recording: 10/29/2024 17:15:45
+
+
+
+<A name="pn241030100630"></A><B><U><big>pn241030100630</big></U></B>
+#Start recording tcl command: 10/29/2024 17:48:44
+#Project Location: C:/Users/ethanhead/Desktop/gen3-cam-fw/HistoFPGAFw; Project name: HistoFPGAFw
+prj_project open "C:/Users/ethanhead/Desktop/gen3-cam-fw/HistoFPGAFw/HistoFPGAFw.ldf"
+sbp_design open -dsgn "C:/Users/ethanhead/Desktop/gen3-cam-fw/HistoFPGAFw/byte_pixel/byte_pixel.sbx"
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Bitgen
+#Stop recording: 10/30/2024 10:06:30
+
+
+
+<A name="pn241030143200"></A><B><U><big>pn241030143200</big></U></B>
+#Start recording tcl command: 10/30/2024 13:00:59
+#Project Location: C:/Users/ethanhead/Desktop/gen3-cam-fw/HistoFPGAFw; Project name: HistoFPGAFw
+prj_project open "C:/Users/ethanhead/Desktop/gen3-cam-fw/HistoFPGAFw/HistoFPGAFw.ldf"
+prj_run Export -impl impl1 -task Bitgen
+#Stop recording: 10/30/2024 14:32:00
+
+
+
+<A name="pn241030181426"></A><B><U><big>pn241030181426</big></U></B>
+#Start recording tcl command: 10/30/2024 15:41:32
+#Project Location: C:/Users/ethanhead/Desktop/gen3-cam-fw/HistoFPGAFw; Project name: HistoFPGAFw
+prj_project open "C:/Users/ethanhead/Desktop/gen3-cam-fw/HistoFPGAFw/HistoFPGAFw.ldf"
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Bitgen
+#Stop recording: 10/30/2024 18:14:26
+
+
+
+<A name="pn241031163755"></A><B><U><big>pn241031163755</big></U></B>
+#Start recording tcl command: 10/31/2024 15:26:05
+#Project Location: C:/Users/ethanhead/Desktop/gen3-cam-fw/HistoFPGAFw; Project name: HistoFPGAFw
+prj_project open "C:/Users/ethanhead/Desktop/gen3-cam-fw/HistoFPGAFw/HistoFPGAFw.ldf"
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Bitgen
+#Stop recording: 10/31/2024 16:37:55
+
+
+
+<A name="pn241119114740"></A><B><U><big>pn241119114740</big></U></B>
+#Start recording tcl command: 11/18/2024 10:01:06
+#Project Location: C:/Users/ethanhead/Desktop/gen3-cam-fw/HistoFPGAFw; Project name: HistoFPGAFw
+prj_project open "C:/Users/ethanhead/Desktop/gen3-cam-fw/HistoFPGAFw/HistoFPGAFw.ldf"
+prj_run Export -impl impl1 -task Bitgen
+#Stop recording: 11/19/2024 11:47:40
+
+
+
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+</PRE></FONT>
+</BODY>
+</HTML>

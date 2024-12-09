@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BaliProject version="3.2" title="byte2pix_eval" device="LIF-MD6000-6UWG36I" synthesis="lse" default_implementation="byte2pix_eval">
+    <Implementation title="byte2pix_eval" dir="byte2pix_eval" description="byte2pix_eval" default_strategy="byte2pix_top">
+        <Options>
+            <Option name="HDL type" value="Verilog"/>
+            <Option name="top" value="byte2pix"/>
+        </Options>
+        <Source name="../../../../../byte2pix_byte2pixel_bb.v" type="Verilog"/>
+        <Source name="../../../../../byte2pix.v" type="Verilog"/>
+        <Source name="byte2pix_top.lpf" type="Logic Preference"/>
+    </Implementation>
+    <Strategy name="byte2pix_top" file="byte2pix_top.sty"/>
+</BaliProject>

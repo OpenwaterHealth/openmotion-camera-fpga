@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BaliProject version="3.2" title="csi_dphy_rx_eval" device="LIF-MD6000-6UWG36I" synthesis="lse" default_implementation="csi_dphy_rx_eval">
+    <Implementation title="csi_dphy_rx_eval" dir="csi_dphy_rx_eval" description="csi_dphy_rx_eval" default_strategy="csi_dphy_rx_top">
+        <Options>
+            <Option name="HDL type" value="Verilog"/>
+            <Option name="top" value="csi_dphy_rx_wrap"/>
+        </Options>
+        <Source name="../../../../../csi_dphy_rx_dphy_wrapper.v" type="Verilog"/>
+        <Source name="../../../../../csi_dphy_rx_capture_ctrl_bb.v" type="Verilog"/>
+        <Source name="../../../../../csi_dphy_rx_rx_global_ctrl_bb.v" type="Verilog"/>
+        <Source name="../../../../../csi_dphy_rx_soft_dphy_rx_bb.v" type="Verilog"/>
+        <Source name="../../../../../csi_dphy_rx_dphy_rx_wrap_bb.v" type="Verilog"/>
+        <Source name="../../../../../csi_dphy_rx_dphy_rx.v" type="Verilog"/>
+        <Source name="../../../../../csi_dphy_rx_wrap.v" type="Verilog"/>
+        <Source name="csi_dphy_rx_top.lpf" type="Logic Preference"/>
+    </Implementation>
+    <Strategy name="csi_dphy_rx_top" file="csi_dphy_rx_top.sty"/>
+</BaliProject>
