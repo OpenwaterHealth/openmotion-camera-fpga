@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<DiamondModule name="xclk" module="xclk" VendorName="Lattice Semiconductor Corporation" generator="IPexpress" date="2024 10 23 12:24:22.717" version="5.8" type="Module" synthesis="lse" source_format="Verilog HDL">
-  <Package>
-		<File name="xclk.lpc" type="lpc" modified="2024 10 23 12:24:21.316"/>
-		<File name="xclk.v" type="top_level_verilog" modified="2024 10 23 12:24:21.370"/>
-		<File name="xclk_tmpl.v" type="template_verilog" modified="2024 10 23 12:24:21.370"/>
-  </Package>
-</DiamondModule>
