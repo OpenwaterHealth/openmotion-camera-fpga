@@ -5,8 +5,9 @@ module histogram3 (
     input wire clk,             // clock
     input wire rw,              // read/write, when reading outputs histo data/bin num until done
     input wire [9:0] pixel,    // 10 bit data for each pixel
-    input wire pixel_valid,     // only on when the pixel is valid
-    input wire [9:0] bin,       // bin number to read out
+    input wire line_valid,      // only on when the pixel is valid
+    input wire frame_valid,      // 
+	input wire [9:0] bin,       // bin number to read out
     output wire [23:0] data      // data output of the bin being read
   );
 
@@ -32,6 +33,29 @@ module histogram3 (
   wire [9:0] ram_wr_addr;
   wire bin_incremented;
 
+  reg [11:0] input_line_number;
+  reg [11:0] output_line_number;
+  
+  wire pixel_valid = line_valid & frame_valid;
+  
+  always @(posedge line_valid) begin
+	  if(rst)
+		  input_line_number <= 12'b0;
+	  else 
+		  input_line_number <= input_line_number + 12'b1;
+  end
+
+/*
+  always @(posedge clk)
+  begin
+    if(rst) begin
+      
+	end	else begin
+	  if(pixel_valid)
+			
+	end
+  end*/
+		
   always @(posedge clk)
   begin
     if(rst)

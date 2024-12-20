@@ -83,27 +83,16 @@ module histogram_module (
         flag <= 1; // set the flag high to show that a serialization has started
     end
   end
+  
   histogram3 histo_a (
                .clk(clk),          // reset - zeros the histogram
                .rst(reset),          // clock
                .rw(frame_valid),           // read/write, when reading outputs histo data/bin num until done
 
                .pixel (pixel_a),  // 10 bit data for each pixel
-               .pixel_valid (pixel_valid),
-
+               .line_valid (line_valid),
+			   .frame_valid (frame_valid),
                .data(data_a),       //    when writing, on every rising edge of CLK adds one to the histogram
-               .bin(bin)
-             );
-
-  histogram3 histo_b (
-               .clk(clk),          // reset - zeros the histogram
-               .rst(reset),          // clock
-               .rw(frame_valid),           // read/write, when reading outputs histo data/bin num until done
-
-               .pixel (pixel_b),  // 10 bit data for each pixel
-               .pixel_valid (pixel_valid),
-
-               .data(data_b),       //    when writing, on every rising edge of CLK adds one to the histogram
                .bin(bin)
              );
 
