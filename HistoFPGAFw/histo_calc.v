@@ -4,7 +4,7 @@ module histogram3 (
     input wire rst,             // reset - zeros the histogram
     input wire clk,             // clock
     input wire rw,              // read/write, when reading outputs histo data/bin num until done
-    input wire [9:0] pixel,    // 10 bit data for each pixel
+    input wire [19:0] pixel,    // 10 bit data for each pixel
     input wire line_valid,      // only on when the pixel is valid
     input wire frame_valid,      // 
 	input wire [9:0] bin,       // bin number to read out
@@ -34,6 +34,8 @@ module histogram3 (
   wire bin_incremented;
 
   reg [11:0] input_line_number;
+  reg [11:0] input_column_number;
+  reg [11:0] input_frame_number;
   reg [11:0] output_line_number;
   
   wire pixel_valid = line_valid & frame_valid;
@@ -43,6 +45,20 @@ module histogram3 (
 		  input_line_number <= 12'b0;
 	  else 
 		  input_line_number <= input_line_number + 12'b1;
+  end
+  
+  always @(posedge clk) begin
+	  if(rst | ~line_valid)
+		  input_column_number <= 12'b0;
+	  else
+		  input_column_number <= input_column_number + 12'b1;
+  end
+  
+    always @(posedge frame_valid) begin
+	  if(rst)
+		  input_frame_number <= 12'b0;
+	  else 
+		  input_frame_number <= input_frame_number + 12'b1;
   end
 
 /*
@@ -101,9 +117,9 @@ module histogram3 (
 
              .WrClock(clk),
              .WrClockEn(~rst),
-             .WrAddress(ram_wr_addr),
-             .Data(ram_wr_data),
-             .WE(~prev_prev_prev_prev_rw | (~rpt & prev_pixel_valid)) // write when in "READ" mode, aka wipe everything out as you read it, and only write when the pixel before was valid and is not being repeated
+             .WrAddress(input_column_number),
+             .Data(input_frame_number),
+             .WE(rw) // write when in "READ" mode, aka wipe everything out as you read it, and only write when the pixel before was valid and is not being repeated
            );
 
   assign debug_line = (ram_wr_data == 0);

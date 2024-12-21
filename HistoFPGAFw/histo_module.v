@@ -89,7 +89,7 @@ module histogram_module (
                .rst(reset),          // clock
                .rw(frame_valid),           // read/write, when reading outputs histo data/bin num until done
 
-               .pixel (pixel_a),  // 10 bit data for each pixel
+               .pixel (pixel_data),  // 10 bit data for each pixel
                .line_valid (line_valid),
 			   .frame_valid (frame_valid),
                .data(data_a),       //    when writing, on every rising edge of CLK adds one to the histogram
