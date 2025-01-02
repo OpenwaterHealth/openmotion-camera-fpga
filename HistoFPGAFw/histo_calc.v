@@ -8,7 +8,8 @@ module histogram3 (
     input wire line_valid,      // only on when the pixel is valid
     input wire frame_valid,      // 
 	input wire [9:0] bin,       // bin number to read out
-    output wire [23:0] data      // data output of the bin being read
+    output wire [23:0] data,      // data output of the bin being read
+	output reg [11:0] input_frame_number
   );
 
   reg prev_pixel_valid;

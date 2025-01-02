@@ -22,7 +22,7 @@ module histogram_module (
   reg prev_serializer_done;
   reg serializer_total_done =0;
   reg flag = 0;
-  reg [7:0] frame_counter;
+  wire [7:0] frame_counter;
   
   wire pixel_valid = frame_valid && line_valid;
 
@@ -93,18 +93,19 @@ module histogram_module (
                .line_valid (line_valid),
 			   .frame_valid (frame_valid),
                .data(data_a),       //    when writing, on every rising edge of CLK adds one to the histogram
-               .bin(bin)
+               .bin(bin),
+			   .input_frame_number(frame_counter)
              );
 
   assign data = data_a + data_b;
   
   wire [7:0] spacer = (bin == 10'h3ff) ? frame_counter : 8'b0;
-  always @(negedge frame_valid, posedge reset) begin
-    if(reset)
-      frame_counter <= 8'b0;
-    else
-      frame_counter <= frame_counter + 8'b1;
-  end
+  //always @(negedge frame_valid, posedge reset) begin
+    //if(reset)
+      //frame_counter <= 8'b0;
+    //else
+      //frame_counter <= frame_counter + 8'b1;
+  //end
    
   Serializer seralizer_i (
                .fast_clk_in(spi_clk_i),
