@@ -6,7 +6,7 @@ module topmod
 
     output          FSIN,
     input			GPIO0,
-    output			GPIO1,
+    input			GPIO1,
 
 
     // Camera MIPI input
