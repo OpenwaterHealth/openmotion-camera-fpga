@@ -100,7 +100,7 @@ module topmod
   assign FSIN = 1'bz;
   assign DIFF_P = spi_en & spi_clk;
   assign DIFF_N = spi_en & spi_mosi;
-  assign reset_n_i = 1'b1; //GPIO0; 		
+  assign reset_n_i = GPIO0; 		
   assign spi_en = 1'b1;//~GPIO1;			//needs to be active low because i need to keep this one high through boot because its also cdone
   //assign GPIO1 = cmos_fv;
 endmodule
