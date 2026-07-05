@@ -2,13 +2,13 @@
 module histogram_module (
     input clk,
     input reset,
+    input enable,                    // histogram mode active (synced to clk)
     input [19:0] pixel_data,
     input frame_valid,
     input line_valid,
-    input spi_clk_i,
-    output spi_mosi_o,
-    output spi_clk_o,
-    input spi_en,
+    input serializer_done_i,         // from top-level Serializer
+    output [31:0] word_o,            // {spacer, data} to top-level Serializer
+    output serialize_active_o,
     output [5:0] debug,
     output [9:0] debug2
   );
@@ -18,7 +18,7 @@ module histogram_module (
   reg [9:0] bin;
 
   // Control
-  wire serializer_done;
+  wire serializer_done = serializer_done_i;
   reg prev_serializer_done;
   reg serializer_total_done =0;
   reg flag = 0;
@@ -46,7 +46,7 @@ module histogram_module (
       case (state)
         IDLE:
         begin
-          if (frame_valid)
+          if (frame_valid && enable)
             state <= HISTO;
         end
         HISTO:
@@ -117,21 +117,14 @@ module histogram_module (
       frame_counter <= frame_counter + 8'b1;
   end
    
-  Serializer seralizer_i (
-               .fast_clk_in(spi_clk_i),
-               .reset(reset | (state != SERIALIZE)),
-               .data_in({spacer,data}),
-               .serial_out(spi_mosi_o),
-               .slow_clk_out(spi_clk_o),
-               .done(serializer_done),
-               .debug ()
-             ); 
+  assign word_o = {spacer, data};
+  assign serialize_active_o = (state == SERIALIZE);
   assign debug2 = frame_valid ? pixel_data : bin;
   //assign debug2 = data[9:0];
 
 
-  assign debug[0] = spi_clk_o;
-  assign debug[1] = spi_mosi_o;
+  assign debug[0] = 1'b0;
+  assign debug[1] = 1'b0;
   assign debug[2] = line_valid;
   assign debug[3] = frame_valid;
   assign debug[4] = state[0];

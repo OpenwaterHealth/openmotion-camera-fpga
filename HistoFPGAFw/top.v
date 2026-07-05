@@ -78,29 +78,72 @@ module topmod
                   .pll_lock_i			(pll_lock)
                 );
 
-  /*------------------Histogram Module--------------------*/
-  wire spi_mosi, spi_clk, spi_en;
-  histogram_module histogram_module_i(
-                     .clk 		(clk_pixel_hs),
-                     .reset		(~reset_n_HFCLKOUT),
-                     .pixel_data (cmos_data),
-                     .frame_valid (cmos_fv),
-                     .line_valid (cmos_lv),
-                     .spi_clk_i 	(clk_pixel_hs),
-                     .spi_mosi_o (spi_mosi),
-                     .spi_clk_o (spi_clk),
-                     .spi_en    (spi_en),
-                     .debug		(),
-                     .debug2	    ()
-                   );
+  /*------------------I2C control plane (clk_osc domain)------------------*/
+  wire osc_reset = ~reset_n_HFCLKOUT;
+  wire [7:0] r_addr, r_wdata, r_rdata;
+  wire r_wstrobe, sda_oe;
+  wire mode_image;
+  wire [11:0] line_value, sent_line;
+  wire line_req_toggle, line_ack_toggle, line_sent_toggle, img_active;
 
-  /*------------------Output Pin Assignments--------------------*/
-  assign SDA = 1'bz;
-  //assign SCL = 1'bz;
+  i2c_slave #(.I2C_ADDR(7'h5A)) i2c_slave_i (
+      .clk(clk_osc), .reset(osc_reset),
+      .scl_i(SCL), .sda_i(SDA), .sda_oe(sda_oe),
+      .reg_addr(r_addr), .wr_data(r_wdata), .wr_strobe(r_wstrobe),
+      .rd_data(r_rdata));
+
+  fpga_regs fpga_regs_i (
+      .clk(clk_osc), .reset(osc_reset),
+      .reg_addr(r_addr), .wr_data(r_wdata), .wr_strobe(r_wstrobe),
+      .rd_data(r_rdata),
+      .pll_lock_i(pll_lock), .fv_i(cmos_fv),
+      .line_sent_toggle_i(line_sent_toggle), .sent_line_i(sent_line),
+      .img_active_i(img_active),
+      .line_ack_toggle_i(line_ack_toggle),
+      .mode_image_o(mode_image), .line_value_o(line_value),
+      .line_req_toggle_o(line_req_toggle));
+
+  /*------------------Readout producers (clk_pixel_hs domain)-------------*/
+  // mode bit into the pixel domain
+  reg [1:0] mode_sync /* synthesis syn_preserve=1 */;
+  always @(posedge clk_pixel_hs) mode_sync <= {mode_sync[0], mode_image};
+  wire mode_pix = mode_sync[1];
+  wire pix_reset = ~reset_n_HFCLKOUT;
+
+  wire ser_done;
+  wire [31:0] hm_word, lc_word;
+  wire hm_active, lc_active;
+
+  histogram_module histogram_module_i (
+      .clk(clk_pixel_hs), .reset(pix_reset), .enable(~mode_pix),
+      .pixel_data(cmos_data), .frame_valid(cmos_fv), .line_valid(cmos_lv),
+      .serializer_done_i(ser_done),
+      .word_o(hm_word), .serialize_active_o(hm_active),
+      .debug(), .debug2());
+
+  line_capture line_capture_i (
+      .clk(clk_pixel_hs), .reset(pix_reset), .enable(mode_pix),
+      .pixel_data(cmos_data), .frame_valid(cmos_fv), .line_valid(cmos_lv),
+      .line_value_i(line_value), .line_req_toggle_i(line_req_toggle),
+      .line_ack_toggle_o(line_ack_toggle),
+      .line_sent_toggle_o(line_sent_toggle), .sent_line_o(sent_line),
+      .img_active_o(img_active),
+      .serializer_done(ser_done),
+      .word_o(lc_word), .serialize_active_o(lc_active));
+
+  /*------------------Shared Serializer + SPI-----------------------------*/
+  wire spi_mosi, spi_clk;
+  Serializer serializer_i (
+      .fast_clk_in(clk_pixel_hs),
+      .reset(pix_reset | ~(hm_active | lc_active)),
+      .data_in(lc_active ? lc_word : hm_word),
+      .serial_out(spi_mosi), .slow_clk_out(spi_clk),
+      .done(ser_done), .debug());
+
+  /*------------------Output Pin Assignments------------------------------*/
+  assign SDA = sda_oe ? 1'b0 : 1'bz;   // open-drain data
   assign FSIN = 1'bz;
-  assign DIFF_P = spi_en & spi_clk;
-  assign DIFF_N = spi_en & spi_mosi;
-  assign reset_n_i = GPIO0; 		
-  assign spi_en = 1'b1;//~GPIO1;			//needs to be active low because i need to keep this one high through boot because its also cdone
-  //assign GPIO1 = cmos_fv;
+  assign DIFF_P = spi_clk;
+  assign DIFF_N = spi_mosi;
+  assign reset_n_i = GPIO0;
 endmodule
