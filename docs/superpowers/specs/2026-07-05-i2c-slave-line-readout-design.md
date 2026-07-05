@@ -88,8 +88,12 @@ LINE_H write (write L then H; a lone H write commits H with the last-staged L).
 - When enabled and tracked line == synced target line: write the 20-bit pixel
   pair to its own RAM (new SCUBA `ram_dp_s`-geometry instance) at the column
   address.
-- Serialization starts as soon as the captured line ends (~1 ms drain at ~33 MHz
-  SCLK; frame period 25 ms).
+- Serialization starts at the frame_valid FALLING edge (not at line end).
+  Rationale: the MCU re-arms SPI DMA in its FSIN ISR; a packet transmitted
+  mid-frame (worst case: line 0, ~10 us after FSIN) can race the ISR's
+  copy/re-arm and lose bytes. Histogram packets transmit during vertical
+  blanking and never hit this; image packets must keep the same timing
+  envelope (~1 ms drain at ~33 MHz SCLK; frame period 25 ms).
 - On packet completion, flips a `line_sent` toggle to `fpga_regs` (increment)
   and receives the new target via the CDC handshake before the next frame.
 - Maintains its own fv-edge frame counter for packet metadata.
@@ -106,6 +110,29 @@ LINE_H write (write L then H; a lone H write commits H with the last-staged L).
 - `Serializer.data_in` = mode-selected word; `.reset` =
   `reset | ~(histo_serialize_active | line_serialize_active)`.
 - SDA becomes a real open-drain bidirectional; SCL an input.
+
+## Verified system facts (2026-07-05 exploration)
+
+- **Active resolution: 1920 x 1280** (`X02C1B_Sensor_Config.h` regs 0x3808-0x380b)
+  → 960 pixel-pairs/line, 1280 line packets per full frame.
+- **A packet is 1025 words = 4100 bytes** (= firmware `SPI_PACKET_LENGTH`): on
+  entering SERIALIZE, the serializer's ready line fires one phantom done pulse
+  that advances the word counter 0x3FF→0 before any byte is sent. Transmitted
+  word order: 0,1,...,1023, then word 0 repeated. The MCU forwards the first
+  4096 bytes; host `histogram[k]` = word k, and `histogram[1023]>>24` is the
+  frame counter — matching the SDK's existing frame_id parsing.
+- **Host control plane needs zero firmware changes**: `OW_CMD_I2C_REG_READ`
+  (SDK `MotionSensor.i2c_read_register`) with `reg_addr_size=2` emits
+  `START,addr+W,[hi],[lo],RESTART,addr+R,read` — to our slave, [hi] sets the
+  register pointer and [lo] is a register write. With `reg_addr_size=1` it is
+  a plain read. `mux_channel` selects the camera.
+- **Bitstream size constraint**: firmware's SRAM programming streams exactly
+  163489 bytes (`crosslink.c:497`). The Diamond-produced .bit must match this
+  length (compare with the released asset; pad/adjust if needed).
+- **MCU-side**: no packet validation before USB forwarding; DMA armed per
+  camera at stream-enable and re-armed per frame in the FSIN ISR path; all 8
+  cameras stream simultaneously; per-sample OV2312 die temperature is already
+  in every parsed histogram block (SDK `HistogramSample.temperature_c`).
 
 ## SPI packet — image mode
 
