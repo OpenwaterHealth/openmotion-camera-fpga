@@ -3,6 +3,9 @@
 // framing of histogram packets (1025 words / 4100 bytes, incl. the phantom
 // first done pulse — see spec). Serialization starts at frame_valid falling
 // edge so packets keep the histogram timing envelope (MCU DMA re-arm race).
+// Timing envelope: serialize = ~1.14 ms at 133 MHz; vertical blanking
+// ~1.78 ms @40fps / ~1.19 ms @60fps (98 of 1378 line-times) — same envelope
+// as histogram packets, ~4% margin at 60 fps.
 module line_capture #(
     parameter [7:0] MAGIC = 8'hB6
 ) (
@@ -82,11 +85,22 @@ module line_capture #(
     end else begin
       if (fv_rise) armed <= enable;       // mode changes land on frame boundaries
       capturing_q <= capturing;
-      if (capturing_q & ~capturing) begin // capture just ended (lv dropped)
-        captured <= 1'b1; line_rep <= target;
+      if (capturing_q & ~capturing) begin
+        // Latch only if capture ended with the line (lv/fv low). If lv&fv are
+        // still high, the target changed mid-line: discard the partial capture
+        // (no packet, no toggle) — next frame captures the new target cleanly.
+        if (!(line_valid & frame_valid)) begin
+          captured <= 1'b1; line_rep <= target;
+        end
       end
       case (state)
-        S_IDLE: if (fv_fall & captured) state <= S_SER;
+        // Level-based (not fv_fall pulse): `captured` latches one clock after
+        // the target line's lv drop, so when the sensor drops fv on the SAME
+        // clock as the last line's lv (gap=0, target = last line), the
+        // one-cycle fv_fall pulse would miss it and defer the packet a whole
+        // frame with a wrong frame-counter spacer. The level arm enters 1 clk
+        // later in that corner instead — byte framing unchanged.
+        S_IDLE: if (~frame_valid & captured) state <= S_SER;
         S_SER:  if (serializer_done && word_idx == 10'h0 && flag == 1'b1) begin
                   state <= S_IDLE;
                   captured <= 1'b0;
