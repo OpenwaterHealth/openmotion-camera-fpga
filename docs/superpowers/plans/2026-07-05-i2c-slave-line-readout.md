@@ -702,6 +702,7 @@ module line_capture_tb;
   reg  [11:0] line_value = 12'd5;
   reg  line_req = 0;
   wire line_ack, line_sent;
+  wire [11:0] sent_line;
   wire enable = 1'b1;
 
   wire ser_done;
@@ -714,7 +715,7 @@ module line_capture_tb;
     .pixel_data(pd), .frame_valid(fv), .line_valid(lv),
     .line_value_i(line_value), .line_req_toggle_i(line_req),
     .line_ack_toggle_o(line_ack), .line_sent_toggle_o(line_sent),
-    .img_active_o(img_active),
+    .sent_line_o(sent_line), .img_active_o(img_active),
     .serializer_done(ser_done), .word_o(word),
     .serialize_active_o(ser_active));
 
@@ -771,6 +772,7 @@ module line_capture_tb;
     // unwritten words are zero data
     check((getword(500) & 24'hFFFFFF) == 0, "unused words zero");
     check(sent_seen == 1, "one line_sent event");
+    check(sent_line == 12'd5, "sent_line reports captured line");
 
     // no capture when target exceeds frame height: no new packet
     nbytes = 0;
@@ -812,6 +814,7 @@ module line_capture #(
     input  wire        line_req_toggle_i,
     output reg         line_ack_toggle_o,
     output reg         line_sent_toggle_o,
+    output wire [11:0] sent_line_o,       // which line the last toggle reported (quasi-static)
     output wire        img_active_o,
     // serializer interface
     input  wire        serializer_done,
@@ -820,17 +823,19 @@ module line_capture #(
 );
 
   // ---- CDC receive: target line ----
-  reg [1:0] s_req; reg req_q;
+  // Level-mismatch reception (synced req != our ack), NOT edge detection:
+  // self-heals from any stale state after reset skew with a stopped pixel
+  // clock (an edge-detect history flop can latch a stale '1' and deadlock).
+  reg [1:0] s_req /* synthesis syn_preserve=1 */;
   reg [11:0] target;
   always @(posedge clk) begin
     if (reset) begin
-      s_req <= 2'b00; req_q <= 1'b0; target <= 12'd0; line_ack_toggle_o <= 1'b0;
+      s_req <= 2'b00; target <= 12'd0; line_ack_toggle_o <= 1'b0;
     end else begin
       s_req <= {s_req[0], line_req_toggle_i};
-      req_q <= s_req[1];
-      if (s_req[1] ^ req_q) begin
+      if (s_req[1] != line_ack_toggle_o) begin
         target <= line_value_i;           // stable while req pending
-        line_ack_toggle_o <= ~line_ack_toggle_o;
+        line_ack_toggle_o <= s_req[1];
       end
     end
   end
@@ -889,6 +894,7 @@ module line_capture #(
   end
   assign img_active_o = armed;
   assign serialize_active_o = (state == S_SER);
+  assign sent_line_o = line_rep;          // quasi-static: stable around the sent toggle
 
   // ---- word counter: byte-exact replica of histo_module bin behavior ----
   always @(posedge clk) begin
@@ -1024,7 +1030,7 @@ and pin assignments of `HistoFPGAFw/top.v` (keep everything above line 80 as-is)
   wire [7:0] r_addr, r_wdata, r_rdata;
   wire r_wstrobe, sda_oe;
   wire mode_image;
-  wire [11:0] line_value;
+  wire [11:0] line_value, sent_line;
   wire line_req_toggle, line_ack_toggle, line_sent_toggle, img_active;
 
   i2c_slave #(.I2C_ADDR(7'h5A)) i2c_slave_i (
@@ -1038,7 +1044,8 @@ and pin assignments of `HistoFPGAFw/top.v` (keep everything above line 80 as-is)
       .reg_addr(r_addr), .wr_data(r_wdata), .wr_strobe(r_wstrobe),
       .rd_data(r_rdata),
       .pll_lock_i(pll_lock), .fv_i(cmos_fv),
-      .line_sent_toggle_i(line_sent_toggle), .img_active_i(img_active),
+      .line_sent_toggle_i(line_sent_toggle), .sent_line_i(sent_line),
+      .img_active_i(img_active),
       .line_ack_toggle_i(line_ack_toggle),
       .mode_image_o(mode_image), .line_value_o(line_value),
       .line_req_toggle_o(line_req_toggle));
@@ -1066,7 +1073,8 @@ and pin assignments of `HistoFPGAFw/top.v` (keep everything above line 80 as-is)
       .pixel_data(cmos_data), .frame_valid(cmos_fv), .line_valid(cmos_lv),
       .line_value_i(line_value), .line_req_toggle_i(line_req_toggle),
       .line_ack_toggle_o(line_ack_toggle),
-      .line_sent_toggle_o(line_sent_toggle), .img_active_o(img_active),
+      .line_sent_toggle_o(line_sent_toggle), .sent_line_o(sent_line),
+      .img_active_o(img_active),
       .serializer_done(ser_done),
       .word_o(lc_word), .serialize_active_o(lc_active));
 
@@ -1140,7 +1148,7 @@ module integration_tb;
     .sda_oe(sda_oe), .reg_addr(r_addr), .wr_data(r_wdata),
     .wr_strobe(r_wstrobe), .rd_data(r_rdata));
 
-  wire mode_image; wire [11:0] line_value;
+  wire mode_image; wire [11:0] line_value, sent_line_w;
   wire req_t, ack_t, sent_t, img_act;
   reg fv = 0, lv = 0; reg [19:0] pd = 0;
 
@@ -1149,6 +1157,7 @@ module integration_tb;
     .reg_addr(r_addr), .wr_data(r_wdata), .wr_strobe(r_wstrobe),
     .rd_data(r_rdata),
     .pll_lock_i(1'b1), .fv_i(fv), .line_sent_toggle_i(sent_t),
+    .sent_line_i(sent_line_w),
     .img_active_i(img_act), .line_ack_toggle_i(ack_t),
     .mode_image_o(mode_image), .line_value_o(line_value),
     .line_req_toggle_o(req_t));
@@ -1161,6 +1170,7 @@ module integration_tb;
     .pixel_data(pd), .frame_valid(fv), .line_valid(lv),
     .line_value_i(line_value), .line_req_toggle_i(req_t),
     .line_ack_toggle_o(ack_t), .line_sent_toggle_o(sent_t),
+    .sent_line_o(sent_line_w),
     .img_active_o(img_act), .serializer_done(ser_done),
     .word_o(lc_word), .serialize_active_o(lc_active));
 

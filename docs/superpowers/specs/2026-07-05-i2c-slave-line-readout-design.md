@@ -152,9 +152,17 @@ same LSB-first bit order, same word transmission order (word 0x3FF first, then
   boundaries only; each producer finishes any in-flight packet before yielding —
   no torn packets.
 - **Target line (12 bits):** toggle req/ack handshake. Bus held stable while req
-  pending; last-write-wins if the MCU writes mid-transfer.
+  pending; last-write-wins if the MCU writes mid-transfer. The RECEIVER uses
+  level-mismatch reception (`synced req != ack`), never edge detection — an
+  edge-detect history flop can latch stale state across a reset that the
+  stopped pixel clock missed, deadlocking the handshake.
 - **Back-channel:** `fv` 2-flop synced and edge-counted in the osc domain for
-  FRAME_CNT; `line_sent` returns as a toggle event; pll_lock 2-flop synced.
+  FRAME_CNT; `line_sent` returns as a toggle event ACCOMPANIED by a
+  quasi-static `sent_line[11:0]` bus; fpga_regs auto-increments the counter
+  only when `sent_line == line_counter`, so a stale completion toggle from
+  before an MCU rewind is self-discarding (otherwise a rewind committed while
+  a packet was in flight would get its first line silently skipped);
+  pll_lock 2-flop synced.
 
 ## Error handling
 
