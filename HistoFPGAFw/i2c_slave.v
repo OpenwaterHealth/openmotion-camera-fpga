@@ -18,7 +18,7 @@ module i2c_slave #(
     input  wire [7:0] rd_data      // combinational read of reg_addr
 );
 
-  reg [1:0] scl_sync, sda_sync;
+  reg [1:0] scl_sync, sda_sync /* synthesis syn_preserve=1 */;
   reg scl_q, sda_q;
   wire scl = scl_sync[1];
   wire sda = sda_sync[1];

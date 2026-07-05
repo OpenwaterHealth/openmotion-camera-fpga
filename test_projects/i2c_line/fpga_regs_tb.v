@@ -20,6 +20,7 @@ module fpga_regs_tb;
   // TB models the pixel domain side of the CDC
   reg pll_lock = 1, fv = 0, line_sent_toggle = 0, img_active = 0;
   reg line_ack_toggle = 0;
+  reg [11:0] sent_line = 12'd0;       // line number the pixel side just finished sending
   wire mode_image;
   wire [11:0] line_value;
   wire line_req_toggle;
@@ -30,19 +31,33 @@ module fpga_regs_tb;
     .reg_addr(reg_addr), .wr_data(wr_data), .wr_strobe(wr_strobe),
     .rd_data(rd_data),
     .pll_lock_i(pll_lock), .fv_i(fv),
-    .line_sent_toggle_i(line_sent_toggle), .img_active_i(img_active),
+    .line_sent_toggle_i(line_sent_toggle), .sent_line_i(sent_line),
+    .img_active_i(img_active),
     .line_ack_toggle_i(line_ack_toggle),
     .mode_image_o(mode_image), .line_value_o(line_value),
     .line_req_toggle_o(line_req_toggle));
 
   // pixel-domain CDC responder (async to clk on purpose)
-  always @(line_req_toggle) begin
+  reg responder_on = 1;
+  always @(line_req_toggle) if (responder_on) begin
     #100; pix_target = line_value; line_ack_toggle = line_req_toggle;
   end
 
+  // stability monitor: while enabled, the published bus must never change
+  reg monitor_stability = 0;
+  integer errors = 0;
+  always @(line_value) if (monitor_stability) begin
+    errors = errors + 1;
+    $display("FAIL: line_value_o changed while req pending");
+  end
+
+  // count req toggles so tests can assert exact handshake activity
+  integer req_edges = 0;
+  always @(line_req_toggle) req_edges = req_edges + 1;
+
   `include "i2c_line/i2c_master_tasks.vh"
 
-  reg ack; reg [7:0] rb, rb2; integer errors = 0;
+  reg ack; reg [7:0] rb, rb2;
   task check(input cond, input [255:0] msg);
     if (!cond) begin errors = errors + 1; $display("FAIL: %0s", msg); end
   endtask
@@ -60,10 +75,14 @@ module fpga_regs_tb;
     end
   endtask
 
-  integer k;
+  integer k, req_snap;
   initial begin
     $dumpfile("out/fpga_regs_tb.vcd"); $dumpvars(0, fpga_regs_tb);
-    #200 reset = 0; #500;
+    #200 reset = 0;
+
+    // T-initial-publish: reset forces one publish of the reset counter (0)
+    #2000;
+    check(pix_target == 12'd0, "initial publish delivered 0");
 
     rd_reg(8'h00, rb); check(rb == 8'h5A, "ID");
     rd_reg(8'h01, rb); check(rb == 8'h01, "VERSION");
@@ -81,9 +100,52 @@ module fpga_regs_tb;
     check({rb2[3:0], rb} == 12'h234, "LINE_CUR readback");
 
     // line_sent event increments the counter and re-publishes
+    sent_line = 12'h234;                          // pixel side sent our current target
     line_sent_toggle = ~line_sent_toggle; #5000;
     rd_reg(8'h06, rb); check(rb == 8'h35, "auto-increment");
     check(pix_target == 12'h235, "CDC re-published");
+
+    // T-stale: a line_sent for an OLD target (arriving after an MCU rewind)
+    // must be discarded, not bump the freshly committed counter
+    wr_reg(8'h04, 8'h50); wr_reg(8'h05, 8'h00);   // rewind to line 0x050
+    #5000;
+    check(pix_target == 12'h050, "CDC delivered 0x050");
+    sent_line = 12'h234;                          // stale: old-target packet finishes late
+    line_sent_toggle = ~line_sent_toggle; #5000;
+    rd_reg(8'h06, rb); rd_reg(8'h07, rb2);
+    check({rb2[3:0], rb} == 12'h050, "stale line_sent discarded");
+    sent_line = 12'h050;                          // legit completion for current target
+    line_sent_toggle = ~line_sent_toggle; #5000;
+    rd_reg(8'h06, rb); rd_reg(8'h07, rb2);
+    check({rb2[3:0], rb} == 12'h051, "legit line_sent increments");
+    check(pix_target == 12'h051, "CDC re-published 0x051");
+
+    // T-withheld-ack: while a req is pending the published bus must hold
+    // steady; back-to-back commits coalesce and the LAST one wins
+    responder_on = 0;
+    wr_reg(8'h04, 8'hAA); wr_reg(8'h05, 8'h00);   // 0x0AA — publishes, req pends
+    monitor_stability = 1;                        // 0x0AA publish already fired
+    wr_reg(8'h04, 8'hBB); wr_reg(8'h05, 8'h00);   // 0x0BB — must NOT publish
+    wr_reg(8'h04, 8'hCC); wr_reg(8'h05, 8'h00);   // 0x0CC — must NOT publish
+    check(line_value == 12'h0AA, "line_value_o held at 0x0AA while pending");
+    monitor_stability = 0;
+    req_snap = req_edges;
+    responder_on = 1;
+    #100; pix_target = line_value; line_ack_toggle = line_req_toggle; // ack pending req
+    #5000;
+    check(pix_target == 12'h0CC, "withheld ack: last write wins (0x0CC)");
+    check(req_edges == req_snap + 1, "exactly one more req edge");
+    rd_reg(8'h06, rb); rd_reg(8'h07, rb2);
+    check({rb2[3:0], rb} == 12'h0CC, "LINE_CUR == 0x0CC after coalesce");
+
+    // T-lone-H: an H write alone commits using the last staged L
+    wr_reg(8'h04, 8'h11);                         // stage L only
+    wr_reg(8'h02, 8'h77);                         // unrelated write; staging persists
+    wr_reg(8'h05, 8'h03);                         // commit {0x3, 0x11} = 0x311
+    #5000;
+    rd_reg(8'h06, rb); rd_reg(8'h07, rb2);
+    check({rb2[3:0], rb} == 12'h311, "lone H write commits 0x311");
+    check(pix_target == 12'h311, "CDC delivered 0x311");
 
     // FRAME_CNT counts fv rising edges
     for (k = 0; k < 3; k = k + 1) begin fv = 1; #500; fv = 0; #500; end

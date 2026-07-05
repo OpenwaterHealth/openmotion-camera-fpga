@@ -15,8 +15,9 @@ module fpga_regs #(
     // async status inputs (synchronized here)
     input  wire       pll_lock_i,
     input  wire       fv_i,
-    input  wire       line_sent_toggle_i,
-    input  wire       img_active_i,
+    input  wire        line_sent_toggle_i,
+    input  wire [11:0] sent_line_i,
+    input  wire        img_active_i,
     input  wire       line_ack_toggle_i,
     // control outputs
     output reg        mode_image_o,
@@ -24,7 +25,10 @@ module fpga_regs #(
     output reg        line_req_toggle_o
 );
 
-  reg [1:0] s_pll, s_fv, s_sent, s_ack, s_act;
+  reg [1:0] s_pll, s_fv, s_sent, s_ack, s_act /* synthesis syn_preserve=1 */;
+  // sent_line_i is quasi-static (stable well before and after its companion
+  // toggle flips), so a plain 2FF sync of the multi-bit value is valid.
+  reg [11:0] s_sent_line_a, s_sent_line_b /* synthesis syn_preserve=1 */;
   reg fv_q, sent_q;
   always @(posedge clk) begin
     s_pll  <= {s_pll[0],  pll_lock_i};
@@ -32,6 +36,8 @@ module fpga_regs #(
     s_sent <= {s_sent[0], line_sent_toggle_i};
     s_ack  <= {s_ack[0],  line_ack_toggle_i};
     s_act  <= {s_act[0],  img_active_i};
+    s_sent_line_a <= sent_line_i;
+    s_sent_line_b <= s_sent_line_a;
     fv_q   <= s_fv[1];
     sent_q <= s_sent[1];
   end
@@ -49,7 +55,10 @@ module fpga_regs #(
       line_stage_l <= 8'h00; line_counter <= 12'd0; frame_cnt <= 8'd0;
     end else begin
       if (fv_rise) frame_cnt <= frame_cnt + 8'd1;
-      if (sent_event) line_counter <= line_counter + 12'd1;
+      // increment only if the completed send was for OUR current target;
+      // a stale toggle from before an MCU rewind is self-discarding
+      if (sent_event && s_sent_line_b == line_counter)
+        line_counter <= line_counter + 12'd1;
       if (wr_strobe) begin
         case (reg_addr)
           8'h02: scratch <= wr_data;
@@ -84,6 +93,7 @@ module fpga_regs #(
       8'h03: rd_data = {7'b0, mode_image_o};
       8'h04: rd_data = line_stage_l;
       8'h05: rd_data = {4'b0, line_counter[11:8]};
+      // LINE_CUR L/H are separate byte reads and can tear across an increment — display/debug use only; the SPI packet spacers carry the authoritative line number.
       8'h06: rd_data = line_counter[7:0];
       8'h07: rd_data = {4'b0, line_counter[11:8]};
       8'h08: rd_data = frame_cnt;
