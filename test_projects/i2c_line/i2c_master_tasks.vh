@@ -1,5 +1,8 @@
 // I2C bit-bang master tasks. Open-drain: master pulls low via m_sda_drive_low/m_scl=0.
-localparam T_I2C = 1250;
+// T_I2C is the half-bit delay in ns; bit period = 4*T_I2C, so 1250 -> ~200 kHz bus.
+// Declared as a variable (not localparam) so the including TB can override it at
+// runtime (e.g. T_I2C = 250 -> ~1 MHz) for bus-speed margin tests.
+integer T_I2C = 1250;
 
 task i2c_start;   // also repeated start
   begin

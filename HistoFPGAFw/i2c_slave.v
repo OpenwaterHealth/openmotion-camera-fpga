@@ -61,7 +61,7 @@ module i2c_slave #(
       state <= ST_IDLE; sda_oe <= 1'b0;
     end else begin
       case (state)
-        ST_IDLE: ;
+        ST_IDLE: sda_oe <= 1'b0;   // hardening: never hold the bus while idle
 
         ST_ADDR: begin
           if (scl_rise && bit_cnt < 4'd8) begin
@@ -136,7 +136,7 @@ module i2c_slave #(
           end
         end
 
-        default: state <= ST_IDLE;
+        default: begin state <= ST_IDLE; sda_oe <= 1'b0; end
       endcase
     end
   end
