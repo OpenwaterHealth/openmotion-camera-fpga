@@ -114,6 +114,7 @@ module integration_tb;
   reg [7:0] cur_byte;
   integer nbits = 0;
   integer nbytes_total = 0;              // bytes in the CURRENT (in-progress) packet
+  integer bytes_lifetime = 0;            // monotonic: every byte ever received
   integer pkt_count = 0;                 // number of completed packets seen
   reg [7:0] cur_pkt [0:4099];
   reg [7:0] last_pkt [0:4099];
@@ -123,6 +124,7 @@ module integration_tb;
     if (nbits == 8) begin
       if (nbytes_total < 4100) cur_pkt[nbytes_total] = cur_byte;
       nbytes_total = nbytes_total + 1;
+      bytes_lifetime = bytes_lifetime + 1;
       nbits = 0;
       if (nbytes_total == 4100) begin
         // snapshot the finished packet, then start assembling the next one
@@ -161,19 +163,24 @@ module integration_tb;
     if (~lc_active & lc_active_q) lc_fall_t = $realtime;
 
     // a collision window begins when the SECOND producer joins an already-
-    // active first producer
+    // active first producer. Snapshot the wire's monotonic byte counter:
+    // rises are <=1 pixel-clk apart and the serializer's first byte takes
+    // ~35 clks to assemble after its reset deasserts, so no byte of this
+    // window's packet can have landed before this snapshot.
     if ((hm_active & ~hm_active_q & lc_active) ||
         (lc_active & ~lc_active_q & hm_active)) begin
       collision_pending <= 1'b1;
-      bytes_at_rise <= pkt_count;        // packets completed so far
+      bytes_at_rise <= bytes_lifetime;
     end
-    // window ends when BOTH have gone inactive
+    // window ends when BOTH have gone inactive; the final byte's last SPI
+    // sampling edge lands before `done` retires the producers, so
+    // bytes_lifetime is already final here.
     if (collision_pending & ~hm_active & ~lc_active) begin
       collision_pending <= 1'b0;
       collision_seen <= 1'b1;
       collision_rise_delta = (hm_rise_t > lc_rise_t) ? (hm_rise_t - lc_rise_t) : (lc_rise_t - hm_rise_t);
       collision_fall_delta = (hm_fall_t > lc_fall_t) ? (hm_fall_t - lc_fall_t) : (lc_fall_t - hm_fall_t);
-      collision_bytes = 4100; // one packet always completes across a collision window (see checks)
+      collision_bytes = bytes_lifetime - bytes_at_rise;   // measured, not assumed
     end
   end
 
