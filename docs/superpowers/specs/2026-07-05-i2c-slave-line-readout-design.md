@@ -80,8 +80,13 @@ Undefined reads return 0x00. Writes to RO/undefined addresses are ignored.
 LINE commit rule: LINE_L is staging only; the {H,L} pair is committed on the
 LINE_H write (write L then H; a lone H write commits H with the last-staged L).
 
-**`line_capture.v`** — pixel domain (`clk_pixel_hs`), parameterized
-`LINE_WIDTH_PAIRS = 960`, `NUM_WORDS = 1024`.
+**`line_capture.v`** — pixel domain (`clk_pixel_hs`). Geometry is implicit in
+the 10-bit RAM addressing (1024 words; a write guard on the column counter's
+bit 10 caps capture at 1024 pairs — correct for the 960-pair/1920-px line);
+only `MAGIC` is a parameter. Serialize entry is level-based
+(`~frame_valid & captured`), so a frame-end coincident with the target line's
+last pixel defers entry by one clock, not one frame; captures aborted mid-line
+by an MCU retarget are discarded (no packet, no toggle).
 - Tracks line number by counting `lv` rising edges inside `fv`; column number by
   counting valid pixel clocks inside `lv`. Fully synchronous counters — no
   gated-clock `always @(posedge frame_valid)` idioms.
