@@ -171,6 +171,17 @@ same LSB-first bit order, same word transmission order (word 0x3FF first, then
 
 ## Error handling
 
+- **First histogram packet after leaving image mode is invalid** (host rule):
+  histogram bins keep accumulating during image mode (accumulation is not
+  gated; bins are only wiped by a serialize readout, which image mode
+  suppresses). The first histogram packet after switching back therefore
+  contains counts accumulated across the whole image session (bins may have
+  wrapped) — hosts must discard it; the second packet onward is normal.
+  A mid-frame image→histogram switch can also make both producers serialize
+  the same blanking interval once: they run in lockstep off the shared done
+  signal and exactly one well-formed image packet appears on the wire
+  (verified in sim); the shadow-read incidentally wipes the bins.
+
 - Camera not streaming: no fv → no packet. MCU distinguishes "camera dead"
   (FRAME_CNT frozen) from "line out of range" (FRAME_CNT ticking, no packet).
 - Target line ≥ frame height: never matches, no packet sent. MCU recovers by
