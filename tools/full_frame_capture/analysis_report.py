@@ -222,6 +222,77 @@ def page_asymmetry(pdf, res):
     plt.close(fig)
 
 
+def page_gradient_vectors(pdf, res, cams):
+    """2D gradient direction per camera: does the tilt ever flip?"""
+    fig, axes = plt.subplots(2, 1, figsize=(8.5, 11),
+                             gridspec_kw={"height_ratios": [1.3, 1]})
+    vec = {}
+    for key in res:
+        d = res[key]["sig"][::16, ::16]
+        yy, xx = np.mgrid[0:d.shape[0], 0:d.shape[1]]
+        A = np.c_[xx.ravel(), yy.ravel(), np.ones(d.size)]
+        gx, gy, _ = np.linalg.lstsq(A, d.ravel(), rcond=None)[0]
+        vec[key] = (gx, gy)
+
+    ax = axes[0]
+    for row, side in enumerate(("left", "right")):
+        for i in range(8):
+            key = f"{side}_cam{i}"
+            if key not in vec:
+                continue
+            gx, gy = vec[key]
+            n = np.hypot(gx, gy)
+            # arrow points toward INCREASING brightness; y flipped so 'up' on
+            # the page = decreasing row index (sensor top)
+            ax.annotate("", xy=(i + 0.42 * gx / n, -row * 1.6 - 0.42 * gy / n),
+                        xytext=(i, -row * 1.6),
+                        arrowprops=dict(arrowstyle="-|>", lw=2.2,
+                                        color="tab:blue" if side == "left"
+                                        else "tab:red"))
+            ax.add_patch(plt.Circle((i, -row * 1.6), 0.45, fill=False,
+                                    ec="0.6", lw=0.8))
+            ax.text(i, -row * 1.6 - 0.62, f"cam{i}", ha="center", fontsize=8)
+        ax.text(-0.9, -row * 1.6, f"{side}\nmodule", ha="center", fontsize=9,
+                color="tab:blue" if side == "left" else "tab:red")
+    ax.set_xlim(-1.6, 7.8)
+    ax.set_ylim(-2.6, 1.0)
+    ax.set_aspect("equal")
+    ax.axis("off")
+    ax.set_title("Brightness-gradient direction per camera (arrow points toward "
+                 "brighter side,\nsensor pixel coordinates; page-up = sensor row 0). "
+                 "Horizontal component never flips;\nvertical component mirrors at the "
+                 "cam3|cam4 midline on BOTH modules.")
+
+    ax = axes[1]
+    pos = np.arange(8)
+    for side, marker in (("left", "o"), ("right", "s")):
+        tb = []
+        for i in pos:
+            key = f"{side}_cam{i}"
+            if key not in res:
+                tb.append(np.nan); continue
+            sig = res[key]["sig"]
+            pr = uniform_filter1d(sig[EDGE:-EDGE, EDGE:-EDGE].mean(axis=1), 101,
+                                  mode="nearest")
+            third = pr.size // 3
+            tb.append(100 * (pr[:third].mean() - pr[-third:].mean())
+                      / max((pr[:third].mean() + pr[-third:].mean()) / 2, 1e-9))
+        ax.plot(pos, tb, marker=marker, label=f"{side} module (top/bottom)")
+        ax.plot(pos, [res[f'{side}_cam{i}']['asym_sig'] if f'{side}_cam{i}' in res
+                      else np.nan for i in pos], marker=marker, ls="--", alpha=0.5,
+                label=f"{side} module (left/right)")
+    ax.axhline(0, color="k", lw=0.8)
+    ax.set_xlabel("camera position (0..7)")
+    ax.set_ylabel("asymmetry [%]")
+    ax.set_title("Left/right asymmetry never changes sign; top/bottom asymmetry "
+                 "flips at the module midline")
+    ax.legend(fontsize=8)
+    ax.grid(alpha=0.3)
+    fig.tight_layout()
+    pdf.savefig(fig)
+    plt.close(fig)
+
+
 def page_thermal(pdf, res):
     keys = sorted(res)
     temps = np.array([res[k]["temp"] for k in keys])
@@ -302,6 +373,7 @@ def main():
     with PdfPages(a.out) as pdf:
         page_title(pdf, res)
         page_asymmetry(pdf, res)
+        page_gradient_vectors(pdf, res, cams)
         page_thermal(pdf, res)
         pages_cameras(pdf, res)
         d = pdf.infodict()
