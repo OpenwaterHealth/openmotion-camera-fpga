@@ -15,9 +15,15 @@ from pathlib import Path
 
 import numpy as np
 from omotion import MotionInterface
+import omotion.MotionProcessing as _MP
 from omotion.MotionProcessing import parse_histogram_packet_structured
 
 from fpga_link import FpgaRegs, MAGIC, force_program_fpga
+
+# The SDK parser validates every sample against a fixed histogram photon-count
+# sum and drops mismatches. Image-line packets (and histogram packets after an
+# image session) have arbitrary sums — disable the check for capture tooling.
+_MP.EXPECTED_HISTOGRAM_SUM = None
 
 WIDTH, HEIGHT, PAIRS = 1920, 1280, 960
 EXPECTED_SIZE = 32833

@@ -49,12 +49,10 @@ module topmod
                      .clk_40Hz	(clk_fsin)
                    );
 
-  //	Reset Bridge for clk_osc
-  reset_bridge rst_brg_osc(
-                 .clk_i			(clk_osc),// Destination clock
-                 .ext_resetn_i		( reset_n_i ),// Asynchronous reset signal
-                 .sync_resetn_out	(reset_n_HFCLKOUT)// Synchronized reset signal
-               );
+  // (legacy clk_osc reset bridge removed — clk_osc never runs; see the
+  //  control-plane section below. reset_n_i/GPIO0 is also unused: firmware
+  //  drives the GPIO0 net low permanently, so gating on it holds the design
+  //  in reset forever — hardware-verified 2026-07-05.)
 
   /*------------------Camera Communication--------------------*/
   //	MIPI DPHY to CMOS module : It converts the MIPI camera input to Parallel video data at clock "clk_pixel"
@@ -63,7 +61,13 @@ module topmod
   wire cmos_lv;
   mipidphy2cmos mipidphy2cmos
                 (
-                  .reset_n_i			(reset_n_HFCLKOUT), // Changed to test 1080p resolution
+                  // Self-releasing: the module's internal reset bridges (on the
+                  // MIPI byte clock) handle synchronized release. Previously fed
+                  // by reset_n_HFCLKOUT, whose release requires clk_osc edges —
+                  // and the OSCI HF oscillator provably never runs in these
+                  // builds (hardware-verified 2026-07-05: free-running divider
+                  // on clk_osc never advanced), which held the DPHY in reset.
+                  .reset_n_i			(1'b1),
                   .rx_clk_p_i			(CK_P),
                   .rx_clk_n_i			(CK_N),
                   .rx_d0_p_i			(D0_P),
@@ -78,8 +82,19 @@ module topmod
                   .pll_lock_i			(pll_lock)
                 );
 
-  /*------------------I2C control plane (clk_osc domain)------------------*/
-  wire osc_reset = ~reset_n_HFCLKOUT;
+  /*------------------I2C control plane (clk_pixel_hs domain)-------------*/
+  // Clocked from the MIPI-derived pixel clock, NOT clk_osc: the OSCI HF
+  // oscillator does not run in these builds (hardware-verified — see note at
+  // mipidphy2cmos), so anything clocked from it is dead. Consequence: the
+  // register interface responds only while the camera streams (MIPI clock
+  // active) — the capture flow already orders enable_camera before register
+  // writes. Reset self-releases two pixel clocks after the MIPI clock starts.
+  wire reset_n_pix;
+  reset_bridge rst_brg_pix (
+      .clk_i           (clk_pixel_hs),
+      .ext_resetn_i    (1'b1),
+      .sync_resetn_out (reset_n_pix));
+  wire osc_reset = ~reset_n_pix;
   wire [7:0] r_addr, r_wdata, r_rdata;
   wire r_wstrobe, sda_oe;
   wire mode_image;
@@ -87,13 +102,13 @@ module topmod
   wire line_req_toggle, line_ack_toggle, line_sent_toggle, img_active;
 
   i2c_slave #(.I2C_ADDR(7'h5A)) i2c_slave_i (
-      .clk(clk_osc), .reset(osc_reset),
+      .clk(clk_pixel_hs), .reset(osc_reset),
       .scl_i(SCL), .sda_i(SDA), .sda_oe(sda_oe),
       .reg_addr(r_addr), .wr_data(r_wdata), .wr_strobe(r_wstrobe),
       .rd_data(r_rdata));
 
   fpga_regs fpga_regs_i (
-      .clk(clk_osc), .reset(osc_reset),
+      .clk(clk_pixel_hs), .reset(osc_reset),
       .reg_addr(r_addr), .wr_data(r_wdata), .wr_strobe(r_wstrobe),
       .rd_data(r_rdata),
       .pll_lock_i(pll_lock), .fv_i(cmos_fv),
@@ -108,7 +123,7 @@ module topmod
   reg [1:0] mode_sync /* synthesis syn_preserve=1 */;
   always @(posedge clk_pixel_hs) mode_sync <= {mode_sync[0], mode_image};
   wire mode_pix = mode_sync[1];
-  wire pix_reset = ~reset_n_HFCLKOUT;
+  wire pix_reset = ~reset_n_pix;
 
   wire ser_done;
   wire [31:0] hm_word, lc_word;

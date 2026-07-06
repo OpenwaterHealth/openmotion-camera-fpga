@@ -28,6 +28,100 @@ def force_program_fpga(sensor, cam_mask: int, timeout: int = 120) -> bool:
     return r is not None and r.packetType not in _ERROR_TYPES
 
 
+def upload_bitstream(sensor, bitstream_path, block: int = 500) -> bool:
+    """Upload a bitstream file into the sensor's RAM buffer (CRC-checked).
+    The buffer persists across upload_program_fpga calls, so upload once and
+    program any number of cameras from it.
+
+    Rolls its own blocks instead of SDK send_bitstream_fpga: the sensor's
+    comms RX buffer is 512 B, so payloads above 500 B are rejected with
+    OW_ERROR (the SDK's 1 KB blocks never arrive). Also, the packet 'addr'
+    byte only matters as addr==0 → firmware resets the upload buffer, so we
+    send 0 for the first block and 1 for the rest (a naive running index
+    would wrap at 256 and silently restart the upload)."""
+    from pathlib import Path
+    from omotion.config import OW_FPGA, OW_FPGA_BITSTREAM
+    from omotion.MotionSensor import _ERROR_TYPES
+    from omotion.utils import calculate_file_crc
+
+    data = Path(bitstream_path).read_bytes()
+    crc = calculate_file_crc(str(bitstream_path))
+    for off in range(0, len(data), block):
+        r = sensor._send(packetType=OW_FPGA, command=OW_FPGA_BITSTREAM,
+                         addr=(0 if off == 0 else 1), reserved=0,
+                         data=bytearray(data[off:off + block]), timeout=10)
+        if r is None or r.packetType in _ERROR_TYPES:
+            return False
+    r = sensor._send(packetType=OW_FPGA, command=OW_FPGA_BITSTREAM,
+                     addr=1, reserved=1,
+                     data=bytearray(crc.to_bytes(2, "big")), timeout=10)
+    return r is not None and r.packetType not in _ERROR_TYPES
+
+
+def upload_program_fpga(sensor, cam: int, erase_wait_s: float = 5.5) -> bool:
+    """Program ONE camera's FPGA from the previously uploaded RAM bitstream —
+    the pure-SDK flow (no flash-resident image needed). Requires firmware with
+    the sensor-fw#82 fix set (xi2c_write_long staging, buffer+4 source,
+    reserved==3 forced upload, real ISC_DISABLE on exit).
+
+    Sequence mirrors fpga_configure(): activation key while CRESETB is low
+    (forced slave config, so an NVCM part enters config mode instead of
+    auto-booting), IDCODE check, SRAM enable, erase (+host-side settle: the
+    discrete-command firmware path doesn't insert fpga_configure's 5 s wait),
+    then the forced RAM-sourced program and ISC_DISABLE."""
+    import time
+    mask = 1 << cam
+    from omotion.config import OW_FPGA, OW_FPGA_PROG_SRAM
+    from omotion.MotionSensor import _ERROR_TYPES
+
+    def cfg_status():
+        """Raw CrossLink status via the factory I2C passthrough (the active
+        camera's device address is the config port, 0x40). Returns 4 bytes
+        or None. DONE criterion per fpga_configure: byte[2] == 0x0F."""
+        try:
+            rb = sensor.i2c_write_read(0x40, bytes([0x3C, 0, 0, 0]), 4)
+            return bytes(rb) if rb else None
+        except Exception:
+            return None
+
+    sensor.switch_camera(cam)
+    sensor.creset(False)
+    time.sleep(0.1)
+    if not sensor.activate_camera_fpga(mask):
+        print(f"cam{cam}: activation key failed")
+        return False
+    sensor.creset(True)
+    time.sleep(0.15)
+    if sensor.creset(None) != 1:                  # verify CRESETB actually high
+        print(f"cam{cam}: CRESETB did not go high")
+        return False
+    if not sensor.check_camera_fpga(mask):        # IDCODE
+        print(f"cam{cam}: IDCODE mismatch")
+        return False
+    if not sensor.enter_sram_prog_fpga(mask):     # ISC_ENABLE (0xC6)
+        print(f"cam{cam}: ISC_ENABLE failed")
+        return False
+    if not sensor.erase_sram_fpga(mask):          # ISC_ERASE (0x0E)
+        print(f"cam{cam}: erase failed")
+        return False
+    time.sleep(erase_wait_s)
+    st = cfg_status()
+    r = sensor._send(packetType=OW_FPGA, command=OW_FPGA_PROG_SRAM,
+                     addr=mask, reserved=3, timeout=120)  # forced, RAM source
+    if r is None or r.packetType in _ERROR_TYPES:
+        print(f"cam{cam}: bitstream program command failed")
+        return False
+    st = cfg_status()
+    print(f"cam{cam}: post-program status: "
+          f"{st.hex() if st else 'unreadable'}")
+    sensor.exit_sram_prog_fpga(mask)              # ISC_DISABLE (0x26)
+    time.sleep(0.05)
+    done = bool(st) and st[2] == 0x0F
+    if not done:
+        print(f"cam{cam}: DONE not set (expected byte2==0x0F)")
+    return done
+
+
 class FpgaRegs:
     def __init__(self, sensor, cam: int):
         self.sensor = sensor
