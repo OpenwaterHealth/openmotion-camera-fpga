@@ -271,11 +271,18 @@ def main():
             sen.disable_camera_fsin_ext()
 
     from PIL import Image
-    meta = {"scene": a.scene,
-            "captured_at": time.strftime("%Y-%m-%d %H:%M:%S"),
-            "width": WIDTH, "height": HEIGHT, "bit_depth": 10,
-            "scaling": "none — raw 10-bit sensor values 0..1023 in 16-bit files",
-            "cameras": {}}
+    # merge with any existing meta so a partial (e.g. one-side) rerun doesn't
+    # drop the other side's records
+    meta_path = out / "meta.json"
+    if meta_path.exists():
+        meta = json.loads(meta_path.read_text())
+    else:
+        meta = {"cameras": {}}
+    meta.update({"scene": a.scene,
+                 "captured_at": time.strftime("%Y-%m-%d %H:%M:%S"),
+                 "width": WIDTH, "height": HEIGHT, "bit_depth": 10,
+                 "scaling": "none — raw 10-bit sensor values 0..1023 in 16-bit files"})
+    meta.setdefault("cameras", {})
     for s, acc in results.items():
         for c, a_ in acc.items():
             img = a_.image()
