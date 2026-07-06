@@ -13,6 +13,21 @@ REG_FRAME_CNT, REG_STATUS = 0x08, 0x09
 ID_VAL, MAGIC = 0x5A, 0xB6
 
 
+def force_program_fpga(sensor, cam_mask: int, timeout: int = 120) -> bool:
+    """Force an FPGA SRAM load from the sensor's flash-resident bitstream.
+
+    OW_FPGA_PROG_SRAM with reserved==2 (force) bypasses the firmware's
+    isProgrammed/NVCM gates — required because the fleet cameras are
+    NVCM-programmed and would otherwise silently keep the burned image.
+    Needs force-capable firmware (1.8.1-rc.3 + #68 hunk, or feature/68).
+    Takes ~10 s per camera in the mask."""
+    from omotion.config import OW_FPGA, OW_FPGA_PROG_SRAM
+    from omotion.MotionSensor import _ERROR_TYPES
+    r = sensor._send(packetType=OW_FPGA, command=OW_FPGA_PROG_SRAM,
+                     addr=cam_mask, reserved=2, timeout=timeout)
+    return r is not None and r.packetType not in _ERROR_TYPES
+
+
 class FpgaRegs:
     def __init__(self, sensor, cam: int):
         self.sensor = sensor

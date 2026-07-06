@@ -10,7 +10,8 @@ import time
 
 from omotion import MotionInterface
 
-from fpga_link import FpgaRegs
+from capture import setup_trigger
+from fpga_link import FpgaRegs, force_program_fpga
 
 
 def main():
@@ -26,7 +27,7 @@ def main():
 
     iface = MotionInterface(data_dir="smoke_out")
     iface.start(wait=True, wait_timeout=2.0)
-    iface.wait_for_ready(console=False, sensors=1, timeout=15)
+    iface.wait_for_ready(console=True, sensors=1, timeout=15)
     sensor = iface.left if a.side == "left" else iface.right
     assert sensor.uart is not None, f"{a.side} sensor not connected"
     mask = 1 << a.cam
@@ -37,16 +38,13 @@ def main():
     if a.skip_program:
         print("[2/5] skipping FPGA programming (--skip-program)")
     else:
-        # The bitstream now lives in the sensor's flash (update_bitstream.py);
-        # program_fpga runs the firmware's stock CRESETB/activate/erase/program
-        # sequence streaming that flash image. Power-cycle first so the
-        # firmware's isProgrammed latch is clear and a real load happens.
-        print("[2/5] program FPGA from flash-resident bitstream")
-        sensor.disable_camera_power(mask)
-        time.sleep(1.0)
-        assert sensor.enable_camera_power(mask), "camera re-power failed"
-        assert sensor.program_fpga(mask, manual_process=False), "program failed"
-        time.sleep(0.2)
+        # Bitstream lives in the sensor's flash (update_bitstream.py); the
+        # cameras are NVCM-programmed so a FORCED SRAM load is required.
+        print("[2/5] force-load FPGA from flash-resident bitstream (~10 s)")
+        assert force_program_fpga(sensor, mask), "force load failed"
+        time.sleep(0.3)
+    print(f"[2b] configure sensor registers:")
+    assert sensor.camera_configure_registers(mask), "sensor config failed"
 
     print("[3/5] I2C control plane")
     regs = FpgaRegs(sensor, a.cam)
@@ -56,10 +54,13 @@ def main():
     print("      ID/VERSION/SCRATCH OK")
 
     print("[4/5] histogram mode still works (default mode)")
+    setup_trigger(iface.console, "dark")   # SyncOut on, TA (laser) off
+    assert sensor.enable_camera_fsin_ext(), "fsin ext failed"
     q = queue.Queue()
     sensor.uart.histo.flush_stale_data(expected_size=32833)
     sensor.uart.histo.start_streaming(q, expected_size=32833)
     assert sensor.enable_camera(mask), "enable_camera failed"
+    assert iface.console.start_trigger(), "start_trigger failed"
     got = None
     t0 = time.time()
     while time.time() - t0 < 5:
@@ -78,6 +79,8 @@ def main():
     assert cur > 0, f"line counter did not advance (still {cur})"
     print(f"      line counter advanced to {cur}")
     regs.set_histogram_mode()
+    iface.console.stop_trigger()
+    sensor.disable_camera_fsin_ext()
     sensor.disable_camera(mask)
     sensor.uart.histo.stop_streaming()
     print("SMOKE TEST PASSED")

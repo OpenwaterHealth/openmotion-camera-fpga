@@ -17,10 +17,26 @@ import numpy as np
 from omotion import MotionInterface
 from omotion.MotionProcessing import parse_histogram_packet_structured
 
-from fpga_link import FpgaRegs, MAGIC
+from fpga_link import FpgaRegs, MAGIC, force_program_fpga
 
 WIDTH, HEIGHT, PAIRS = 1920, 1280, 960
 EXPECTED_SIZE = 32833
+
+
+def setup_trigger(console, scene: str, freq_hz: float = 40.0):
+    """Configure the console trigger: SyncOut drives the sensors' FSIN on
+    this harness, so BOTH scenes need the trigger running. TA (laser) firing
+    is enabled only for the laser scene."""
+    import json as _json
+    cfg = console.get_trigger_json()
+    if isinstance(cfg, str):
+        cfg = _json.loads(cfg)
+    cfg["EnableSyncOut"] = True
+    cfg["EnableTaTrigger"] = (scene == "laser")
+    cfg["TriggerFrequencyHz"] = float(freq_hz)
+    out = console.set_trigger_json(data=cfg)
+    assert out, "set_trigger_json failed"
+    print(f"[trigger] {out}")
 
 
 def decode_line(hist: np.ndarray):
@@ -162,10 +178,10 @@ def main():
     out = Path(a.out) / a.scene
     out.mkdir(parents=True, exist_ok=True)
 
-    need_console = a.scene == "laser"
+    # Console is needed for BOTH scenes: its trigger SyncOut drives FSIN.
     iface = MotionInterface(data_dir=str(out / "sdk_data"))
     iface.start(wait=True, wait_timeout=2.0)
-    iface.wait_for_ready(console=need_console, sensors=len(sides), timeout=20)
+    iface.wait_for_ready(console=True, sensors=len(sides), timeout=20)
     sensors = {}
     for s in sides:
         sen = getattr(iface, s)
@@ -177,15 +193,15 @@ def main():
         print(f"[{s}] camera power on (mask 0x{cam_mask:02X})")
         assert sen.enable_camera_power(cam_mask), f"{s}: power-on failed"
         if not a.skip_program:
-            # Bitstream is flash-resident (update_bitstream.py); the stock
-            # program_fpga path streams it. Power-cycle clears isProgrammed
-            # so a real load happens (~10 s per camera).
-            print(f"[{s}] programming FPGAs from flash bitstream ...")
-            sen.disable_camera_power(cam_mask)
-            time.sleep(1.0)
-            assert sen.enable_camera_power(cam_mask), f"{s}: re-power failed"
-            assert sen.program_fpga(cam_mask, manual_process=False)
-            time.sleep(0.2)
+            # Bitstream is flash-resident (update_bitstream.py). The cameras
+            # are NVCM-programmed, so a FORCED SRAM load (reserved==2) is
+            # required — ~10 s per camera.
+            print(f"[{s}] force-loading FPGAs from flash bitstream "
+                  f"(~{10 * len(cams)} s) ...")
+            assert force_program_fpga(sen, cam_mask), f"{s}: force load failed"
+            time.sleep(0.3)
+        print(f"[{s}] configuring sensor registers")
+        assert sen.camera_configure_registers(cam_mask), f"{s}: config failed"
         good = []
         for c in cams:
             ok = FpgaRegs(sen, c).check_id()
@@ -197,10 +213,10 @@ def main():
     if a.scene == "laser":
         print("[laser] applying laser power config")
         assert iface.apply_laser_power(), "apply_laser_power failed"
-        for s, (sen, _) in prepared.items():
-            assert sen.enable_camera_fsin_ext(), f"{s}: enable FSIN ext failed"
-        print("[laser] trigger config:", iface.console.get_trigger_json())
-        assert iface.console.start_trigger(), "start_trigger failed"
+    setup_trigger(iface.console, a.scene)
+    for s, (sen, _) in prepared.items():
+        assert sen.enable_camera_fsin_ext(), f"{s}: enable FSIN ext failed"
+    assert iface.console.start_trigger(), "start_trigger failed"
 
     results = {}
     try:
@@ -214,10 +230,9 @@ def main():
         for th in threads.values():
             th.join()
     finally:
-        if a.scene == "laser":
-            iface.console.stop_trigger()
-            for s, (sen, _) in prepared.items():
-                sen.disable_camera_fsin_ext()
+        iface.console.stop_trigger()
+        for s, (sen, _) in prepared.items():
+            sen.disable_camera_fsin_ext()
 
     from PIL import Image
     meta = {"scene": a.scene,

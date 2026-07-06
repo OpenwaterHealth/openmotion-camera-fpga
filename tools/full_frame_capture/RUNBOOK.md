@@ -1,49 +1,70 @@
-# Full-frame capture runbook (morning of 2026-07-06)
+# Full-frame capture runbook (updated end of 2026-07-05 session)
 
-## State as of last night (2026-07-05)
+## Rig state right now
 
-- Both sensor modules' STM32 flash carries the NEW FPGA bitstream (with the
-  I2C slave @0x5A + image-line readout) at 0x081A0000, written over DFU and
-  **verified**: right = full 163489-byte readback identical; left = write
-  completed + first bytes verified over SWD. Firmware code untouched
-  (1.8.1-rc.3), motion_config/serial sector untouched.
-- Backups of the previous flash content: `backups/bitstream_left.bin`,
-  `backups/bitstream_right.bin` (exactly 163489 B each). Restore with:
-  `python update_bitstream.py --restore backups/bitstream_<side>.bin --side <side>`
-- Both sensors' USB is down until a POWER CYCLE (the app's USB does not
-  recover after a DFU session — both apps are running and healthy otherwise).
-  The left sensor may also be recovered by BOOT button / power cycle; no
-  reflash needed on either sensor.
-- The firmware's host-upload SRAM path is broken (sensor-fw bug filed) —
-  that's why the flash route was used. FPGA programming now uses the STOCK
-  `program_fpga` path which streams our flash-resident image.
+- **Both sensors run force-capable firmware** `1.8.1-rc.3-dirty` = exact tag
+  1.8.1-rc.3 + ONLY the feature/68 force-load hunk (OW_FPGA_PROG_SRAM
+  reserved==2 → `program_fpga(i, force=true)`). Build tree:
+  `C:\Users\ethan\AppData\Local\Temp\claude\sensorfw-rc3` (worktree of
+  sensor-fw at the tag + patch). Official rc3 raw.bin restore copy:
+  `<that tree>\build\Release\official-rc3-backup.bin` and the GitHub release.
+- **Both sensors' flash bitstream sectors (0x081A0000) hold the NEW FPGA
+  image** (I2C slave @0x5A + line readout), byte-exact verified. Backups of
+  the previous content: `backups/bitstream_{left,right}.bin` (restore:
+  `python update_bitstream.py --restore backups/bitstream_<side>.bin --side <side>`).
+- **All 16 cameras are NVCM-programmed** → the FPGAs boot the OLD image from
+  NVCM at power-on. Loading the NEW image requires the FORCED SRAM load
+  (`fpga_link.force_program_fpga`, ~10 s/camera). SRAM loads are volatile —
+  re-force after any camera power cycle.
+- **Shelly plug `192.168.1.81` power-cycles the whole rig**
+  (`python C:\Users\ethan\AppData\Local\Temp\claude\shelly_cycle.py`).
+  Sensor USB never re-enumerates after a DFU session without this.
 
-## Morning sequence
+## THE BLOCKER (needs eyes on the bench)
 
-1. **Power cycle both sensor modules** (and check they enumerate: two
-   healthy 0483:5A5A composites).
-2. Smoke test one camera (from `tools/full_frame_capture/`):
-   `python smoke_test.py --side left --cam 0`
-   Expect: ID/VERSION/SCRATCH OK, histogram packet OK, line counter advances.
-   (First `program_fpga` per sensor takes ~10 s/camera — 8 cams ≈ 80 s.)
-3. Dark scene (rig covered/dark):
+**No camera produces frames tonight in ANY configuration** — stock firmware
+(official rc3 re-flashed and tested) + stock NVCM image + configured sensors
++ console trigger running (tried SyncOut on/off, TA on/off, laser config
+applied or not, single-capture's manual FSIN pulse, internal enable path,
+1 camera or all 8, both sensors). All 16 OV2312s answer on I2C; all enables
+succeed from a clean boot; zero histogram packets ever arrive (5 s firmware
+HISTO timeout on single captures).
+
+Everything from USB down to the sensors' I2C is proven good, so the missing
+link is frame sync (FSIN) or something physical: check the console→sensor
+sync/trigger cabling and anything the 60 Hz bench session (morning of 07-05)
+may have left disconnected or re-jumpered. The morning's all-16 60 Hz run
+used the feature/68 dev firmware + console trigger and worked.
+
+## Capture sequence (once frames work)
+
+From `tools/full_frame_capture/` (worktree
+`...\openmotion-camera-fpga\.claude\worktrees\admiring-moore-975f35`):
+
+1. `python smoke_test.py --side left --cam 0`
+   (force-loads the FPGA, checks I2C ID/SCRATCH at 0x5A, histogram packet
+   with dark trigger, image-mode line counter advance)
+2. Dark scene (rig covered; trigger runs with TA/laser OFF):
    `python capture.py --out captures --scene dark`
-4. Laser scene (console drives laser; FSIN external + trigger handled by the
-   script): `python capture.py --out captures --scene laser --skip-program`
-5. Report: `python report.py --captures captures --out captures/report.html`
+3. Laser scene:
+   `python capture.py --out captures --scene laser --skip-program`
+   (`--skip-program` only if cameras were NOT power-cycled since step 2)
+4. `python report.py --captures captures --out captures/report.html`
 
-Outputs: per camera `captures/<scene>/<side>_cam<N>.npy` (raw uint16
-1280x1920, values 0..1023) + 16-bit PNG (lossless), `meta.json` with
-temperatures + missing-line stats, and `report.html` with all previews.
+Outputs per camera: lossless `.npy` (uint16 1280x1920, raw 10-bit values) +
+16-bit PNG + `meta.json` (temps, missing lines) + `report.html`.
 
 ## Gotchas
 
-- If a camera's FPGA ID check fails after programming: that camera may be
-  NVCM-programmed (firmware skips SRAM load; 1.8.1-rc.3 has no force flag).
-  The capture script skips it and records it in meta.json.
-- The first HISTOGRAM packet after any image-mode session is invalid by
-  design (accumulated bins) — irrelevant to captures, but don't be surprised
-  in other tooling. FPGA repo issue #5 has details; bin +4/frame defect is
-  issue #6.
-- LINE_CUR I2C readback (regs 0x06/0x07) is display-only; the authoritative
-  line number rides in each packet's spacer bytes.
+- FPGA I2C regs (0x5A) may only respond while the camera stream is enabled —
+  the FPGA's external reset (fw "GPIO1" → FPGA GPIO0, schematic swap) is
+  raised in enable_camera_stream and dropped in disable. The capture flow
+  sets image mode AFTER enable_camera for this reason. (Unverified on
+  hardware tonight — frames blocker prevented the check; if 0x5A stays mute
+  with streaming running and frames flowing, capture debug continues there.)
+- First histogram packet after leaving image mode is invalid (camera-fpga
+  issue #5/#6 docs).
+- LINE_CUR readback is display-only; SPI packet spacers are authoritative.
+- sensor-fw#82: the firmware's host-upload SRAM path is broken — do NOT use
+  enter_sram_prog/send_bitstream/PROG_SRAM(reserved=0); the flash-resident
+  route above is the working path.
