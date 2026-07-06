@@ -18,7 +18,8 @@ from omotion import MotionInterface
 import omotion.MotionProcessing as _MP
 from omotion.MotionProcessing import parse_histogram_packet_structured
 
-from fpga_link import FpgaRegs, MAGIC, force_program_fpga
+from fpga_link import (FpgaRegs, MAGIC, force_program_fpga,  # noqa: F401
+                       upload_bitstream, upload_program_fpga)
 
 # The SDK parser validates every sample against a fixed histogram photon-count
 # sum and drops mismatches. Image-line packets (and histogram packets after an
@@ -89,38 +90,68 @@ class CameraAccum:
 
 def capture_side(sensor, side, cams, timeout_s=90, retry_rounds=5):
     """Stream image-line packets from all cams on one sensor until every line
-    of every camera is collected (or retries exhausted). Returns {cam: CameraAccum}."""
+    of every camera is collected (or retries exhausted). Returns {cam: CameraAccum}.
+
+    NOTE: the FPGA control plane is clocked from the MIPI-derived pixel clock,
+    so register access only works while the camera is streaming — enable
+    first, then talk I2C."""
     accum = {c: CameraAccum() for c in cams}
     regs = {c: FpgaRegs(sensor, c) for c in cams}
     mask = 0
     for c in cams:
         mask |= 1 << c
 
-    for c in cams:
-        regs[c].set_image_mode(start_line=0)
-
     q = queue.Queue()
     stop = threading.Event()
 
     def consume():
+        # USB delivers multi-camera packets (~32 KB) split across reads:
+        # accumulate and let the parser's bytes_consumed drive the cursor.
+        buf = bytearray()
         while not stop.is_set() or not q.empty():
             try:
-                raw = q.get(timeout=0.2)
+                buf += q.get(timeout=0.2)
             except queue.Empty:
                 continue
-            try:
-                pkt = parse_histogram_packet_structured(memoryview(raw))
+            while True:
+                sof = buf.find(b"\xaa")
+                if sof < 0:
+                    buf.clear()
+                    break
+                if sof:
+                    del buf[:sof]
+                try:
+                    pkt = parse_histogram_packet_structured(memoryview(buf))
+                except Exception:
+                    # incomplete (or garbage) — wait for more data unless the
+                    # buffer is absurdly large, then resync past this SOF
+                    if len(buf) > 4 * EXPECTED_SIZE:
+                        del buf[:1]
+                        continue
+                    break
                 for s in pkt.samples:
                     if s.cam_id in accum:
                         accum[s.cam_id].add(s)
-            except Exception as e:
-                print(f"  [{side}] parse error (packet dropped): {e}")
+                del buf[:max(pkt.bytes_consumed, 1)]
 
     sensor.uart.histo.flush_stale_data(expected_size=EXPECTED_SIZE)
     sensor.uart.histo.start_streaming(q, expected_size=EXPECTED_SIZE)
     t = threading.Thread(target=consume, daemon=True)
     t.start()
     assert sensor.enable_camera(mask), f"{side}: enable_camera failed"
+    time.sleep(1.0)  # MIPI clock + control plane come up with streaming
+
+    live = []
+    for c in cams:
+        ok = regs[c].check_id()
+        print(f"  [{side}] cam{c} control plane: {'OK' if ok else 'NO ANSWER'}")
+        if ok:
+            regs[c].set_image_mode(start_line=0)
+            live.append(c)
+    cams = live
+    for c in list(accum):
+        if c not in live:
+            del accum[c]
 
     def total_missing():
         return sum(len(accum[c].missing()) for c in cams)
@@ -149,12 +180,12 @@ def capture_side(sensor, side, cams, timeout_s=90, retry_rounds=5):
         while time.time() < deadline and any(accum[c].missing() for c in cams):
             time.sleep(1.0)
 
-    sensor.disable_camera(mask)
     for c in cams:
         try:
-            regs[c].set_histogram_mode()
+            regs[c].set_histogram_mode()  # while clock still runs
         except IOError:
             pass
+    sensor.disable_camera(mask)
     stop.set()
     sensor.uart.histo.stop_streaming()
     try:
@@ -199,22 +230,21 @@ def main():
         print(f"[{s}] camera power on (mask 0x{cam_mask:02X})")
         assert sen.enable_camera_power(cam_mask), f"{s}: power-on failed"
         if not a.skip_program:
-            # Bitstream is flash-resident (update_bitstream.py). The cameras
-            # are NVCM-programmed, so a FORCED SRAM load (reserved==2) is
-            # required — ~10 s per camera.
-            print(f"[{s}] force-loading FPGAs from flash bitstream "
-                  f"(~{10 * len(cams)} s) ...")
-            assert force_program_fpga(sen, cam_mask), f"{s}: force load failed"
-            time.sleep(0.3)
+            # Pure-SDK path (validated on hardware): upload the bitstream once
+            # into the sensor's RAM buffer, then a verified forced ISC program
+            # per camera (~12 s each; the firmware realigns USART receivers
+            # after each program).
+            assert a.bitstream, "--bitstream required unless --skip-program"
+            print(f"[{s}] uploading bitstream ...")
+            assert upload_bitstream(sen, a.bitstream), f"{s}: upload failed"
+            for c in cams:
+                ok = upload_program_fpga(sen, c)
+                print(f"[{s}] cam{c} FPGA program: {'OK' if ok else 'FAILED'}")
         print(f"[{s}] configuring sensor registers")
         assert sen.camera_configure_registers(cam_mask), f"{s}: config failed"
-        good = []
-        for c in cams:
-            ok = FpgaRegs(sen, c).check_id()
-            print(f"[{s}] cam{c} I2C ID: {'OK' if ok else 'FAIL'}")
-            if ok:
-                good.append(c)
-        prepared[s] = (sen, good)
+        # Control-plane ID checks happen inside capture_side once streaming
+        # runs (the FPGA register interface needs the MIPI-derived clock).
+        prepared[s] = (sen, cams)
 
     if a.scene == "laser":
         print("[laser] applying laser power config")
