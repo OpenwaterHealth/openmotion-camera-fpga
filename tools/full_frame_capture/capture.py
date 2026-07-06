@@ -145,7 +145,9 @@ def capture_side(sensor, side, cams, timeout_s=90, retry_rounds=5):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--bitstream", required=True)
+    ap.add_argument("--bitstream", default=None,
+                    help="unused at runtime — bitstream is flash-resident "
+                         "(see update_bitstream.py); kept for provenance")
     ap.add_argument("--out", default="captures")
     ap.add_argument("--scene", required=True, choices=["dark", "laser"])
     ap.add_argument("--sides", default="left,right")
@@ -175,11 +177,15 @@ def main():
         print(f"[{s}] camera power on (mask 0x{cam_mask:02X})")
         assert sen.enable_camera_power(cam_mask), f"{s}: power-on failed"
         if not a.skip_program:
-            print(f"[{s}] programming FPGA SRAM ...")
-            assert sen.enter_sram_prog_fpga(cam_mask)
-            assert sen.send_bitstream_fpga(a.bitstream)
+            # Bitstream is flash-resident (update_bitstream.py); the stock
+            # program_fpga path streams it. Power-cycle clears isProgrammed
+            # so a real load happens (~10 s per camera).
+            print(f"[{s}] programming FPGAs from flash bitstream ...")
+            sen.disable_camera_power(cam_mask)
+            time.sleep(1.0)
+            assert sen.enable_camera_power(cam_mask), f"{s}: re-power failed"
             assert sen.program_fpga(cam_mask, manual_process=False)
-            assert sen.exit_sram_prog_fpga(cam_mask)
+            time.sleep(0.2)
         good = []
         for c in cams:
             ok = FpgaRegs(sen, c).check_id()

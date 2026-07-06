@@ -15,7 +15,9 @@ from fpga_link import FpgaRegs
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("bitstream")
+    ap.add_argument("bitstream", nargs="?", default=None,
+                    help="unused at runtime — bitstream is flash-resident "
+                         "(see update_bitstream.py); kept for provenance")
     ap.add_argument("--side", default="left", choices=["left", "right"])
     ap.add_argument("--cam", type=int, default=0)
     ap.add_argument("--skip-program", action="store_true",
@@ -33,13 +35,18 @@ def main():
     assert sensor.enable_camera_power(mask), "camera power-on failed"
 
     if a.skip_program:
-        print("[2/5] skipping SRAM programming (--skip-program)")
+        print("[2/5] skipping FPGA programming (--skip-program)")
     else:
-        print("[2/5] program FPGA SRAM")
-        assert sensor.enter_sram_prog_fpga(mask), "enter_sram_prog failed"
-        assert sensor.send_bitstream_fpga(a.bitstream), "send_bitstream failed"
+        # The bitstream now lives in the sensor's flash (update_bitstream.py);
+        # program_fpga runs the firmware's stock CRESETB/activate/erase/program
+        # sequence streaming that flash image. Power-cycle first so the
+        # firmware's isProgrammed latch is clear and a real load happens.
+        print("[2/5] program FPGA from flash-resident bitstream")
+        sensor.disable_camera_power(mask)
+        time.sleep(1.0)
+        assert sensor.enable_camera_power(mask), "camera re-power failed"
         assert sensor.program_fpga(mask, manual_process=False), "program failed"
-        assert sensor.exit_sram_prog_fpga(mask), "exit_sram_prog failed"
+        time.sleep(0.2)
 
     print("[3/5] I2C control plane")
     regs = FpgaRegs(sensor, a.cam)
