@@ -3,3 +3,17 @@
 *.vcd
 *.vvp
 out/
+
+# Python tooling caches
+__pycache__/
+*.pyc
+.pytest_cache/
+.benchmarks/
+
+# Full-frame capture outputs (large datasets — archive outside git;
+# the dataset handoff report stays tracked)
+tools/full_frame_capture/captures/*
+!tools/full_frame_capture/captures/DATASET_REPORT.md
+
+# Bring-up debug bitstream variants
+/debug_probe*.bit
