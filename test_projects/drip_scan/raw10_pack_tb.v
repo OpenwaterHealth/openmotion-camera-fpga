@@ -55,7 +55,7 @@ module raw10_pack_tb;
   endtask
   task do_push_pop(input [19:0] p, output [7:0] b);
     begin
-      b = byte_out;
+      b = byte_out;                 // value presented BEFORE the take edge
       pair_in <= p; pair_en <= 1; byte_take <= 1;
       @(posedge clk);
       pair_en <= 0; byte_take <= 0; @(posedge clk);

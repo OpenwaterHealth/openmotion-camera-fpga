@@ -26,6 +26,10 @@ module raw10_pack (
   assign byte_out   = acc[7:0];
   assign byte_avail = (cnt >= 6'd8);
   assign pair_room  = (cnt <= 6'd12);
+  // These thresholds guarantee pair_room|byte_avail always holds (all deltas
+  // are multiples of 4), so a caller alternating push/pop can never deadlock.
+  // Synthesis builds a full 6-bit barrel shifter below even though the
+  // contract bounds cnt to [0,12] — single instance, ample slack at 133 MHz.
 
   always @(posedge clk) begin
     if (clear) begin
