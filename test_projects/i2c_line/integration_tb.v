@@ -42,6 +42,7 @@ module integration_tb;
   wire [7:0] r_addr, r_wdata, r_rdata;
   wire r_wstrobe;
   wire mode_image;
+  wire sweep_value;
   wire [11:0] line_value, sent_line;
   wire line_req_toggle, line_ack_toggle, line_sent_toggle, img_active;
 
@@ -58,8 +59,10 @@ module integration_tb;
       .pll_lock_i(1'b1), .fv_i(fv),
       .line_sent_toggle_i(line_sent_toggle), .sent_line_i(sent_line),
       .img_active_i(img_active),
+      .overrun_i(1'b0),
       .line_ack_toggle_i(line_ack_toggle),
       .mode_image_o(mode_image), .line_value_o(line_value),
+      .sweep_value_o(sweep_value),
       .line_req_toggle_o(line_req_toggle));
 
   /*------------------Readout producers (clk_pix domain)-------------*/
@@ -338,7 +341,7 @@ module integration_tb;
     // 2. I2C SANITY: ID, VERSION, SCRATCH read/write.
     // =====================================================================
     rd_reg(8'h00, rb); check(rb == 8'h5A, "I2C-SANITY: ID == 0x5A");
-    rd_reg(8'h01, rb); check(rb == 8'h01, "I2C-SANITY: VERSION == 0x01");
+    rd_reg(8'h01, rb); check(rb == 8'h02, "I2C-SANITY: VERSION == 0x02");
     rd_reg(8'h02, rb); check(rb == 8'hA5, "I2C-SANITY: SCRATCH default 0xA5");
     wr_reg(8'h02, 8'h3C); rd_reg(8'h02, rb);
     check(rb == 8'h3C, "I2C-SANITY: SCRATCH write/readback 0x3C");

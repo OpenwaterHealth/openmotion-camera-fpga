@@ -24,6 +24,9 @@ module fpga_regs_tb;
   wire mode_image;
   wire [11:0] line_value;
   wire line_req_toggle;
+  wire sweep_value;
+  reg  overrun_i = 0;
+  reg  pix_sweep = 0;
   reg [11:0] pix_target = 12'hEEE;
 
   fpga_regs regs (
@@ -33,14 +36,17 @@ module fpga_regs_tb;
     .pll_lock_i(pll_lock), .fv_i(fv),
     .line_sent_toggle_i(line_sent_toggle), .sent_line_i(sent_line),
     .img_active_i(img_active),
+    .overrun_i(overrun_i),
     .line_ack_toggle_i(line_ack_toggle),
     .mode_image_o(mode_image), .line_value_o(line_value),
+    .sweep_value_o(sweep_value),
     .line_req_toggle_o(line_req_toggle));
 
   // pixel-domain CDC responder (async to clk on purpose)
   reg responder_on = 1;
   always @(line_req_toggle) if (responder_on) begin
-    #100; pix_target = line_value; line_ack_toggle = line_req_toggle;
+    #100; pix_target = line_value; pix_sweep = sweep_value;
+    line_ack_toggle = line_req_toggle;
   end
 
   // stability monitor: while enabled, the published bus must never change
@@ -85,7 +91,7 @@ module fpga_regs_tb;
     check(pix_target == 12'd0, "initial publish delivered 0");
 
     rd_reg(8'h00, rb); check(rb == 8'h5A, "ID");
-    rd_reg(8'h01, rb); check(rb == 8'h01, "VERSION");
+    rd_reg(8'h01, rb); check(rb == 8'h02, "VERSION == 0x02");
     rd_reg(8'h02, rb); check(rb == 8'hA5, "SCRATCH default");
     wr_reg(8'h02, 8'h3C); rd_reg(8'h02, rb); check(rb == 8'h3C, "SCRATCH rw");
 
@@ -146,6 +152,24 @@ module fpga_regs_tb;
     rd_reg(8'h06, rb); rd_reg(8'h07, rb2);
     check({rb2[3:0], rb} == 12'h311, "lone H write commits 0x311");
     check(pix_target == 12'h311, "CDC delivered 0x311");
+
+    // T-sweep: CTRL bit1 write/readback; {sweep, line} publish atomically
+    wr_reg(8'h04, 8'h40); wr_reg(8'h05, 8'h00);   // LINE = 0x040
+    wr_reg(8'h03, 8'h03);                          // image + sweep
+    rd_reg(8'h03, rb); check(rb == 8'h03, "T-sweep: CTRL image+sweep readback");
+    #5000;
+    check(pix_target == 12'h040, "T-sweep: CDC delivered line 0x040");
+    check(pix_sweep == 1'b1, "T-sweep: sweep=1 delivered with the line");
+    wr_reg(8'h03, 8'h01);                          // sweep off, image stays
+    #5000;
+    check(pix_sweep == 1'b0, "T-sweep: sweep=0 republished");
+    check(pix_target == 12'h040, "T-sweep: line unchanged by sweep republish");
+
+    // T-overrun: STATUS bit2 mirrors the pixel-domain latch level
+    overrun_i = 1; #500;
+    rd_reg(8'h09, rb); check(rb[2] == 1'b1, "T-overrun: STATUS bit2 set");
+    overrun_i = 0; #500;
+    rd_reg(8'h09, rb); check(rb[2] == 1'b0, "T-overrun: STATUS bit2 clear");
 
     // FRAME_CNT counts fv rising edges
     for (k = 0; k < 3; k = k + 1) begin fv = 1; #500; fv = 0; #500; end
