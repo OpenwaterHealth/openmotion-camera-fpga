@@ -49,12 +49,13 @@ module fpga_regs_tb;
     line_ack_toggle = line_req_toggle;
   end
 
-  // stability monitor: while enabled, the published bus must never change
+  // stability monitor: while enabled, the published pair must never change
+  // — line AND sweep, so a torn {sweep,line} publish fails deterministically
   reg monitor_stability = 0;
   integer errors = 0;
-  always @(line_value) if (monitor_stability) begin
+  always @(line_value or sweep_value) if (monitor_stability) begin
     errors = errors + 1;
-    $display("FAIL: line_value_o changed while req pending");
+    $display("FAIL: {sweep,line} publish changed while req pending");
   end
 
   // count req toggles so tests can assert exact handshake activity
@@ -64,7 +65,7 @@ module fpga_regs_tb;
   `include "i2c_line/i2c_master_tasks.vh"
 
   reg ack; reg [7:0] rb, rb2;
-  task check(input cond, input [255:0] msg);
+  task check(input cond, input [511:0] msg);  // 64 chars: T-sweep-withheld labels are long
     if (!cond) begin errors = errors + 1; $display("FAIL: %0s", msg); end
   endtask
   task wr_reg(input [7:0] r, input [7:0] v);
@@ -164,6 +165,27 @@ module fpga_regs_tb;
     #5000;
     check(pix_sweep == 1'b0, "T-sweep: sweep=0 republished");
     check(pix_target == 12'h040, "T-sweep: line unchanged by sweep republish");
+
+    // T-sweep-withheld: while a LINE publish pends (ack withheld), a CTRL
+    // SWEEP flip must NOT tear onto the published bus; after a single ack
+    // the one republish delivers {sweep=1, line} together
+    responder_on = 0;
+    wr_reg(8'h04, 8'hB0); wr_reg(8'h05, 8'h00);   // LINE = 0x0B0 — publishes {0,0x0B0}, req pends
+    monitor_stability = 1;                        // {0,0x0B0} publish already fired
+    wr_reg(8'h03, 8'h03);                         // CTRL |= SWEEP — must NOT publish
+    check(line_value == 12'h0B0, "T-sweep-withheld: line held 0x0B0 while pending");
+    check(sweep_value == 1'b0, "T-sweep-withheld: sweep held 0 while pending");
+    monitor_stability = 0;
+    req_snap = req_edges;
+    #100; line_ack_toggle = line_req_toggle;      // single manual ack
+    #5000;
+    check(req_edges == req_snap + 1, "T-sweep-withheld: exactly one more req edge");
+    check(sweep_value == 1'b1, "T-sweep-withheld: republish delivers sweep=1");
+    check(line_value == 12'h0B0, "T-sweep-withheld: ...atomically with line 0x0B0");
+    #100; line_ack_toggle = line_req_toggle;      // ack the republish
+    pix_target = line_value; pix_sweep = sweep_value;
+    responder_on = 1;
+    #2000;
 
     // T-overrun: STATUS bit2 mirrors the pixel-domain latch level
     overrun_i = 1; #500;
