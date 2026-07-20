@@ -16,6 +16,21 @@
 // Handoff contract with line_capture: start_i is a 1-clk pulse with
 // line_i/frame_i/ovr_flag_i registered on the same edge; start_i is never
 // pulsed while busy_o is high (line_capture drops the line instead).
+//
+// SERIALIZE watchdog (ports commit 992dc41's histo_module guard pattern;
+// sensor-fw#68 hardening): S_HAND/S_TAIL wait on `word_done` with no other
+// exit, so a corrupted serializer/SPI handshake mid-push would hold busy_o
+// forever — in sweep mode that silently kills every remaining push of the
+// ~1300-push scan. A guard counter counts clks spent waiting and forces an
+// abort after 2^21 clk (~15.8 ms at 132.8 MHz, ~2x the longest healthy
+// push): serialize_active_o drops (the shared Serializer resets), busy
+// clears so the next line hands off normally, and sticky wedge_o rises
+// (cleared on the next start_i / reset) — line_capture folds its rising
+// edge into the overrun latch, so the host sees the wedge as a flagged
+// sweep (STATUS bit2 / header flag bit0). A frame-based escape is not
+// usable: healthy pushes legitimately straddle into the next frame. Like
+// 992dc41 this cannot help when the glitch also stops clk_pixel_hs (the
+// guard freezes with everything else).
 module image_pusher #(
     parameter [7:0] MAGIC       = 8'hB6,
     parameter [7:0] FMT_VERSION = 8'h01
@@ -28,6 +43,8 @@ module image_pusher #(
     input  wire [7:0]  frame_i,
     input  wire        ovr_flag_i,      // header flags bit0
     output wire        busy_o,
+    output reg         wedge_o,         // sticky: last push attempt wedged
+
     // line RAM read port (pair index; sync read)
     output wire [9:0]  ram_addr_o,
     input  wire [23:0] ram_q_i,
@@ -109,10 +126,25 @@ module image_pusher #(
     .byte_en(take_byte && (byte_idx < 12'd2406)),
     .byte_in(cur_byte), .crc(crc));
 
+  // ---- SERIALIZE watchdog guard counter (see header) ----
+  // Counts every clk spent in S_HAND/S_TAIL; any word_done (or a new
+  // start, or leaving the wait states) rearms it. Healthy inter-word gaps
+  // are ~150 clk, so only a wedged handshake reaches bit 21.
+  reg [21:0] guard;
+  wire wedged = guard[21];
+  always @(posedge clk) begin
+    if (reset | start_i | word_done |
+        (state != S_HAND && state != S_TAIL))
+      guard <= 22'd0;
+    else
+      guard <= guard + 22'd1;
+  end
+
   // ---- builder / word-hand FSM ----
   always @(posedge clk) begin
     if (reset) begin
       state <= S_IDLE; busy <= 1'b0; serialize_active_o <= 1'b0;
+      wedge_o <= 1'b0;
       byte_idx <= 12'd0; words_loaded <= 10'd0;
       done_q <= 1'b0; phantom_seen <= 1'b0;
       line_r <= 12'd0; frame_r <= 8'd0; ovr_r <= 1'b0;
@@ -124,7 +156,7 @@ module image_pusher #(
       case (state)
         S_IDLE: if (start_i) begin
           busy <= 1'b1; byte_idx <= 12'd0; words_loaded <= 10'd0;
-          phantom_seen <= 1'b0;
+          phantom_seen <= 1'b0; wedge_o <= 1'b0;
           line_r <= line_i; frame_r <= frame_i; ovr_r <= ovr_flag_i;
           state <= S_BUILD;
         end
@@ -148,11 +180,21 @@ module image_pusher #(
             word_o <= build;
             words_loaded <= words_loaded + 10'd1;
             state <= (words_loaded == N_WORDS - 1) ? S_TAIL : S_BUILD;
+          end else if (wedged) begin    // watchdog abort (see header)
+            serialize_active_o <= 1'b0;
+            busy <= 1'b0;
+            wedge_o <= 1'b1;
+            state <= S_IDLE;
           end
         end
         S_TAIL: if (word_done) begin    // last word finished on the wire
           serialize_active_o <= 1'b0;
           busy <= 1'b0;
+          state <= S_IDLE;
+        end else if (wedged) begin      // watchdog abort (see header)
+          serialize_active_o <= 1'b0;
+          busy <= 1'b0;
+          wedge_o <= 1'b1;
           state <= S_IDLE;
         end
       endcase

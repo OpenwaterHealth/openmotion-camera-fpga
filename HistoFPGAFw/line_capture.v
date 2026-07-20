@@ -22,6 +22,12 @@
 // (row 0.80 ms > drain 0.69 ms) an overrun means the host mis-programmed
 // the sensor. Sweep never toggles line_sent, so fpga_regs' line counter
 // holds the host-written start line.
+//
+// Pusher watchdog: image_pusher aborts a wedged push after 2^21 clk
+// (~15.8 ms — see its header) and raises sticky wedge_o; its rising edge
+// is folded into the overrun latch here, so a wedge surfaces to the host
+// exactly like an overrun (STATUS bit2 / header flag bit0 on subsequent
+// pushes) and clears through the same re-arm publish path.
 module line_capture #(
     parameter [7:0] MAGIC = 8'hB6
 ) (
@@ -98,7 +104,8 @@ module line_capture #(
   reg prev_done, flag;
   reg capturing_q;
 
-  wire pusher_busy, pusher_active;
+  wire pusher_busy, pusher_active, pusher_wedge;
+  reg  pusher_wedge_q;
 
   // single-line capture: gated off entirely while sweep is armed
   wire capturing = armed & ~armed_sweep & (state == S_IDLE) & ~captured &
@@ -125,7 +132,7 @@ module line_capture #(
       sweep_hit_q <= 1'b0; wr_sel <= 1'b0; ovr_latch <= 1'b0;
       cdc_event_q <= 1'b0; ovr_clr_pend <= 1'b0;
       push_start <= 1'b0; push_line <= 12'd0; push_frame <= 8'd0;
-      push_buf <= 1'b0;
+      push_buf <= 1'b0; pusher_wedge_q <= 1'b0;
     end else begin
       push_start <= 1'b0;                 // default: 1-clk pulse
       if (fv_rise) begin
@@ -188,6 +195,14 @@ module line_capture #(
           end
         end
       end
+
+      // -- pusher watchdog wedge -> overrun latch --
+      // Edge-detected (wedge_o is sticky until the next push attempt), so
+      // the re-arm clear semantics above still apply and a later second
+      // wedge re-trips the latch. Placed last: a set wins over a clear
+      // landing on the same edge.
+      pusher_wedge_q <= pusher_wedge;
+      if (pusher_wedge & ~pusher_wedge_q) ovr_latch <= 1'b1;
     end
   end
   assign img_active_o = armed;
@@ -261,6 +276,7 @@ module line_capture #(
     .clk(clk), .reset(reset),
     .start_i(push_start), .line_i(push_line), .frame_i(push_frame),
     .ovr_flag_i(ovr_latch), .busy_o(pusher_busy),
+    .wedge_o(pusher_wedge),
     .ram_addr_o(pusher_addr), .ram_q_i(push_buf ? q1 : q0),
     .serializer_done(serializer_done),
     .word_o(pusher_word), .serialize_active_o(pusher_active));

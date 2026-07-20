@@ -27,13 +27,23 @@ module image_pusher_tb;
   wire ser_done, ser_active;
   wire [31:0] word;
 
+  wire wedge;
   image_pusher dut (
     .clk(clk), .reset(reset),
     .start_i(start), .line_i(line), .frame_i(frame), .ovr_flag_i(ovr),
     .busy_o(busy),
+    .wedge_o(wedge),
     .ram_addr_o(ram_addr), .ram_q_i(ram_q),
     .serializer_done(ser_done),
     .word_o(word), .serialize_active_o(ser_active));
+
+  // the SERIALIZE watchdog must never fire on a healthy push (wedge_tb
+  // owns the wedged case)
+  always @(posedge clk)
+    if (!reset && wedge === 1'b1) begin
+      errors = errors + 1;
+      $display("FAIL: wedge_o rose during a healthy push");
+    end
 
   // sync-read line RAM (behavioral DP8KE stand-in); write port unused,
   // contents preloaded hierarchically below
