@@ -6,15 +6,18 @@
 // guard-counter pattern (2^21 clk ~= 15.8 ms at 132.8 MHz) into the
 // pusher: on overflow the push aborts (serialize_active_o dropped, busy
 // cleared, FSM to S_IDLE), the sticky wedge_o flag rises, and line_capture
-// folds the wedge into its overrun latch so the host sees a flagged sweep
-// (STATUS bit2 / header flag bit0).
+// latches the wedge into BOTH its overrun latch (STATUS bit2 / header
+// flag bit0) and its dedicated wedge latch (STATUS bit3 / header flag
+// bit1, via wedge_latch_o) — the host can tell a wedge from a plain
+// overrun. Both latches clear on the same re-arm publish semantics.
 //
 // Scenario: target line 7 -> one push per frame. F1 clean push (byte-exact
 // baseline). F2 push is wedged by forcing serializer_done low mid-push;
-// the TB verifies escape within the timeout window, wedge_o sticky, the
-// overrun latch set, then releases the force and verifies the F3 push is
-// byte-exact (flags bit0 = 1: latch held, no re-arm publish) and that the
-// new start cleared wedge_o.
+// the TB verifies escape within the timeout window, wedge_o sticky, both
+// latches set, then releases the force and verifies the F3 push is
+// byte-exact (flags bits 1:0 = 11: both latches held, no re-arm publish)
+// and that the new start cleared wedge_o. F4: a re-arm publish clears
+// both latches at the next frame boundary -> clean flags-0 push.
 `include "../HistoFPGAFw/crc16.v"
 `include "../HistoFPGAFw/raw10_pack.v"
 `include "../HistoFPGAFw/image_pusher.v"
@@ -43,7 +46,7 @@ module wedge_tb;
   reg enable = 1'b1;
   wire line_ack, line_sent;
   wire [11:0] sent_line;
-  wire img_active, overrun;
+  wire img_active, overrun, wedge_latch;
   wire ser_done, ser_active;
   wire [31:0] word;
 
@@ -54,7 +57,7 @@ module wedge_tb;
     .line_req_toggle_i(line_req),
     .line_ack_toggle_o(line_ack), .line_sent_toggle_o(line_sent),
     .sent_line_o(sent_line), .img_active_o(img_active),
-    .overrun_o(overrun),
+    .overrun_o(overrun), .wedge_latch_o(wedge_latch),
     .serializer_done(ser_done), .word_o(word),
     .serialize_active_o(ser_active));
 
@@ -103,6 +106,7 @@ module wedge_tb;
 
   // stimulus (sweep_tb pattern): 8 lines x 16 pairs, pixA=(2C+L)&3FF
   // pixB=(2C+1+L)&3FF. Only line 7 >= target, so exactly one push/frame.
+  integer tp;
   task send_frame_paced;
     begin
       fv <= 1; #400;
@@ -121,7 +125,6 @@ module wedge_tb;
       fv <= 0;
     end
   endtask
-  integer tp;
 
   // ---- reference model (byte-exact, image_pusher_tb/check_push style) ----
   function [19:0] tb_pair(input [11:0] fline, input integer idx);
@@ -223,6 +226,7 @@ module wedge_tb;
     check(dut.pusher_i.wedge_o === 1'b1, "WD: sticky wedge_o set");
     check(ser_active === 1'b0, "WD: line_capture serialize_active released");
     check(overrun === 1'b1, "WD: wedge folded into the overrun latch");
+    check(wedge_latch === 1'b1, "WD: wedge_latch_o set (STATUS bit3 source)");
 
     // ===== recovery: next push must be byte-exact =====
     release ser_done;                    // Serializer is now held in reset
@@ -234,10 +238,23 @@ module wedge_tb;
     send_frame_paced;                    // frame_cnt = 3
     wait_total_bytes(base + PUSH_BYTES, 2_000_000);
     check(bytes_lifetime === base + PUSH_BYTES, "F3: exactly one push after recovery");
-    check_push(base, 12'd7, 8'd3, 4'h1,
-               "F3: byte-exact push, flags bit0 = 1 (latch held, no re-arm)");
-    check(overrun === 1'b1, "F3: latch sticky until a re-arm publish");
+    check_push(base, 12'd7, 8'd3, 4'h3,
+               "F3: byte-exact push, flags bits1:0 = 11 (latches held, no re-arm)");
+    check(overrun === 1'b1, "F3: overrun latch sticky until a re-arm publish");
+    check(wedge_latch === 1'b1, "F3: wedge latch sticky until a re-arm publish");
     check(dut.pusher_i.wedge_o === 1'b0, "F3: wedge_o cleared by the new start");
+
+    // ===== F4: re-arm publish clears BOTH latches at next fv_rise =====
+    line_req = ~line_req; #500;          // re-deliver {line=7, sweep=1}
+    check(line_ack === line_req, "F4: CDC ack for re-arm publish");
+    check(wedge_latch === 1'b1, "F4: wedge latch holds until the frame boundary");
+    base = bytes_lifetime;
+    send_frame_paced;                    // frame_cnt = 4
+    wait_total_bytes(base + PUSH_BYTES, 2_000_000);
+    check(bytes_lifetime === base + PUSH_BYTES, "F4: one push after re-arm");
+    check_push(base, 12'd7, 8'd4, 4'h0, "F4: flags clear after re-arm publish");
+    check(overrun === 1'b0, "F4: overrun latch cleared at frame boundary");
+    check(wedge_latch === 1'b0, "F4: wedge latch cleared at frame boundary");
 
     if (errors == 0) $display("ALL TESTS PASSED");
     else $display("%0d ERRORS", errors);

@@ -97,7 +97,7 @@ module topmod
   wire osc_reset = ~reset_n_pix;
   wire [7:0] r_addr, r_wdata, r_rdata;
   wire r_wstrobe, sda_oe;
-  wire mode_image, sweep_value, lc_overrun;
+  wire mode_image, sweep_value, lc_overrun, lc_wedge;
   wire [11:0] line_value, sent_line;
   wire line_req_toggle, line_ack_toggle, line_sent_toggle, img_active;
 
@@ -115,6 +115,7 @@ module topmod
       .line_sent_toggle_i(line_sent_toggle), .sent_line_i(sent_line),
       .img_active_i(img_active),
       .overrun_i(lc_overrun),
+      .wedge_i(lc_wedge),
       .line_ack_toggle_i(line_ack_toggle),
       .mode_image_o(mode_image), .line_value_o(line_value),
       .sweep_value_o(sweep_value),
@@ -146,6 +147,7 @@ module topmod
       .line_ack_toggle_o(line_ack_toggle),
       .line_sent_toggle_o(line_sent_toggle), .sent_line_o(sent_line),
       .img_active_o(img_active), .overrun_o(lc_overrun),
+      .wedge_latch_o(lc_wedge),
       .serializer_done(ser_done),
       .word_o(lc_word), .serialize_active_o(lc_active));
 

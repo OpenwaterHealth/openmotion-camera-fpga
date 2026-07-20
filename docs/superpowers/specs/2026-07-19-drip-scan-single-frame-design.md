@@ -59,7 +59,7 @@ wastes 37% of the link). Each row is one fixed-size push:
 | 0 | 1 | Magic `0xB6` (same marker as feature/5) |
 | 1 | 1 | Format version `0x01` |
 | 2 | 1 | `line[7:0]` |
-| 3 | 1 | `{flags[3:0], line[11:8]}` — flag bit0: overrun occurred since sweep start |
+| 3 | 1 | `{flags[3:0], line[11:8]}` — flag bit0: overrun occurred since sweep start (line dropped: host misprogrammed sensor timing); flag bit1: pusher-watchdog wedge occurred since sweep start (a push aborted after ~15.8 ms with no serializer progress: electrical/SEU event mid-push). A wedge sets both bits; a plain overrun sets only bit0 |
 | 4 | 1 | `frame_cnt[7:0]` (free-running fv counter; must be constant across one image) |
 | 5 | 1 | Reserved `0x00` |
 | 6 | 2400 | 1920 px packed RAW10, 4 px → 5 B: pixel *k* (k=0..3, in readout order) occupies bits [10k+9 : 10k] of a 40-bit little-endian group; groups transmit low byte first (matches the link's LSB-first byte convention) |
@@ -95,7 +95,10 @@ verification).
     like the existing mode bit).
   - `LINE_L/H` reused as **sweep start line** — a retry re-runs the sweep from the
     first missing line (0 for a fresh capture).
-  - `STATUS` bit2 = overrun latch (cleared on sweep arm).
+  - `STATUS` bit2 = overrun latch, bit3 = wedge latch (pusher-watchdog abort —
+    distinguishes an electrical/SEU wedge from a timing overrun). Both latches
+    clear on sweep arm and on any re-arm publish (consumed at the next frame
+    boundary), so each retry starts with clean tripwires.
 - **`line_capture` becomes double-buffered:** second 1024×24 EBR instance (ping/pong,
   +3 EBR → 15/20 total). In sweep mode every line ≥ start_line is captured; a
   completed buffer immediately queues to the serializer. If a buffer completes while

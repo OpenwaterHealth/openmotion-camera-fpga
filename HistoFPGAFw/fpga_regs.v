@@ -4,7 +4,9 @@
 // pending). v2 (drip-scan): VERSION 0x02; CTRL bit1 = SWEEP, published
 // ATOMICALLY with the line counter on the same handshake (one publish
 // carries {sweep, line}, so an arm can never pair with a stale start
-// line); STATUS bit2 mirrors the pixel-domain overrun latch (2FF level).
+// line); STATUS bit2 mirrors the pixel-domain overrun latch and bit3 the
+// wedge latch (both 2FF levels — bit3 distinguishes a pusher-watchdog
+// wedge from a plain overrun, see line_capture.v).
 // In sweep mode the pixel side never toggles line_sent, so the counter
 // holds the host-written sweep start line (LINE_L/H reuse, spec §4.3).
 module fpga_regs #(
@@ -25,6 +27,7 @@ module fpga_regs #(
     input  wire [11:0] sent_line_i,
     input  wire        img_active_i,
     input  wire        overrun_i,
+    input  wire        wedge_i,
     input  wire       line_ack_toggle_i,
     // control outputs
     output reg        mode_image_o,
@@ -33,7 +36,7 @@ module fpga_regs #(
     output reg        line_req_toggle_o
 );
 
-  reg [1:0] s_pll, s_fv, s_sent, s_ack, s_act, s_ovr /* synthesis syn_preserve=1 */;
+  reg [1:0] s_pll, s_fv, s_sent, s_ack, s_act, s_ovr, s_wedge /* synthesis syn_preserve=1 */;
   // sent_line_i is quasi-static (stable well before and after its companion
   // toggle flips), so a plain 2FF sync of the multi-bit value is valid.
   reg [11:0] s_sent_line_a, s_sent_line_b /* synthesis syn_preserve=1 */;
@@ -45,6 +48,7 @@ module fpga_regs #(
     s_ack  <= {s_ack[0],  line_ack_toggle_i};
     s_act  <= {s_act[0],  img_active_i};
     s_ovr  <= {s_ovr[0],  overrun_i};
+    s_wedge <= {s_wedge[0], wedge_i};
     s_sent_line_a <= sent_line_i;
     s_sent_line_b <= s_sent_line_a;
     fv_q   <= s_fv[1];
@@ -109,7 +113,7 @@ module fpga_regs #(
       8'h06: rd_data = line_counter[7:0];
       8'h07: rd_data = {4'b0, line_counter[11:8]};
       8'h08: rd_data = frame_cnt;
-      8'h09: rd_data = {5'b0, s_ovr[1], s_act[1], s_pll[1]};
+      8'h09: rd_data = {4'b0, s_wedge[1], s_ovr[1], s_act[1], s_pll[1]};
       default: rd_data = 8'h00;
     endcase
   end

@@ -26,6 +26,7 @@ module fpga_regs_tb;
   wire line_req_toggle;
   wire sweep_value;
   reg  overrun_i = 0;
+  reg  wedge_i = 0;
   reg  pix_sweep = 0;
   reg [11:0] pix_target = 12'hEEE;
 
@@ -37,6 +38,7 @@ module fpga_regs_tb;
     .line_sent_toggle_i(line_sent_toggle), .sent_line_i(sent_line),
     .img_active_i(img_active),
     .overrun_i(overrun_i),
+    .wedge_i(wedge_i),
     .line_ack_toggle_i(line_ack_toggle),
     .mode_image_o(mode_image), .line_value_o(line_value),
     .sweep_value_o(sweep_value),
@@ -187,11 +189,22 @@ module fpga_regs_tb;
     responder_on = 1;
     #2000;
 
-    // T-overrun: STATUS bit2 mirrors the pixel-domain latch level
+    // T-overrun: STATUS bit2 mirrors the pixel-domain latch level; bit3
+    // must NOT follow it (overrun and wedge are separate diagnoses)
     overrun_i = 1; #500;
-    rd_reg(8'h09, rb); check(rb[2] == 1'b1, "T-overrun: STATUS bit2 set");
+    rd_reg(8'h09, rb); check(rb[2] === 1'b1, "T-overrun: STATUS bit2 set");
+    check(rb[3] === 1'b0, "T-overrun: bit3 stays clear (not a wedge)");
     overrun_i = 0; #500;
-    rd_reg(8'h09, rb); check(rb[2] == 1'b0, "T-overrun: STATUS bit2 clear");
+    rd_reg(8'h09, rb); check(rb[2] === 1'b0, "T-overrun: STATUS bit2 clear");
+
+    // T-wedge: STATUS bit3 mirrors the wedge latch level, independent of
+    // bit2 (disambiguation: wedge = electrical/SEU event mid-push,
+    // overrun = host misprogrammed sensor timing)
+    wedge_i = 1; #500;
+    rd_reg(8'h09, rb); check(rb[3] === 1'b1, "T-wedge: STATUS bit3 set");
+    check(rb[2] === 1'b0, "T-wedge: bit2 stays clear (not an overrun)");
+    wedge_i = 0; #500;
+    rd_reg(8'h09, rb); check(rb[3] === 1'b0, "T-wedge: STATUS bit3 clear");
 
     // FRAME_CNT counts fv rising edges
     for (k = 0; k < 3; k = k + 1) begin fv = 1; #500; fv = 0; #500; end

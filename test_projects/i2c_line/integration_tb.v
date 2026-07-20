@@ -5,7 +5,9 @@
 // racing into a SHARED Serializer with reset `pix_reset | ~(hm_active |
 // lc_active)` and mux `lc_active ? lc_word : hm_word` — see HistoFPGAFw/top.v
 // lines ~81-145) because top.v itself cannot be simulated (Lattice OSCI/PLL
-// primitives). This is the only pre-hardware verification of the mode-mux
+// primitives). Caveat: this TB runs the control plane on a separate ~24 MHz
+// clock — a two-domain, conservative superset of top.v, which post-752be6a
+// is single-domain (everything on clk_pixel_hs). This is the only pre-hardware verification of the mode-mux
 // invariants: histogram/image packet framing, I2C control plane, and the
 // mid-frame mode-flip collision where both producers serialize the same
 // blanking interval.
@@ -63,6 +65,7 @@ module integration_tb;
       .line_sent_toggle_i(line_sent_toggle), .sent_line_i(sent_line),
       .img_active_i(img_active),
       .overrun_i(1'b0),
+      .wedge_i(1'b0),
       .line_ack_toggle_i(line_ack_toggle),
       .mode_image_o(mode_image), .line_value_o(line_value),
       .sweep_value_o(sweep_value),
@@ -97,7 +100,7 @@ module integration_tb;
       .line_req_toggle_i(line_req_toggle),
       .line_ack_toggle_o(line_ack_toggle),
       .line_sent_toggle_o(line_sent_toggle), .sent_line_o(sent_line),
-      .img_active_o(img_active), .overrun_o(),
+      .img_active_o(img_active), .overrun_o(), .wedge_latch_o(),
       .serializer_done(ser_done),
       .word_o(lc_word), .serialize_active_o(lc_active));
 

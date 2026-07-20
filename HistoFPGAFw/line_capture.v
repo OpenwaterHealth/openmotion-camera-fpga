@@ -25,9 +25,12 @@
 //
 // Pusher watchdog: image_pusher aborts a wedged push after 2^21 clk
 // (~15.8 ms — see its header) and raises sticky wedge_o; its rising edge
-// is folded into the overrun latch here, so a wedge surfaces to the host
-// exactly like an overrun (STATUS bit2 / header flag bit0 on subsequent
-// pushes) and clears through the same re-arm publish path.
+// sets BOTH the overrun latch (STATUS bit2 / header flag bit0 — any
+// flagged sweep is suspect) and a dedicated wedge latch (STATUS bit3 /
+// header flag bit1) so the host can tell a wedge (electrical/SEU event
+// mid-push) from a plain overrun (misprogrammed sensor timing). Both
+// latches share the same clear semantics: sweep arm edge, or a re-arm
+// publish consumed at the next frame boundary.
 module line_capture #(
     parameter [7:0] MAGIC = 8'hB6
 ) (
@@ -46,6 +49,7 @@ module line_capture #(
     output wire [11:0] sent_line_o,       // which line the last toggle reported (quasi-static)
     output wire        img_active_o,
     output wire        overrun_o,         // sticky latch (quasi-static level)
+    output wire        wedge_latch_o,     // sticky latch (quasi-static level)
     // serializer interface
     input  wire        serializer_done,
     output wire [31:0] word_o,
@@ -115,7 +119,7 @@ module line_capture #(
   wire sweep_hit = armed_sweep & frame_valid & line_valid & (line_cnt >= target);
   reg  sweep_hit_q;
   reg  wr_sel;                            // buffer being written
-  reg  ovr_latch;
+  reg  ovr_latch, wedge_latch;
   reg  cdc_event_q;                       // pipelined so sweep_pend is settled
   reg  ovr_clr_pend;                      // re-arm publish seen: clear at next fv_rise
   reg  push_start;
@@ -130,6 +134,7 @@ module line_capture #(
       line_rep <= 12'd0; state <= S_IDLE;
       line_sent_toggle_o <= 1'b0; capturing_q <= 1'b0;
       sweep_hit_q <= 1'b0; wr_sel <= 1'b0; ovr_latch <= 1'b0;
+      wedge_latch <= 1'b0;
       cdc_event_q <= 1'b0; ovr_clr_pend <= 1'b0;
       push_start <= 1'b0; push_line <= 12'd0; push_frame <= 8'd0;
       push_buf <= 1'b0; pusher_wedge_q <= 1'b0;
@@ -139,7 +144,9 @@ module line_capture #(
         armed <= enable;                  // mode changes land on frame boundaries
         armed_sweep <= enable & sweep_pend;
       end
-      if (sweep_arm_edge) ovr_latch <= 1'b0;   // spec: cleared on sweep arm
+      if (sweep_arm_edge) begin                // spec: cleared on sweep arm
+        ovr_latch <= 1'b0; wedge_latch <= 1'b0;
+      end
       // Any (re-)arm publish also clears the latch at the next frame
       // boundary — the host retry path re-publishes {sweep=1, line}
       // WITHOUT a disarmed frame, so the disarmed->armed sweep_arm_edge
@@ -148,7 +155,7 @@ module line_capture #(
       // single sample point of the async sweep bit); consume at fv_rise.
       cdc_event_q <= cdc_event;
       if (fv_rise & ovr_clr_pend) begin
-        ovr_latch <= 1'b0; ovr_clr_pend <= 1'b0;
+        ovr_latch <= 1'b0; wedge_latch <= 1'b0; ovr_clr_pend <= 1'b0;
       end
       if (cdc_event_q & sweep_pend) ovr_clr_pend <= 1'b1;
 
@@ -196,17 +203,21 @@ module line_capture #(
         end
       end
 
-      // -- pusher watchdog wedge -> overrun latch --
+      // -- pusher watchdog wedge -> overrun + wedge latches --
       // Edge-detected (wedge_o is sticky until the next push attempt), so
       // the re-arm clear semantics above still apply and a later second
-      // wedge re-trips the latch. Placed last: a set wins over a clear
-      // landing on the same edge.
+      // wedge re-trips the latches. Placed last: a set wins over a clear
+      // landing on the same edge. wedge_latch (STATUS bit3 / flags bit1)
+      // is set ONLY here, never by the drop paths — the disambiguator.
       pusher_wedge_q <= pusher_wedge;
-      if (pusher_wedge & ~pusher_wedge_q) ovr_latch <= 1'b1;
+      if (pusher_wedge & ~pusher_wedge_q) begin
+        ovr_latch <= 1'b1; wedge_latch <= 1'b1;
+      end
     end
   end
   assign img_active_o = armed;
   assign overrun_o = ovr_latch;
+  assign wedge_latch_o = wedge_latch;
   assign serialize_active_o = (state == S_SER) | pusher_active;
   assign sent_line_o = line_rep;          // quasi-static: stable around the sent toggle
 
@@ -275,8 +286,8 @@ module line_capture #(
   image_pusher #(.MAGIC(MAGIC)) pusher_i (
     .clk(clk), .reset(reset),
     .start_i(push_start), .line_i(push_line), .frame_i(push_frame),
-    .ovr_flag_i(ovr_latch), .busy_o(pusher_busy),
-    .wedge_o(pusher_wedge),
+    .ovr_flag_i(ovr_latch), .wedge_flag_i(wedge_latch),
+    .busy_o(pusher_busy), .wedge_o(pusher_wedge),
     .ram_addr_o(pusher_addr), .ram_q_i(push_buf ? q1 : q0),
     .serializer_done(serializer_done),
     .word_o(pusher_word), .serialize_active_o(pusher_active));

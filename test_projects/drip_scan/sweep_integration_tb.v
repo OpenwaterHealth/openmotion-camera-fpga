@@ -4,8 +4,11 @@
 // 2FF mode sync; histogram_module(enable=~mode_pix) + line_capture(enable=
 // mode_pix) racing into the SHARED Serializer with reset `pix_reset |
 // ~(hm_active|lc_active)` and mux `lc_active ? lc_word : hm_word`; NEW:
-// sweep_value and lc_overrun between fpga_regs and line_capture) because
-// top.v cannot be simulated (Lattice OSCI/PLL primitives).
+// sweep_value, lc_overrun and lc_wedge between fpga_regs and
+// line_capture) because top.v cannot be simulated (Lattice OSCI/PLL
+// primitives). Caveat: this TB runs the control plane on a separate
+// ~24 MHz clock — a two-domain, conservative superset of top.v, which
+// post-752be6a is single-domain (everything on clk_pixel_hs).
 // Frame ledger (histogram3 accumulates on fv/lv regardless of enable;
 // bins wipe only on a histogram SERIALIZE readout — see integration_tb.v):
 //   F1 histo boot (wipes) | F2 legacy line-5 | F3 sweep paced | F4 sweep
@@ -15,8 +18,10 @@
 //   short frame INSIDE F8's drain: every completed sweep line takes the
 //   state==S_SER branch of line_capture's drop guard (cross-mode corner —
 //   drop + latch, envelope must finish intact) | F10 sweep paced clean
-//   (start line 2 via the F8 send's auto-inc republish) | F11 histo
-//   (accumulated F8..F11 = 4 frames, wipes) | F12 histo steady.
+//   (start line 2 via the F8 send's auto-inc republish) | F10b sweep
+//   frame whose push is wedged (forced ser_done + white-box guard
+//   deposit) -> STATUS bit3 readable over I2C | F11 histo (accumulated
+//   F8..F11+F10b = 5 frames, wipes) | F12 histo steady.
 `include "../HistoFPGAFw/i2c_slave.v"
 `include "../HistoFPGAFw/fpga_regs.v"
 `include "../HistoFPGAFw/crc16.v"
@@ -51,7 +56,7 @@ module sweep_integration_tb;
   wire mode_image, sweep_value;
   wire [11:0] line_value, sent_line;
   wire line_req_toggle, line_ack_toggle, line_sent_toggle;
-  wire img_active, lc_overrun;
+  wire img_active, lc_overrun, lc_wedge;
 
   i2c_slave #(.I2C_ADDR(7'h5A)) i2c_slave_i (
       .clk(clk_osc), .reset(reset),
@@ -67,6 +72,7 @@ module sweep_integration_tb;
       .line_sent_toggle_i(line_sent_toggle), .sent_line_i(sent_line),
       .img_active_i(img_active),
       .overrun_i(lc_overrun),
+      .wedge_i(lc_wedge),
       .line_ack_toggle_i(line_ack_toggle),
       .mode_image_o(mode_image), .line_value_o(line_value),
       .sweep_value_o(sweep_value),
@@ -99,6 +105,7 @@ module sweep_integration_tb;
       .line_ack_toggle_o(line_ack_toggle),
       .line_sent_toggle_o(line_sent_toggle), .sent_line_o(sent_line),
       .img_active_o(img_active), .overrun_o(lc_overrun),
+      .wedge_latch_o(lc_wedge),
       .serializer_done(ser_done),
       .word_o(lc_word), .serialize_active_o(lc_active));
 
@@ -377,7 +384,7 @@ module sweep_integration_tb;
     check(bytes_lifetime === base + PUSH_BYTES, "F4: exactly ONE push (rest dropped)");
     check_push(base, 12'd2, 8'd4, 4'h0, "F4: push line 2, flags still 0");
     rd_reg(8'h09, rb);
-    check(rb === 8'h07, "F4: STATUS bit2 overrun set (via I2C)");
+    check(rb === 8'h07, "F4: STATUS bit2 overrun set, bit3 wedge clear (via I2C)");
 
     // ===== F5: latch -> header flag bit0 on subsequent pushes ====
     base = bytes_lifetime;
@@ -445,7 +452,7 @@ module sweep_integration_tb;
     // F9's fv_rise bumped frame_cnt — proof the drain crossed a whole frame.
     check_envelope(base, 12'd1, 8'd9, "F8: legacy envelope byte-exact (intact)");
     rd_reg(8'h09, rb);
-    check(rb === 8'h07, "F9: STATUS bit2 overrun set (via I2C)");
+    check(rb === 8'h07, "F9: STATUS bit2 set but bit3 clear - overrun, not wedge");
 
     // ===== F10: next sweep frame after the cross-mode drop is clean ====
     base = bytes_lifetime;
@@ -458,23 +465,49 @@ module sweep_integration_tb;
     rd_reg(8'h09, rb);
     check(rb === 8'h03, "F10: overrun cleared (auto-inc republish + frame boundary)");
 
+    // ===== F10b: WEDGE mid-push — STATUS bit3 end-to-end over I2C =====
+    // Line 2's push is wedged (serializer_done forced low) and the guard
+    // counter is white-box-deposited near overflow — proving the timeout
+    // VALUE is wedge_tb's job; this block proves the wedge_latch_o ->
+    // fpga_regs -> STATUS bit3 chain reads back 1 over I2C, disambiguated
+    // from bit2 (which this same frame's pusher-busy drops of lines 3..7
+    // set regardless). No byte-count assertions: the aborted push
+    // truncates mid-stream by design.
+    base = bytes_lifetime;
+    send_frame;                                    // frame_cnt = 11
+    t0 = $time;
+    while (bytes_lifetime < base + 64 && ($time - t0) < 500_000) #5000;
+    check(bytes_lifetime >= base + 64, "F10b: push under way before the wedge");
+    check(line_capture_i.pusher_i.busy === 1'b1, "F10b: pusher busy before the wedge");
+    force ser_done = 1'b0;
+    #5000;                                         // FSM parks in S_HAND
+    line_capture_i.pusher_i.guard = 22'h1FFFF0;    // 16 clks from overflow
+    t0 = $time;
+    while (line_capture_i.pusher_i.busy !== 1'b0 && ($time - t0) < 500_000) #1000;
+    check(line_capture_i.pusher_i.busy === 1'b0, "F10b: guard abort escaped the push");
+    release ser_done;
+    #10_000;
+    nbits = 0;                    // resync monitor: abort cut the wire mid-byte
+    rd_reg(8'h09, rb);
+    check(rb === 8'h0F, "F10b: STATUS bit3 wedge + bit2 overrun (drops) via I2C");
+
     // ===== F11/F12: EXIT again — histogram streaming still intact ====
     wr_reg(8'h03, 8'h00);
     #50_000;
     base = bytes_lifetime;
-    send_frame;                                    // frame_cnt = 11
+    send_frame;                                    // frame_cnt = 12
     wait_total_bytes(base + 4100, 1_700_000);
     check(bytes_lifetime === base + 4100, "F11: one 4100-B envelope");
     check(env_word(base, 2) >> 24 === 8'h00, "F11: no magic (histogram)");
-    check(env_word(base, 1023) >> 24 === 8'h0B, "F11: frame counter spacer == 11");
-    check_env_sum(base, 4*(PIXELS_PER_FRAME + SUM_BUG_PER_FRAME),
-                  "F11: first-after-exit sum (4 accumulated frames F8..F11)");
+    check(env_word(base, 1023) >> 24 === 8'h0C, "F11: frame counter spacer == 12");
+    check_env_sum(base, 5*(PIXELS_PER_FRAME + SUM_BUG_PER_FRAME),
+                  "F11: first-after-exit sum (5 accumulated frames F8..F10b)");
     base = bytes_lifetime;
-    send_frame;                                    // frame_cnt = 12
+    send_frame;                                    // frame_cnt = 13
     wait_total_bytes(base + 4100, 1_700_000);
     check(bytes_lifetime === base + 4100, "F12: one 4100-B envelope");
     check(env_word(base, 2) >> 24 === 8'h00, "F12: no magic");
-    check(env_word(base, 1023) >> 24 === 8'h0C, "F12: frame counter spacer == 12");
+    check(env_word(base, 1023) >> 24 === 8'h0D, "F12: frame counter spacer == 13");
     check_env_sum(base, PIXELS_PER_FRAME + SUM_BUG_PER_FRAME,
                   "F12: steady-state histogram sum");
 
@@ -483,7 +516,7 @@ module sweep_integration_tb;
     $finish;
   end
 
-  // ~24 ms of simulated time (19 push drains + 6 envelopes); generous cap
+  // ~26 ms of simulated time (19 push drains + 6 envelopes + F10b); cap
   initial begin
     #200_000_000;
     $display("FAIL: watchdog timeout -- sim did not finish");

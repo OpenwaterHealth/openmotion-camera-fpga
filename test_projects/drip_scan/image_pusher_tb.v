@@ -31,6 +31,7 @@ module image_pusher_tb;
   image_pusher dut (
     .clk(clk), .reset(reset),
     .start_i(start), .line_i(line), .frame_i(frame), .ovr_flag_i(ovr),
+    .wedge_flag_i(1'b0),
     .busy_o(busy),
     .wedge_o(wedge),
     .ram_addr_o(ram_addr), .ram_q_i(ram_q),
