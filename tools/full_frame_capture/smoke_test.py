@@ -49,7 +49,7 @@ def main():
     print("[3/5] I2C control plane")
     regs = FpgaRegs(sensor, a.cam)
     assert regs.check_id(), "ID register != 0x5A — I2C slave not answering"
-    assert regs.read(0x01) == 0x01, "VERSION mismatch"
+    assert regs.read(0x01) == 0x02, "VERSION mismatch (drip-scan register map is v2)"
     assert regs.scratch_test(), "SCRATCH write/read failed"
     print("      ID/VERSION/SCRATCH OK")
 
