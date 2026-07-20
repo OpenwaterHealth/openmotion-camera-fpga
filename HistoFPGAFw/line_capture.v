@@ -13,8 +13,12 @@
 // two line RAMs, and handed to image_pusher, which drains a 2408-B RAW10
 // push while the next line lands in the other buffer. A line that
 // completes while the pusher is still draining is DROPPED and a sticky
-// overrun latch is set (STATUS bit2 / header flag bit0), cleared on the
-// next sweep arm edge. Open-loop timing with a tripwire: at sweep HTS
+// overrun latch is set (STATUS bit2 / header flag bit0). Any (re-)arm
+// publish — a CDC delivery with sweep=1, with or without an intervening
+// disarmed frame — clears the latch at the next frame boundary, so the
+// host's retry path (re-publish {sweep, first-missing-line} and rerun)
+// starts each attempt with a clean tripwire.
+// Open-loop timing with a tripwire: at sweep HTS
 // (row 0.80 ms > drain 0.69 ms) an overrun means the host mis-programmed
 // the sensor. Sweep never toggles line_sent, so fpga_regs' line counter
 // holds the host-written start line.
@@ -63,11 +67,13 @@ module line_capture #(
     end
   end
 
+  // CDC delivery event (1 clk): the same edge that latched target/sweep_pend
+  wire cdc_event = (s_req[1] != line_ack_toggle_o);
+
   // ---- video position tracking ----
   reg fv_q, lv_q;
   always @(posedge clk) begin fv_q <= frame_valid; lv_q <= line_valid; end
   wire fv_rise = frame_valid & ~fv_q;
-  wire fv_fall = ~frame_valid & fv_q;
   wire lv_fall = ~line_valid & lv_q;
 
   reg [11:0] line_cnt;
@@ -103,6 +109,8 @@ module line_capture #(
   reg  sweep_hit_q;
   reg  wr_sel;                            // buffer being written
   reg  ovr_latch;
+  reg  cdc_event_q;                       // pipelined so sweep_pend is settled
+  reg  ovr_clr_pend;                      // re-arm publish seen: clear at next fv_rise
   reg  push_start;
   reg  [11:0] push_line;
   reg  [7:0]  push_frame;
@@ -115,6 +123,7 @@ module line_capture #(
       line_rep <= 12'd0; state <= S_IDLE;
       line_sent_toggle_o <= 1'b0; capturing_q <= 1'b0;
       sweep_hit_q <= 1'b0; wr_sel <= 1'b0; ovr_latch <= 1'b0;
+      cdc_event_q <= 1'b0; ovr_clr_pend <= 1'b0;
       push_start <= 1'b0; push_line <= 12'd0; push_frame <= 8'd0;
       push_buf <= 1'b0;
     end else begin
@@ -124,6 +133,17 @@ module line_capture #(
         armed_sweep <= enable & sweep_pend;
       end
       if (sweep_arm_edge) ovr_latch <= 1'b0;   // spec: cleared on sweep arm
+      // Any (re-)arm publish also clears the latch at the next frame
+      // boundary — the host retry path re-publishes {sweep=1, line}
+      // WITHOUT a disarmed frame, so the disarmed->armed sweep_arm_edge
+      // alone would leave the latch (and header flag bit0) stuck for the
+      // whole session. Pend on the pipelined CDC event (sweep_pend is the
+      // single sample point of the async sweep bit); consume at fv_rise.
+      cdc_event_q <= cdc_event;
+      if (fv_rise & ovr_clr_pend) begin
+        ovr_latch <= 1'b0; ovr_clr_pend <= 1'b0;
+      end
+      if (cdc_event_q & sweep_pend) ovr_clr_pend <= 1'b1;
 
       // -- single-line path (feature/5, unchanged) --
       capturing_q <= capturing;
@@ -152,7 +172,11 @@ module line_capture #(
       sweep_hit_q <= sweep_hit;
       if (sweep_hit_q & ~sweep_hit) begin
         if (!(line_valid & frame_valid)) begin   // clean line end
-          if (pusher_busy) begin
+          // state==S_SER: reverse cross-mode guard — a sweep line completing
+          // while a legacy single-line drain is in flight (misprogrammed VTS)
+          // takes the standard drop+tripwire instead of contending for the
+          // Serializer, symmetric with the ~pusher_busy guard on S_SER entry.
+          if (pusher_busy || state == S_SER) begin
             ovr_latch <= 1'b1;            // drop: wr_sel unchanged, reuse buffer
           end else begin
             push_start <= 1'b1;

@@ -1,9 +1,10 @@
 `timescale 1ns / 1ps
 // sweep_tb.v — line_capture sweep mode: start-line gating, ping/pong
 // handoff, overrun tripwire (drop + sticky latch + header flag), latch
-// clear on re-arm. Byte-exact payloads are image_pusher_tb's and the
-// sweep integration TB's job; here headers + CRC self-consistency + push
-// accounting are asserted.
+// clear on a retry-style re-arm publish (no disarmed frame) and on the
+// disarmed->armed arm edge. Byte-exact payloads are image_pusher_tb's and
+// the sweep integration TB's job; here headers + CRC self-consistency +
+// push accounting are asserted.
 `include "../HistoFPGAFw/crc16.v"
 `include "../HistoFPGAFw/raw10_pack.v"
 `include "../HistoFPGAFw/image_pusher.v"
@@ -68,6 +69,14 @@ module sweep_tb;
   task check(input cond, input [1023:0] msg);
     if (!cond) begin errors = errors + 1; $display("FAIL: %0s", msg); end
   endtask
+
+  // white-box: Task-3 handoff contract — start_i must never pulse while the
+  // pusher is mid-push (its internal busy reg; busy_o includes start_i itself)
+  always @(posedge clk)
+    if (!reset && dut.push_start && dut.pusher_i.busy) begin
+      errors = errors + 1;
+      $display("FAIL: image_pusher start_i pulsed while busy");
+    end
   integer t0;
   task wait_total_bytes(input integer target, input integer max_ns);
     begin
@@ -195,6 +204,7 @@ module sweep_tb;
       check_push_payload_head(base + k*PUSH_BYTES, 2+k, "F1: payload head");
     end
     check(!overrun, "F1: no overrun");
+    check(line_sent == 0, "sweep never toggles line_sent");
 
     // F2: overrun tripwire — short blanking, drain >> row time
     base = bytes_lifetime;
@@ -214,21 +224,47 @@ module sweep_tb;
       check_push_hdr(base + k*PUSH_BYTES, 2+k, 8'd3, 4'h1, "F3: header flag bit0 set");
     check(overrun, "F3: latch still set (no re-arm)");
 
+    // F3R: retry-style re-arm — the host re-publishes {sweep=1, line=3}
+    // (the first line dropped in F2) WITHOUT a disarmed frame, exactly the
+    // SDK retry path. The latch must hold until the next frame boundary,
+    // then clear: the retry's pushes carry flags=0.
+    line_value = 12'd3; line_req = ~line_req; #500;
+    check(line_ack == line_req, "F3R: CDC ack for re-arm publish");
+    check(overrun, "F3R: latch holds until the next frame boundary");
+    base = bytes_lifetime;
+    send_frame_paced;                    // frame_cnt = 4
+    wait_total_bytes(base + 5*PUSH_BYTES, 6_000_000);
+    check(bytes_lifetime == base + 5*PUSH_BYTES, "F3R: 5 pushes (start_line=3)");
+    for (k = 0; k < 5; k = k + 1)
+      check_push_hdr(base + k*PUSH_BYTES, 3+k, 8'd4, 4'h0, "F3R: flags clear after re-arm publish");
+    check(!overrun, "F3R: latch cleared at frame boundary");
+
+    // F3R2: re-trip the latch (short blanking again) so F5 below proves the
+    // disarmed->armed arm edge also clears a SET latch
+    base = bytes_lifetime;
+    send_frame;                          // frame_cnt = 5
+    wait_total_bytes(base + PUSH_BYTES, 3_000_000);
+    #200000;
+    check(bytes_lifetime == base + PUSH_BYTES, "F3R2: exactly ONE push (rest dropped)");
+    check_push_hdr(base, 12'd3, 8'd5, 4'h0, "F3R2: push is line 3, flags 0 (latch was clear)");
+    check(overrun, "F3R2: overrun latch set again");
+
     // F4: disarm (image mode off, like the host exit path) — no pushes
     enable = 0;
     base = bytes_lifetime;
-    send_frame;                          // frame_cnt = 4
+    send_frame;                          // frame_cnt = 6
     #300000;
     check(bytes_lifetime == base, "F4: disarmed frame produces nothing");
+    check(overrun, "F4: latch survives a disarmed frame (sticky)");
 
     // F5: re-arm — arm edge clears the latch; pushes clean again
     enable = 1;
     base = bytes_lifetime;
-    send_frame_paced;                    // frame_cnt = 5
-    wait_total_bytes(base + 6*PUSH_BYTES, 6_000_000);
-    check(bytes_lifetime == base + 6*PUSH_BYTES, "F5: 6 pushes after re-arm");
-    for (k = 0; k < 6; k = k + 1)
-      check_push_hdr(base + k*PUSH_BYTES, 2+k, 8'd5, 4'h0, "F5: flags clear after re-arm");
+    send_frame_paced;                    // frame_cnt = 7
+    wait_total_bytes(base + 5*PUSH_BYTES, 6_000_000);
+    check(bytes_lifetime == base + 5*PUSH_BYTES, "F5: 5 pushes after re-arm");
+    for (k = 0; k < 5; k = k + 1)
+      check_push_hdr(base + k*PUSH_BYTES, 3+k, 8'd7, 4'h0, "F5: flags clear after re-arm");
     check(!overrun, "F5: latch cleared on arm edge");
 
     if (errors == 0) $display("ALL TESTS PASSED");
