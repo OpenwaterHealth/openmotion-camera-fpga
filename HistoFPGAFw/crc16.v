@@ -9,7 +9,7 @@ module crc16 (
     input  wire        init,        // 1-clk pulse: crc <= 16'hFFFF
     input  wire        byte_en,     // 1-clk pulse: fold byte_in into crc
     input  wire [7:0]  byte_in,
-    output reg  [15:0] crc
+    output reg  [15:0] crc          // undefined until the first init pulse
 );
 
   function [15:0] crc_step8(input [15:0] c, input [7:0] b);

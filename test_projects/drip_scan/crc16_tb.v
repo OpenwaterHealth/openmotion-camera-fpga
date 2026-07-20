@@ -35,7 +35,8 @@ module crc16_tb;
     crc_init;
     check(crc == 16'hFFFF, "T1: init -> 0xFFFF");
 
-    // T2: standard check string "123456789" -> 0x29B1 (CRC-16/CCITT-FALSE)
+    // T2: standard check string "123456789" -> 0x29B1 (CRC-16/CCITT-FALSE).
+    // Continues from T1's just-initialized 0xFFFF state — no crc_init here.
     s = "123456789";
     for (i = 8; i >= 0; i = i - 1) crc_byte(s[8*i +: 8]);
     check(crc == 16'h29B1, "T2: crc(123456789) == 0x29B1");
