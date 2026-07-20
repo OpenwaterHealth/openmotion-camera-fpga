@@ -67,7 +67,7 @@ module sweep_tb;
 
   integer errors = 0;
   task check(input cond, input [1023:0] msg);
-    if (!cond) begin errors = errors + 1; $display("FAIL: %0s", msg); end
+    if (cond !== 1'b1) begin errors = errors + 1; $display("FAIL: %0s", msg); end
   endtask
 
   // white-box: Task-3 handoff contract — start_i must never pulse while the

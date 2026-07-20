@@ -75,7 +75,7 @@ module image_pusher_tb;
 
   integer errors = 0;
   task check(input cond, input [1023:0] msg);
-    if (!cond) begin errors = errors + 1; $display("FAIL: %0s", msg); end
+    if (cond !== 1'b1) begin errors = errors + 1; $display("FAIL: %0s", msg); end
   endtask
   integer t0;
   task wait_total_bytes(input integer target, input integer max_ns);

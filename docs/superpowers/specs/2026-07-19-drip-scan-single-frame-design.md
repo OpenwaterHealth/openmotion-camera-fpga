@@ -63,7 +63,7 @@ wastes 37% of the link). Each row is one fixed-size push:
 | 4 | 1 | `frame_cnt[7:0]` (free-running fv counter; must be constant across one image) |
 | 5 | 1 | Reserved `0x00` |
 | 6 | 2400 | 1920 px packed RAW10, 4 px → 5 B: pixel *k* (k=0..3, in readout order) occupies bits [10k+9 : 10k] of a 40-bit little-endian group; groups transmit low byte first (matches the link's LSB-first byte convention) |
-| 2406 | 2 | CRC-16/CCITT over bytes 0–2405 |
+| 2406 | 2 | CRC-16/CCITT-FALSE (poly 0x1021, init 0xFFFF, MSB-first fold, no reflection, no final XOR — byte-identical to sensor-fw `util_crc16`), transmitted high byte first, computed over bytes 0–2405 |
 
 Drain time at current link: 2408 × 286 ns ≈ **0.69 ms**. The MCU forwards blind;
 the **host** verifies CRC (the MCU stays out of the per-line hot path).
