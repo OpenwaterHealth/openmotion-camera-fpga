@@ -11,6 +11,9 @@
 // blanking interval.
 `include "../HistoFPGAFw/i2c_slave.v"
 `include "../HistoFPGAFw/fpga_regs.v"
+`include "../HistoFPGAFw/crc16.v"
+`include "../HistoFPGAFw/raw10_pack.v"
+`include "../HistoFPGAFw/image_pusher.v"
 `include "../HistoFPGAFw/line_capture.v"
 `include "../HistoFPGAFw/histo_module.v"
 `include "../HistoFPGAFw/histo_calc.v"
@@ -90,10 +93,11 @@ module integration_tb;
   line_capture line_capture_i (
       .clk(clk_pix), .reset(pix_reset), .enable(mode_pix),
       .pixel_data(pd), .frame_valid(fv), .line_valid(lv),
-      .line_value_i(line_value), .line_req_toggle_i(line_req_toggle),
+      .line_value_i(line_value), .sweep_value_i(sweep_value),
+      .line_req_toggle_i(line_req_toggle),
       .line_ack_toggle_o(line_ack_toggle),
       .line_sent_toggle_o(line_sent_toggle), .sent_line_o(sent_line),
-      .img_active_o(img_active),
+      .img_active_o(img_active), .overrun_o(),
       .serializer_done(ser_done),
       .word_o(lc_word), .serialize_active_o(lc_active));
 

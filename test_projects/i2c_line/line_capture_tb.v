@@ -1,4 +1,7 @@
 `timescale 1ns / 1ps
+`include "../HistoFPGAFw/crc16.v"
+`include "../HistoFPGAFw/raw10_pack.v"
+`include "../HistoFPGAFw/image_pusher.v"
 `include "../HistoFPGAFw/line_capture.v"
 `include "../HistoFPGAFw/histo_serializer.v"
 `include "../HistoFPGAFw/spi_master.v"
@@ -80,9 +83,11 @@ module line_capture_tb;
   line_capture dut (
     .clk(clk), .reset(reset), .enable(enable),
     .pixel_data(pd), .frame_valid(fv), .line_valid(lv),
-    .line_value_i(line_value), .line_req_toggle_i(line_req),
+    .line_value_i(line_value), .sweep_value_i(1'b0),
+    .line_req_toggle_i(line_req),
     .line_ack_toggle_o(line_ack), .line_sent_toggle_o(line_sent),
     .sent_line_o(sent_line), .img_active_o(img_active),
+    .overrun_o(),
     .serializer_done(ser_done), .word_o(word),
     .serialize_active_o(ser_active));
 
