@@ -54,6 +54,15 @@
         <Source name="line_capture.v" type="Verilog" type_short="Verilog">
             <Options VerilogStandard="Verilog 2001"/>
         </Source>
+        <Source name="crc16.v" type="Verilog" type_short="Verilog">
+            <Options VerilogStandard="Verilog 2001"/>
+        </Source>
+        <Source name="raw10_pack.v" type="Verilog" type_short="Verilog">
+            <Options VerilogStandard="Verilog 2001"/>
+        </Source>
+        <Source name="image_pusher.v" type="Verilog" type_short="Verilog">
+            <Options VerilogStandard="Verilog 2001"/>
+        </Source>
         <Source name="ram_dp/ram_dp.sbx" type="sbx" type_short="SBX">
             <Options/>
         </Source>
