@@ -57,6 +57,20 @@ wire [1:0] p_odd;
 //	Reset Bridge for clk_pixel_pll clock
 assign int_rst_n = reset_n_i;
 
+// Drip-scan bench finding (camera-fpga#8): in the sensor's low-power snapshot
+// trigger mode the MIPI clock GAPS between frames; the PLL loses lock and the
+// payload-decode path (DPHY byte-domain depacketizer + byte2pix) desyncs
+// PERMANENTLY — fv still decodes but lv/payload never recover, so armed sweeps
+// go silent after the first gap (proven on hardware: armed=1, FRAME_CNT
+// counting, zero captures, zero overruns). Fix: re-fire the DATAPATH reset
+// bridges on every lock loss (async assert while clocks die, synchronized
+// release ~2 destination clocks after relock) so each gap gets a clean
+// resync. Control-plane state (top.v's rst_brg_pix -> fpga_regs/line_capture
+// arm state) is deliberately NOT gated by lock and survives gaps; the PHY
+// powerdown and main IP reset are also untouched (the PHY must keep running
+// to regenerate the clock, else relock could never happen).
+wire dp_rst_n = reset_n_i & pll_lock_i;
+
 
 /*synthesis translate_off*/
 GSR GSR_INST (1'b1);
@@ -68,7 +82,7 @@ assign clk_pixel_pll = clk_pixel_i;
 //	Reset Bridge for rx_clk_byte_fr clock
 reset_bridge rst_brg_mipi_clk(
   .clk_i			(rx_clk_byte_fr),// Destination clock
-  .ext_resetn_i		( int_rst_n ),// Asynchronous reset signal
+  .ext_resetn_i		( dp_rst_n ),// re-fires on every PLL lock loss (see above)
   .sync_resetn_out	(rx_reset_byte_fr_n_sync)// Synchronized reset signal
 );
 
@@ -124,7 +138,7 @@ rx_dphy_ip rx_dphy
 //	Reset Bridge for pixel clock rst
 reset_bridge rst_pixel_clk(
   .clk_i			(clk_pixel_pll),// Destination clock
-  .ext_resetn_i		( reset_n_i ),// Asynchronous reset signal
+  .ext_resetn_i		( dp_rst_n ),// re-fires on every PLL lock loss (see above)
   .sync_resetn_out	(reset_pixel_n_sync_x)// Synchronized reset signal
 );
 
