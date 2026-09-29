@@ -100,6 +100,7 @@ module topmod
   wire mode_image, sweep_value, lc_overrun, lc_wedge;
   wire [11:0] line_value, sent_line;
   wire line_req_toggle, line_ack_toggle, line_sent_toggle, img_active;
+  wire [7:0] stride;
 
   i2c_slave #(.I2C_ADDR(7'h5A)) i2c_slave_i (
       .clk(clk_pixel_hs), .reset(osc_reset),
@@ -119,7 +120,8 @@ module topmod
       .line_ack_toggle_i(line_ack_toggle),
       .mode_image_o(mode_image), .line_value_o(line_value),
       .sweep_value_o(sweep_value),
-      .line_req_toggle_o(line_req_toggle));
+      .line_req_toggle_o(line_req_toggle),
+      .stride_o(stride));
 
   /*------------------Readout producers (clk_pixel_hs domain)-------------*/
   // mode bit into the pixel domain
@@ -144,6 +146,7 @@ module topmod
       .pixel_data(cmos_data), .frame_valid(cmos_fv), .line_valid(cmos_lv),
       .line_value_i(line_value), .sweep_value_i(sweep_value),
       .line_req_toggle_i(line_req_toggle),
+      .stride_i(stride),
       .line_ack_toggle_o(line_ack_toggle),
       .line_sent_toggle_o(line_sent_toggle), .sent_line_o(sent_line),
       .img_active_o(img_active), .overrun_o(lc_overrun),

@@ -85,6 +85,7 @@ module line_capture_tb;
     .pixel_data(pd), .frame_valid(fv), .line_valid(lv),
     .line_value_i(line_value), .sweep_value_i(1'b0),
     .line_req_toggle_i(line_req),
+    .stride_i(8'd0),
     .line_ack_toggle_o(line_ack), .line_sent_toggle_o(line_sent),
     .sent_line_o(sent_line), .img_active_o(img_active),
     .overrun_o(),

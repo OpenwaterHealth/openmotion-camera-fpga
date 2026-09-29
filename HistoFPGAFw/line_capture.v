@@ -44,6 +44,7 @@ module line_capture #(
     input  wire [11:0] line_value_i,
     input  wire        sweep_value_i,     // atomic with line_value_i
     input  wire        line_req_toggle_i,
+    input  wire [7:0]  stride_i,          // quasi-static; >1 = stride composite (see below)
     output reg         line_ack_toggle_o,
     output reg         line_sent_toggle_o,
     output wire [11:0] sent_line_o,       // which line the last toggle reported (quasi-static)
@@ -115,8 +116,21 @@ module line_capture #(
   wire capturing = armed & ~armed_sweep & (state == S_IDLE) & ~captured &
                    frame_valid & line_valid & (line_cnt == target);
 
-  // sweep capture: every line >= start line
-  wire sweep_hit = armed_sweep & frame_valid & line_valid & (line_cnt >= target);
+  // ---- stride composite (map v3) ----
+  // STRIDE > 1: capture only lines phase, phase+STRIDE, phase+2*STRIDE, ...
+  // with phase advancing by one per frame (0 on the arming frame), so STRIDE
+  // consecutive frames cover every line exactly once. This keeps the sensor
+  // at production-quality row times (the ~0.69 ms line drain spans many
+  // rows) while still delivering a complete image every STRIDE frames:
+  // STRIDE 40 at 40 Hz = one full frame per second. STRIDE*row time must
+  // exceed the drain or the overrun tripwire fires as usual.
+  reg [7:0] stride_s1, stride_s2 /* synthesis syn_preserve=1 */;
+  reg [7:0] phase, sel_cnt;
+  wire stride_on = (stride_s2 > 8'd1);
+  wire sel_now = ~stride_on | (sel_cnt == 8'd0);
+
+  // sweep capture: every line >= start line (every STRIDE-th in stride mode)
+  wire sweep_hit = armed_sweep & frame_valid & line_valid & (line_cnt >= target) & sel_now;
   reg  sweep_hit_q;
   reg  wr_sel;                            // buffer being written
   reg  ovr_latch, wedge_latch;
@@ -127,6 +141,23 @@ module line_capture #(
   reg  [7:0]  push_frame;
   reg  push_buf;                          // buffer being drained
   wire sweep_arm_edge = fv_rise & enable & sweep_pend & ~armed_sweep;
+
+  always @(posedge clk) begin
+    stride_s1 <= stride_i; stride_s2 <= stride_s1;
+    if (reset) begin
+      phase <= 8'd0; sel_cnt <= 8'd0;
+    end else if (fv_rise) begin
+      if (~armed_sweep) begin               // arming (or idle) frame: phase 0
+        sel_cnt <= 8'd0;
+        phase   <= stride_on ? 8'd1 : 8'd0;
+      end else begin
+        sel_cnt <= phase;
+        phase   <= (phase + 8'd1 >= stride_s2) ? 8'd0 : phase + 8'd1;
+      end
+    end else if (lv_fall) begin
+      sel_cnt <= (sel_cnt == 8'd0) ? stride_s2 - 8'd1 : sel_cnt - 8'd1;
+    end
+  end
 
   always @(posedge clk) begin
     if (reset) begin

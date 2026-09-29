@@ -64,6 +64,7 @@ module sweep_integration_tb;
       .reg_addr(r_addr), .wr_data(r_wdata), .wr_strobe(r_wstrobe),
       .rd_data(r_rdata));
 
+  wire [7:0] stride;
   fpga_regs fpga_regs_i (
       .clk(clk_osc), .reset(reset),
       .reg_addr(r_addr), .wr_data(r_wdata), .wr_strobe(r_wstrobe),
@@ -76,7 +77,8 @@ module sweep_integration_tb;
       .line_ack_toggle_i(line_ack_toggle),
       .mode_image_o(mode_image), .line_value_o(line_value),
       .sweep_value_o(sweep_value),
-      .line_req_toggle_o(line_req_toggle));
+      .line_req_toggle_o(line_req_toggle),
+      .stride_o(stride));
 
   /*------------------Readout producers (clk_pix domain)------------------*/
   reg [1:0] mode_sync /* synthesis syn_preserve=1 */;
@@ -102,6 +104,7 @@ module sweep_integration_tb;
       .pixel_data(pd), .frame_valid(fv), .line_valid(lv),
       .line_value_i(line_value), .sweep_value_i(sweep_value),
       .line_req_toggle_i(line_req_toggle),
+      .stride_i(stride),
       .line_ack_toggle_o(line_ack_toggle),
       .line_sent_toggle_o(line_sent_toggle), .sent_line_o(sent_line),
       .img_active_o(img_active), .overrun_o(lc_overrun),
@@ -344,7 +347,7 @@ module sweep_integration_tb;
 
     // ===== I2C sanity =====
     rd_reg(8'h00, rb); check(rb === 8'h5A, "I2C: ID 0x5A");
-    rd_reg(8'h01, rb); check(rb === 8'h02, "I2C: VERSION 0x02");
+    rd_reg(8'h01, rb); check(rb === 8'h03, "I2C: VERSION 0x03");
 
     // ===== F2: LEGACY single-line image mode (regression) =====
     wr_reg(8'h04, 8'h05); wr_reg(8'h05, 8'h00);   // LINE = 5

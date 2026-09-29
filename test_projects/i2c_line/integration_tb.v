@@ -57,6 +57,7 @@ module integration_tb;
       .reg_addr(r_addr), .wr_data(r_wdata), .wr_strobe(r_wstrobe),
       .rd_data(r_rdata));
 
+  wire [7:0] stride;
   fpga_regs fpga_regs_i (
       .clk(clk_osc), .reset(reset),
       .reg_addr(r_addr), .wr_data(r_wdata), .wr_strobe(r_wstrobe),
@@ -69,7 +70,8 @@ module integration_tb;
       .line_ack_toggle_i(line_ack_toggle),
       .mode_image_o(mode_image), .line_value_o(line_value),
       .sweep_value_o(sweep_value),
-      .line_req_toggle_o(line_req_toggle));
+      .line_req_toggle_o(line_req_toggle),
+      .stride_o(stride));
 
   /*------------------Readout producers (clk_pix domain)-------------*/
   // mode bit into the pixel domain — EXACT 2FF replica of top.v lines ~108-110
@@ -98,6 +100,7 @@ module integration_tb;
       .pixel_data(pd), .frame_valid(fv), .line_valid(lv),
       .line_value_i(line_value), .sweep_value_i(sweep_value),
       .line_req_toggle_i(line_req_toggle),
+      .stride_i(stride),
       .line_ack_toggle_o(line_ack_toggle),
       .line_sent_toggle_o(line_sent_toggle), .sent_line_o(sent_line),
       .img_active_o(img_active), .overrun_o(), .wedge_latch_o(),
@@ -348,7 +351,7 @@ module integration_tb;
     // 2. I2C SANITY: ID, VERSION, SCRATCH read/write.
     // =====================================================================
     rd_reg(8'h00, rb); check(rb == 8'h5A, "I2C-SANITY: ID == 0x5A");
-    rd_reg(8'h01, rb); check(rb == 8'h02, "I2C-SANITY: VERSION == 0x02");
+    rd_reg(8'h01, rb); check(rb == 8'h03, "I2C-SANITY: VERSION == 0x03");
     rd_reg(8'h02, rb); check(rb == 8'hA5, "I2C-SANITY: SCRATCH default 0xA5");
     wr_reg(8'h02, 8'h3C); rd_reg(8'h02, rb);
     check(rb == 8'h3C, "I2C-SANITY: SCRATCH write/readback 0x3C");

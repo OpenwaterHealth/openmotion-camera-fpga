@@ -29,6 +29,7 @@ module sweep_tb;
   reg sweep_value = 1'b1;
   reg line_req = 0;
   reg enable = 1'b1;
+  reg [7:0] stride = 8'd0;
   wire line_ack, line_sent;
   wire [11:0] sent_line;
   wire img_active, overrun;
@@ -40,6 +41,7 @@ module sweep_tb;
     .pixel_data(pd), .frame_valid(fv), .line_valid(lv),
     .line_value_i(line_value), .sweep_value_i(sweep_value),
     .line_req_toggle_i(line_req),
+    .stride_i(stride),
     .line_ack_toggle_o(line_ack), .line_sent_toggle_o(line_sent),
     .sent_line_o(sent_line), .img_active_o(img_active),
     .overrun_o(overrun),
@@ -54,7 +56,7 @@ module sweep_tb;
   // flat byte-stream monitor (LSB-first)
   reg [7:0] cur; integer nbits = 0;
   integer bytes_lifetime = 0;
-  reg [7:0] wire_bytes [0:65535];
+  reg [7:0] wire_bytes [0:262143];
   always @(posedge spi_clk) begin
     cur = {spi_mosi, cur[7:1]};
     nbits = nbits + 1;
@@ -266,6 +268,42 @@ module sweep_tb;
     for (k = 0; k < 5; k = k + 1)
       check_push_hdr(base + k*PUSH_BYTES, 3+k, 8'd7, 4'h0, "F5: flags clear after re-arm");
     check(!overrun, "F5: latch cleared on arm edge");
+
+    // F6..F8: stride composite (map v3). STRIDE=3 with the start line at 0:
+    // the arming frame captures lines 0,3,6; then phase 1 -> 1,4,7; then
+    // phase 2 -> 2,5; then back to phase 0. Paced frames (drain < 3 rows
+    // here) so no overrun. The union of 3 consecutive frames = all 8 lines.
+    stride = 8'd3;
+    enable = 0; send_frame;              // disarm for one frame (frame_cnt 8)
+    #300000;
+    line_value = 12'd0; line_req = ~line_req; #500;
+    enable = 1;
+    base = bytes_lifetime;
+    send_frame_paced;                    // frame_cnt = 9, arming frame, phase 0
+    wait_total_bytes(base + 3*PUSH_BYTES, 6_000_000);
+    check(bytes_lifetime == base + 3*PUSH_BYTES, "F6: stride 3 phase 0 -> 3 pushes");
+    for (k = 0; k < 3; k = k + 1)
+      check_push_hdr(base + k*PUSH_BYTES, 3*k, 8'd9, 4'h0, "F6: lines 0,3,6");
+    base = bytes_lifetime;
+    send_frame_paced;                    // frame_cnt = 10, phase 1
+    wait_total_bytes(base + 3*PUSH_BYTES, 6_000_000);
+    check(bytes_lifetime == base + 3*PUSH_BYTES, "F7: stride 3 phase 1 -> 3 pushes");
+    for (k = 0; k < 3; k = k + 1) begin
+      check_push_hdr(base + k*PUSH_BYTES, 1+3*k, 8'd10, 4'h0, "F7: lines 1,4,7");
+      check_push_payload_head(base + k*PUSH_BYTES, 1+3*k, "F7: payload head");
+    end
+    base = bytes_lifetime;
+    send_frame_paced;                    // frame_cnt = 11, phase 2
+    wait_total_bytes(base + 2*PUSH_BYTES, 6_000_000);
+    check(bytes_lifetime == base + 2*PUSH_BYTES, "F8: stride 3 phase 2 -> 2 pushes");
+    for (k = 0; k < 2; k = k + 1)
+      check_push_hdr(base + k*PUSH_BYTES, 2+3*k, 8'd11, 4'h0, "F8: lines 2,5");
+    base = bytes_lifetime;
+    send_frame_paced;                    // frame_cnt = 12, phase wraps to 0
+    wait_total_bytes(base + 3*PUSH_BYTES, 6_000_000);
+    check(bytes_lifetime == base + 3*PUSH_BYTES, "F9: phase wrapped -> 3 pushes");
+    check_push_hdr(base, 12'd0, 8'd12, 4'h0, "F9: first line 0 again");
+    check(!overrun, "F6-F9: no overrun in stride mode");
 
     if (errors == 0) $display("ALL TESTS PASSED");
     else $display("%0d ERRORS", errors);

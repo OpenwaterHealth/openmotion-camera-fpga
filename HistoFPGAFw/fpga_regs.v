@@ -9,9 +9,14 @@
 // wedge from a plain overrun, see line_capture.v).
 // In sweep mode the pixel side never toggles line_sent, so the counter
 // holds the host-written sweep start line (LINE_L/H reuse, spec §4.3).
+// v3 (stride composite): VERSION 0x03; register 0x0A = STRIDE. With
+// STRIDE > 1 a sweep captures lines phase, phase+STRIDE, ... and the phase
+// advances by one each frame, so STRIDE consecutive frames cover every line
+// once (see line_capture.v). 0/1 = every line (v2 behaviour). Quasi-static:
+// the host writes it before arming the sweep.
 module fpga_regs #(
     parameter [7:0] ID_VAL  = 8'h5A,
-    parameter [7:0] VERSION = 8'h02
+    parameter [7:0] VERSION = 8'h03
 ) (
     input  wire       clk,
     input  wire       reset,
@@ -33,7 +38,8 @@ module fpga_regs #(
     output reg        mode_image_o,
     output reg [11:0] line_value_o,
     output reg        sweep_value_o,   // published with line_value_o
-    output reg        line_req_toggle_o
+    output reg        line_req_toggle_o,
+    output reg  [7:0] stride_o
 );
 
   reg [1:0] s_pll, s_fv, s_sent, s_ack, s_act, s_ovr, s_wedge /* synthesis syn_preserve=1 */;
@@ -66,6 +72,7 @@ module fpga_regs #(
   always @(posedge clk) begin
     if (reset) begin
       scratch <= 8'hA5; mode_image_o <= 1'b0; mode_sweep <= 1'b0;
+      stride_o <= 8'd0;
       line_stage_l <= 8'h00; line_counter <= 12'd0; frame_cnt <= 8'd0;
     end else begin
       if (fv_rise) frame_cnt <= frame_cnt + 8'd1;
@@ -79,6 +86,7 @@ module fpga_regs #(
           8'h03: begin mode_image_o <= wr_data[0]; mode_sweep <= wr_data[1]; end
           8'h04: line_stage_l <= wr_data;
           8'h05: line_counter <= {wr_data[3:0], line_stage_l}; // commit; wins over sent_event
+          8'h0A: stride_o <= wr_data;
           default: ;
         endcase
       end
@@ -114,6 +122,7 @@ module fpga_regs #(
       8'h07: rd_data = {4'b0, line_counter[11:8]};
       8'h08: rd_data = frame_cnt;
       8'h09: rd_data = {4'b0, s_wedge[1], s_ovr[1], s_act[1], s_pll[1]};
+      8'h0A: rd_data = stride_o;
       default: rd_data = 8'h00;
     endcase
   end

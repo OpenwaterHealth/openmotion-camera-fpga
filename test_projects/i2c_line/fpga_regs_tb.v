@@ -30,6 +30,7 @@ module fpga_regs_tb;
   reg  pix_sweep = 0;
   reg [11:0] pix_target = 12'hEEE;
 
+  wire [7:0] stride_o;
   fpga_regs regs (
     .clk(clk), .reset(reset),
     .reg_addr(reg_addr), .wr_data(wr_data), .wr_strobe(wr_strobe),
@@ -42,7 +43,8 @@ module fpga_regs_tb;
     .line_ack_toggle_i(line_ack_toggle),
     .mode_image_o(mode_image), .line_value_o(line_value),
     .sweep_value_o(sweep_value),
-    .line_req_toggle_o(line_req_toggle));
+    .line_req_toggle_o(line_req_toggle),
+    .stride_o(stride_o));
 
   // pixel-domain CDC responder (async to clk on purpose)
   reg responder_on = 1;
@@ -94,7 +96,10 @@ module fpga_regs_tb;
     check(pix_target == 12'd0, "initial publish delivered 0");
 
     rd_reg(8'h00, rb); check(rb == 8'h5A, "ID");
-    rd_reg(8'h01, rb); check(rb == 8'h02, "VERSION == 0x02");
+    rd_reg(8'h01, rb); check(rb == 8'h03, "VERSION == 0x03");
+    rd_reg(8'h0A, rb); check(rb == 8'h00, "STRIDE default 0");
+    wr_reg(8'h0A, 8'd40); rd_reg(8'h0A, rb); check(rb == 8'd40 && stride_o == 8'd40, "STRIDE rw + output");
+    wr_reg(8'h0A, 8'h00);
     rd_reg(8'h02, rb); check(rb == 8'hA5, "SCRATCH default");
     wr_reg(8'h02, 8'h3C); rd_reg(8'h02, rb); check(rb == 8'h3C, "SCRATCH rw");
 
