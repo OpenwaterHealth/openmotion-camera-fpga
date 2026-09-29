@@ -1,5 +1,12 @@
 # Full-frame capture runbook (validated 2026-07-05 night)
 
+> **Superseded for 1 Hz full frames (2026-09-29).** This runbook covers the
+> July line-by-line (v1 map, ~40 lines/s) capture on `feature/5`. The current
+> path is the map-v3 STRIDE composite on `feature/8-drip-scan-single-frame`
+> (bitstream `validated_bitstream/HistoFPGAFw_impl1_2026-09-29_map-v3-stride.bit`),
+> driven from the SDK: see `docs/FullFrameImages.md` on openmotion-sdk
+> `feature/167-drip-scan-capture` for the resume steps.
+
 ## Proven end-to-end recipe
 
 From `tools/full_frame_capture/` (both sensors + console on USB):
