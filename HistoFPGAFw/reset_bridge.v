@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 `timescale 1 ps / 1 ps
 
 module reset_bridge (
