@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 module clk_divider_40Hz (
     input wire clk_48MHz,    // 48 MHz input clock
     input wire reset,        // Reset signal
