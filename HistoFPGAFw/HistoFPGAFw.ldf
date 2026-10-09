@@ -45,6 +45,15 @@
         <Source name="spi_master.v" type="Verilog" type_short="Verilog">
             <Options VerilogStandard="Verilog 2001"/>
         </Source>
+        <Source name="i2c_slave.v" type="Verilog" type_short="Verilog">
+            <Options VerilogStandard="Verilog 2001"/>
+        </Source>
+        <Source name="fpga_regs.v" type="Verilog" type_short="Verilog">
+            <Options VerilogStandard="Verilog 2001"/>
+        </Source>
+        <Source name="line_capture.v" type="Verilog" type_short="Verilog">
+            <Options VerilogStandard="Verilog 2001"/>
+        </Source>
         <Source name="ram_dp/ram_dp.sbx" type="sbx" type_short="SBX">
             <Options/>
         </Source>
