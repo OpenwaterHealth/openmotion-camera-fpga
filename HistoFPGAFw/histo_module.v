@@ -35,6 +35,27 @@ module histogram_module (
   parameter IDLE = 2'b00, HISTO = 2'b01, SERIALIZE = 2'b11;
   reg [1:0] state = IDLE;
 
+  // sensor-fw#68 self-heal: SERIALIZE previously had NO escape other than
+  // a completed 1024-bin push. An electrical glitch mid-push (e.g. the
+  // laser driver transient coupling into the SPI lines) that corrupts the
+  // SPI master handshake left this FSM stuck in SERIALIZE forever - the
+  // module then ignored every subsequent frame_valid and never pushed
+  // again for the rest of the scan. The guard counter forces the FSM back
+  // to IDLE after 2^21 clk cycles (~15.8 ms at 132.8 MHz) in SERIALIZE -
+  // about 2x the longest healthy push - so a wedged push costs one frame
+  // instead of the scan. A frame_valid-based escape is NOT usable here:
+  // healthy pushes on the slower links legitimately straddle into the
+  // next frame.
+  reg [21:0] ser_guard = 22'd0;
+
+  always @(posedge clk)
+  begin
+    if (reset || state != SERIALIZE)
+      ser_guard <= 22'd0;
+    else
+      ser_guard <= ser_guard + 22'd1;
+  end
+
   always @(posedge clk)
   begin
     if (reset)
@@ -58,6 +79,8 @@ module histogram_module (
         begin
           if (serializer_done && bin == 10'h0 && flag == 1)
             state <= IDLE;
+          else if (ser_guard[21])
+            state <= IDLE;  // wedged push - abandon and self-heal
         end
       endcase
     end
