@@ -34,6 +34,7 @@ module Serializer(
   wire m_tready;
   reg prev_m_tready;
   reg prev_prev_m_tready;
+  reg prev3_m_tready;   // one extra clock before each byte load: data_in is registered upstream (histo_module word_r)
   reg m_tvalid;
 
   always @(posedge fast_clk_in)
@@ -42,11 +43,13 @@ module Serializer(
     begin
       prev_m_tready <= 0;
       prev_prev_m_tready <= 0;
+      prev3_m_tready <= 0;
     end
     else
     begin
       prev_m_tready <= m_tready;
       prev_prev_m_tready <= prev_m_tready;
+      prev3_m_tready <= prev_prev_m_tready;
     end
   end
 
@@ -59,7 +62,7 @@ module Serializer(
     end
     else
     begin
-      if ( m_tready && prev_m_tready && prev_prev_m_tready && !m_tvalid)
+      if ( m_tready && prev_m_tready && prev_prev_m_tready && prev3_m_tready && !m_tvalid)
       begin
         m_tvalid <= 1'b1;
         select <= select + 2'b01; // Increment on the positive edge of serializer_done

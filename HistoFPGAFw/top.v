@@ -79,10 +79,19 @@ module topmod
                 );
 
   /*------------------Histogram Module--------------------*/
+  //	Reset Bridge for clk_pixel_hs: the histogram logic uses a synchronous
+  //	reset, so release it synchronously in its own clock domain.
+  wire reset_n_pix;
+  reset_bridge rst_brg_pix(
+                 .clk_i			(clk_pixel_hs),
+                 .ext_resetn_i		( reset_n_HFCLKOUT ),
+                 .sync_resetn_out	(reset_n_pix)
+               );
+
   wire spi_mosi, spi_clk, spi_en;
   histogram_module histogram_module_i(
                      .clk 		(clk_pixel_hs),
-                     .reset		(~reset_n_HFCLKOUT),
+                     .reset		(~reset_n_pix),
                      .pixel_data (cmos_data),
                      .frame_valid (cmos_fv),
                      .line_valid (cmos_lv),
