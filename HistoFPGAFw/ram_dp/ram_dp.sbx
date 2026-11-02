@@ -169,8 +169,8 @@
             <lattice:device>LIF-MD6000-6UWG36I</lattice:device>
             <lattice:synthesis>lse</lattice:synthesis>
             <lattice:date>2024-10-29.15:20:04</lattice:date>
-            <lattice:modified>2024-10-29.15:21:48</lattice:modified>
-            <lattice:diamond>3.13.0.56.2</lattice:diamond>
+            <lattice:modified>2026-11-02.12:54:58</lattice:modified>
+            <lattice:diamond>3.14.0.75.2</lattice:diamond>
             <lattice:language>Verilog</lattice:language>
             <lattice:attributes>
                 <lattice:attribute lattice:name="AddComponent">false</lattice:attribute>
@@ -328,7 +328,7 @@
                     </spirit:model>
                     <spirit:vendorExtensions>
                         <lattice:synthesis>lse</lattice:synthesis>
-                        <lattice:modified>2024-10-29.15:21:48</lattice:modified>
+                        <lattice:modified>2026-11-02.12:54:58</lattice:modified>
                         <lattice:attributes>
                             <lattice:attribute lattice:name="AddComponent">false</lattice:attribute>
                             <lattice:attribute lattice:name="BBox">false</lattice:attribute>

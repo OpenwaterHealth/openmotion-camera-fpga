@@ -8,6 +8,8 @@
 ################################################
 
 create_clock -period 12.000000 -waveform { 0.000000 6.000000 } -name CLK_PIXEL [ get_nets { pll_inst/CLKOP } ]
+# clk_pixel_hs = PLL CLKOS, 132.8 MHz (OX02C1B: 2 lanes x 1328 Mbps RAW10, 2 pixels/clock)
+create_clock -period 7.530120 -waveform { 0.000000 3.765060 } -name CLK_PIXEL_HS [ get_nets { clk_pixel_hs } ]
 
 ################################################
 # This section describes the HDL Attributes that are supported
